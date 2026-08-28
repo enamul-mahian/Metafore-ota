@@ -15,6 +15,7 @@ class DatabaseSeeder extends Seeder
     {
         $this->call([
             RolePermissionSeeder::class,
+            SettingsSeeder::class,
         ]);
 
         $user = User::query()->firstOrCreate(
@@ -32,6 +33,8 @@ class DatabaseSeeder extends Seeder
             $user->markEmailAsVerified();
         }
 
-        $user->syncRoles(['customer']);
+        $user->syncRoles([
+            'customer',
+        ]);
     }
 }
