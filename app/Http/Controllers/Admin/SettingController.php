@@ -31,12 +31,10 @@ class SettingController extends Controller
                 return [
                     'group' => $setting->group,
                     'key' => $setting->key,
-
                     'value' => $this->settings->get(
                         $setting->group,
                         $setting->key
                     ),
-
                     'type' => $setting->type,
                     'is_public' => $setting->is_public,
                 ];
@@ -45,6 +43,56 @@ class SettingController extends Controller
         return response()->json([
             'data' => $settings,
         ]);
+    }
+
+    /**
+     * Create one new application setting.
+     */
+    public function store(
+        UpdateSettingRequest $request,
+        string $group,
+        string $key
+    ): JsonResponse {
+        $alreadyExists = Setting::query()
+            ->where('group', $group)
+            ->where('key', $key)
+            ->exists();
+
+        if ($alreadyExists) {
+            throw ValidationException::withMessages([
+                'key' => 'A setting with this group and key already exists.',
+            ]);
+        }
+
+        $validated = $request->validated();
+
+        try {
+            $setting = $this->settings->set(
+                group: $group,
+                key: $key,
+                value: $validated['value'] ?? null,
+                type: $validated['type'],
+                isPublic: (bool) $validated['is_public'],
+            );
+        } catch (InvalidArgumentException|JsonException $exception) {
+            throw ValidationException::withMessages([
+                'value' => $exception->getMessage(),
+            ]);
+        }
+
+        return response()->json([
+            'message' => 'Setting created successfully.',
+            'data' => [
+                'group' => $setting->group,
+                'key' => $setting->key,
+                'value' => $this->settings->get(
+                    $setting->group,
+                    $setting->key
+                ),
+                'type' => $setting->type,
+                'is_public' => $setting->is_public,
+            ],
+        ], 201);
     }
 
     /**
@@ -63,12 +111,10 @@ class SettingController extends Controller
             'data' => [
                 'group' => $setting->group,
                 'key' => $setting->key,
-
                 'value' => $this->settings->get(
                     $setting->group,
                     $setting->key
                 ),
-
                 'type' => $setting->type,
                 'is_public' => $setting->is_public,
             ],
@@ -76,7 +122,7 @@ class SettingController extends Controller
     }
 
     /**
-     * Create or update one application setting.
+     * Update one application setting.
      */
     public function update(
         UpdateSettingRequest $request,
@@ -101,16 +147,13 @@ class SettingController extends Controller
 
         return response()->json([
             'message' => 'Setting saved successfully.',
-
             'data' => [
                 'group' => $setting->group,
                 'key' => $setting->key,
-
                 'value' => $this->settings->get(
                     $setting->group,
                     $setting->key
                 ),
-
                 'type' => $setting->type,
                 'is_public' => $setting->is_public,
             ],
