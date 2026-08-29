@@ -21,22 +21,33 @@ class SettingService
         string $key,
         mixed $default = null
     ): mixed {
-        $setting = Cache::remember(
+        $cached = Cache::remember(
             $this->cacheKey($group, $key),
             self::CACHE_TTL_SECONDS,
-            fn () => Setting::query()
-                ->where('group', $group)
-                ->where('key', $key)
-                ->first()
+            function () use ($group, $key): ?array {
+                $setting = Setting::query()
+                    ->where('group', $group)
+                    ->where('key', $key)
+                    ->first();
+
+                if (! $setting) {
+                    return null;
+                }
+
+                return [
+                    'value' => $setting->value,
+                    'type' => $setting->type,
+                ];
+            }
         );
 
-        if (! $setting) {
+        if ($cached === null) {
             return $default;
         }
 
         return $this->castValue(
-            $setting->value,
-            $setting->type
+            $cached['value'],
+            $cached['type']
         );
     }
 
@@ -148,6 +159,7 @@ class SettingService
 
         return match ($type) {
             'integer' => (string) ((int) $value),
+
             'float' => (string) ((float) $value),
 
             'boolean' => $this->normalizeBoolean($value)
@@ -178,6 +190,7 @@ class SettingService
 
         return match ($type) {
             'integer' => (int) $value,
+
             'float' => (float) $value,
 
             'boolean' => in_array(

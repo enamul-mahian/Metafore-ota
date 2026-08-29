@@ -1,11 +1,13 @@
 <?php
 
 use App\Http\Controllers\Admin\SettingController;
+use App\Http\Controllers\Admin\SettingPageController;
 use Illuminate\Support\Facades\Route;
 
 Route::view('/', 'welcome')->name('home');
 
 Route::middleware(['auth', 'verified'])->group(function () {
+
     Route::view('/dashboard', 'dashboard')
         ->name('dashboard');
 
@@ -13,11 +15,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->name('admin.')
         ->middleware('role:admin|super-admin')
         ->group(function () {
-            /*
-            |--------------------------------------------------------------------------
-            | Authorization Test Routes
-            |--------------------------------------------------------------------------
-            */
+
+            /**
+             * |--------------------------------------------------------------------------
+             * | Authorization Test Routes
+             * |--------------------------------------------------------------------------
+             */
 
             Route::get('/role-test', function () {
                 return response()->json([
@@ -33,21 +36,29 @@ Route::middleware(['auth', 'verified'])->group(function () {
                 ->middleware('can:users.manage')
                 ->name('access-test');
 
-            /*
-            |--------------------------------------------------------------------------
-            | Settings
-            |--------------------------------------------------------------------------
-            */
+            /**
+             * |--------------------------------------------------------------------------
+             * | Settings JSON Endpoints
+             * |--------------------------------------------------------------------------
+             */
 
             Route::prefix('settings')
                 ->name('settings.')
                 ->group(function () {
+
                     Route::get(
                         '/',
                         [SettingController::class, 'index']
                     )
                         ->middleware('permission:settings.view')
                         ->name('index');
+
+                    Route::post(
+                        '/{group}/{key}',
+                        [SettingController::class, 'store']
+                    )
+                        ->middleware('permission:settings.manage')
+                        ->name('store');
 
                     Route::get(
                         '/{group}/{key}',
@@ -73,3 +84,21 @@ Route::middleware(['auth', 'verified'])->group(function () {
                 });
         });
 });
+
+/**
+ * |--------------------------------------------------------------------------
+ * | Settings Admin UI
+ * |--------------------------------------------------------------------------
+ */
+
+Route::get(
+    '/admin/settings/manage',
+    SettingPageController::class
+)
+    ->middleware([
+        'auth',
+        'verified',
+        'role:admin|super-admin',
+        'permission:settings.view',
+    ])
+    ->name('admin.settings.manage');
