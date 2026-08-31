@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\Admin\CityController;
+use App\Http\Controllers\Admin\CountryController;
 use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\SettingPageController;
 use Illuminate\Support\Facades\Route;
@@ -80,6 +82,94 @@ Route::middleware(['auth', 'verified'])->group(function () {
                         [SettingController::class, 'destroy']
                     )
                         ->middleware('permission:settings.manage')
+                        ->name('destroy');
+                });
+
+            /**
+             * Master Data - Countries
+             */
+            Route::prefix('master-data/countries')
+                ->name('master-data.countries.')
+                ->group(function () {
+
+                    Route::get(
+                        '/',
+                        [CountryController::class, 'index']
+                    )
+                        ->middleware('permission:master-data.view')
+                        ->name('index');
+
+                    Route::post(
+                        '/',
+                        [CountryController::class, 'store']
+                    )
+                        ->middleware('permission:master-data.manage')
+                        ->name('store');
+
+                    Route::get(
+                        '/{country}',
+                        [CountryController::class, 'show']
+                    )
+                        ->middleware('permission:master-data.view')
+                        ->name('show');
+
+                    Route::match(
+                        ['put', 'patch'],
+                        '/{country}',
+                        [CountryController::class, 'update']
+                    )
+                        ->middleware('permission:master-data.manage')
+                        ->name('update');
+
+                    Route::delete(
+                        '/{country}',
+                        [CountryController::class, 'destroy']
+                    )
+                        ->middleware('permission:master-data.manage')
+                        ->name('destroy');
+                });
+
+            /**
+             * Master Data - Cities
+             */
+            Route::prefix('master-data/cities')
+                ->name('master-data.cities.')
+                ->group(function () {
+
+                    Route::get(
+                        '/',
+                        [CityController::class, 'index']
+                    )
+                        ->middleware('permission:master-data.view')
+                        ->name('index');
+
+                    Route::post(
+                        '/',
+                        [CityController::class, 'store']
+                    )
+                        ->middleware('permission:master-data.manage')
+                        ->name('store');
+
+                    Route::get(
+                        '/{city}',
+                        [CityController::class, 'show']
+                    )
+                        ->middleware('permission:master-data.view')
+                        ->name('show');
+
+                    Route::match(
+                        ['put', 'patch'],
+                        '/{city}',
+                        [CityController::class, 'update']
+                    )
+                        ->middleware('permission:master-data.manage')
+                        ->name('update');
+
+                    Route::delete(
+                        '/{city}',
+                        [CityController::class, 'destroy']
+                    )
+                        ->middleware('permission:master-data.manage')
                         ->name('destroy');
                 });
         });

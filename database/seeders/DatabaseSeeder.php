@@ -16,6 +16,8 @@ class DatabaseSeeder extends Seeder
         $this->call([
             RolePermissionSeeder::class,
             SettingsSeeder::class,
+            CountrySeeder::class,
+            CitySeeder::class,
         ]);
 
         $user = User::query()->firstOrCreate(
