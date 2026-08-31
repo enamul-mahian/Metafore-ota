@@ -12,3 +12,6 @@
 .DS_Store
 Thumbs.db
 /.phpunit.result.cache
+/.mcp.json
+/boost.json
+/.claude/
