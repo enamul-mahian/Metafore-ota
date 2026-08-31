@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\CityController;
 use App\Http\Controllers\Admin\CountryController;
 use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\SettingPageController;
+use App\Http\Controllers\Flight\FlightSearchController;
 use Illuminate\Support\Facades\Route;
 
 Route::view('/', 'welcome')->name('home');
@@ -12,6 +13,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::view('/dashboard', 'dashboard')
         ->name('dashboard');
+
+    Route::post(
+        '/flights/search',
+        FlightSearchController::class
+    )
+        ->middleware('permission:flights.search')
+        ->name('flights.search');
 
     Route::prefix('admin')
         ->name('admin.')
