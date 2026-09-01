@@ -57,6 +57,20 @@ final class DuffelFlightOrderRequestBuilder
             $this->failClosed();
         }
 
+        $paymentRequiredBy =
+            $offer[
+                'payment_required_by'
+            ]
+            ?? null;
+
+        if (
+            ! $this->isFuturePaymentRequiredBy(
+                $paymentRequiredBy,
+            )
+        ) {
+            $this->failClosed();
+        }
+
         $offerId = trim(
             (string) data_get(
                 $offer,
@@ -242,6 +256,33 @@ final class DuffelFlightOrderRequestBuilder
                 'passengers' => $passengers,
             ],
         ];
+    }
+
+    private function isFuturePaymentRequiredBy(
+        mixed $value
+    ): bool {
+        if (! is_string($value)) {
+            return false;
+        }
+
+        $paymentRequiredBy =
+            trim($value);
+
+        if ($paymentRequiredBy === '') {
+            return false;
+        }
+
+        try {
+            $deadline =
+                new \DateTimeImmutable(
+                    $paymentRequiredBy,
+                );
+        } catch (\Throwable) {
+            return false;
+        }
+
+        return $deadline->getTimestamp()
+            > time();
     }
 
     private function normalizePassengerType(

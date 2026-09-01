@@ -186,12 +186,65 @@ final class DuffelFlightOfferRevalidationProvider implements FlightOfferRevalida
             $supplierOffer['expires_at']
             ?? null;
 
-        $refreshedOffer['requires_instant_payment'] =
-            (bool) data_get(
+        $paymentRequirements =
+            data_get(
                 $supplierOffer,
-                'payment_requirements.requires_instant_payment',
-                false,
+                'payment_requirements',
             );
+
+        $hasExplicitPaymentRequirement =
+            is_array($paymentRequirements)
+            && array_key_exists(
+                'requires_instant_payment',
+                $paymentRequirements,
+            )
+            && is_bool(
+                $paymentRequirements[
+                    'requires_instant_payment'
+                ],
+            );
+
+        if (! $hasExplicitPaymentRequirement) {
+            throw new \Symfony\Component\HttpKernel\Exception\ServiceUnavailableHttpException(
+                60,
+                'Flight offer revalidation is currently unavailable.',
+            );
+        }
+
+        $requiresInstantPayment =
+            $paymentRequirements[
+                'requires_instant_payment'
+            ];
+
+        $refreshedOffer['requires_instant_payment'] =
+            $requiresInstantPayment;
+
+        /*
+         * Never retain stale hold-deadline metadata from the original
+         * trusted snapshot. Only a currently valid supplier deadline
+         * may make it into the refreshed trusted offer.
+         */
+        unset(
+            $refreshedOffer[
+                'payment_required_by'
+            ],
+        );
+
+        if ($requiresInstantPayment === false) {
+            $paymentRequiredBy =
+                $this->normalizeFuturePaymentRequiredBy(
+                    $paymentRequirements[
+                        'payment_required_by'
+                    ]
+                    ?? null,
+                );
+
+            if ($paymentRequiredBy !== null) {
+                $refreshedOffer[
+                    'payment_required_by'
+                ] = $paymentRequiredBy;
+            }
+        }
 
         /*
          * Supplier passenger IDs originate from the trusted Duffel offer.
@@ -279,6 +332,39 @@ final class DuffelFlightOfferRevalidationProvider implements FlightOfferRevalida
      * @param mixed $trustedOwner
      * @return array<string, mixed>|mixed
      */
+    private function normalizeFuturePaymentRequiredBy(
+        mixed $value
+    ): ?string {
+        if (! is_string($value)) {
+            return null;
+        }
+
+        $paymentRequiredBy =
+            trim($value);
+
+        if ($paymentRequiredBy === '') {
+            return null;
+        }
+
+        try {
+            $deadline =
+                new \DateTimeImmutable(
+                    $paymentRequiredBy,
+                );
+        } catch (\Throwable) {
+            return null;
+        }
+
+        if (
+            $deadline->getTimestamp()
+            <= time()
+        ) {
+            return null;
+        }
+
+        return $paymentRequiredBy;
+    }
+
     /**
      * @return array<int, array{id: string, type: string}>|null
      */

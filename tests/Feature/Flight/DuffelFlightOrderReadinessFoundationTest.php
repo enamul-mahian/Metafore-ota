@@ -172,6 +172,8 @@ class DuffelFlightOrderReadinessFoundationTest extends TestCase
                         'payment_requirements' => [
                             'requires_instant_payment' =>
                                 false,
+                            'payment_required_by' =>
+                                '2099-01-01T00:00:00Z',
                         ],
                         'passengers' => [
                             [
@@ -259,6 +261,8 @@ class DuffelFlightOrderReadinessFoundationTest extends TestCase
                         'payment_requirements' => [
                             'requires_instant_payment' =>
                                 false,
+                            'payment_required_by' =>
+                                '2099-01-01T00:00:00Z',
                         ],
                         'passengers' => [
                             [
@@ -313,6 +317,8 @@ class DuffelFlightOrderReadinessFoundationTest extends TestCase
                     'USD',
                 'requires_instant_payment' =>
                     false,
+                'payment_required_by' =>
+                    '2099-01-01T00:00:00Z',
                 'passengers' => [
                     [
                         'id' =>

@@ -339,6 +339,8 @@ class DuffelFlightOrderRequestBuilderTest extends TestCase
                 'currency' => 'USD',
                 'requires_instant_payment' =>
                     false,
+                'payment_required_by' =>
+                    '2099-01-01T00:00:00Z',
                 'passengers' => [
                     [
                         'id' => 'pas_adult_1',
