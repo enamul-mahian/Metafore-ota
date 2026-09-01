@@ -47,16 +47,28 @@ final class FlightOfferSelectionUiContractTest extends TestCase
             ->assertSee(
                 route('flights.travelers.validate'),
                 false
+            )
+            ->assertSee(
+                'data-flight-booking-draft-url',
+                false
+            )
+            ->assertSee(
+                route(
+                    'flights.bookings.drafts.store'
+                ),
+                false
             );
     }
 
-    public function test_flight_frontend_contains_secure_selection_and_draft_review_contract(): void
+    public function test_flight_frontend_contains_secure_selection_and_traveler_review_contract(): void
     {
         $javascript = file_get_contents(
             resource_path('js/app.js')
         );
 
-        $this->assertIsString($javascript);
+        $this->assertIsString(
+            $javascript
+        );
 
         $this->assertStringContainsString(
             'Select Flight',
@@ -70,11 +82,6 @@ final class FlightOfferSelectionUiContractTest extends TestCase
 
         $this->assertStringContainsString(
             'flight-traveler-review',
-            $javascript
-        );
-
-        $this->assertStringContainsString(
-            'Traveler details entered here are not saved',
             $javascript
         );
 
@@ -94,12 +101,83 @@ final class FlightOfferSelectionUiContractTest extends TestCase
         );
 
         $this->assertStringContainsString(
-            'selection_token:',
+            'travelers,',
             $javascript
         );
 
         $this->assertStringContainsString(
-            'travelers,',
+            'Traveler details are stored only in a short-lived encrypted server-side booking draft after successful validation.',
+            $javascript
+        );
+
+        $this->assertStringNotContainsString(
+            'Traveler details entered here are not saved',
+            $javascript
+        );
+
+        $this->assertStringNotContainsString(
+            '.innerHTML =',
+            $javascript
+        );
+    }
+
+    public function test_successful_traveler_validation_connects_to_secure_booking_draft(): void
+    {
+        $javascript = file_get_contents(
+            resource_path('js/app.js')
+        );
+
+        $this->assertIsString(
+            $javascript
+        );
+
+        $this->assertMatchesRegularExpression(
+            '/async\s+function\s+createFlightBookingDraft\s*\(/',
+            $javascript
+        );
+
+        $this->assertMatchesRegularExpression(
+            '/\.dataset\s*\.flightBookingDraftUrl/',
+            $javascript
+        );
+
+        $this->assertStringContainsString(
+            'booking_draft_token',
+            $javascript
+        );
+
+        $this->assertMatchesRegularExpression(
+            '/\.dataset\s*\.bookingDraftToken\s*=/',
+            $javascript
+        );
+
+        $this->assertMatchesRegularExpression(
+            '/selection_token\s*:/',
+            $javascript
+        );
+
+        $this->assertMatchesRegularExpression(
+            '/\btravelers\s*,/',
+            $javascript
+        );
+
+        $this->assertMatchesRegularExpression(
+            '/credentials\s*:\s*[\'"]same-origin[\'"]/',
+            $javascript
+        );
+
+        $this->assertMatchesRegularExpression(
+            '/await\s+createFlightBookingDraft\s*\(/',
+            $javascript
+        );
+
+        $this->assertStringContainsString(
+            'This is not a supplier booking, ticket, payment, or confirmed reservation.',
+            $javascript
+        );
+
+        $this->assertMatchesRegularExpression(
+            '/notice\s*\.textContent\s*=/',
             $javascript
         );
 

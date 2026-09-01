@@ -335,6 +335,7 @@
                 <div
                     class="flight-results"
                     data-flight-results data-flight-select-url="{{ route('flights.offers.select') }}" data-flight-traveler-validation-url="{{ route('flights.travelers.validate') }}"
+                    data-flight-booking-draft-url="{{ route('flights.bookings.drafts.store') }}"
                     aria-live="polite"
                     hidden
                 ></div>

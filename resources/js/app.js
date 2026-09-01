@@ -655,7 +655,190 @@ document.addEventListener('DOMContentLoaded', () => {
         );
     };
 
-    const validateFlightTravelers = async (
+
+
+    async function createFlightBookingDraft(
+        selectionToken,
+        travelers,
+    ) {
+        const resultsElement =
+            document.querySelector(
+                '[data-flight-results]'
+            );
+
+        const flightBookingDraftUrl =
+            resultsElement
+                ?.dataset
+                .flightBookingDraftUrl;
+
+        if (!flightBookingDraftUrl) {
+            throw new Error(
+                'Secure booking draft endpoint is unavailable.'
+            );
+        }
+
+        const csrfToken =
+            document.querySelector(
+                '[data-flight-search-form] input[name="_token"]'
+            )?.value;
+
+        if (!csrfToken) {
+            throw new Error(
+                'Security token is unavailable. Please refresh and try again.'
+            );
+        }
+
+        const response =
+            await fetch(
+                flightBookingDraftUrl,
+                {
+                    method:
+                        'POST',
+
+                    credentials:
+                        'same-origin',
+
+                    headers: {
+                        Accept:
+                            'application/json',
+
+                        'Content-Type':
+                            'application/json',
+
+                        'X-CSRF-TOKEN':
+                            csrfToken,
+                    },
+
+                    body:
+                        JSON.stringify({
+                            selection_token:
+                                selectionToken,
+
+                            travelers,
+                        }),
+                },
+            );
+
+        let payload = {};
+
+        try {
+            payload =
+                await response.json();
+        } catch {
+            payload = {};
+        }
+
+        if (!response.ok) {
+            throw new Error(
+                payload?.message
+                || 'Unable to create the secure booking draft. Please try again.'
+            );
+        }
+
+        const bookingDraftToken =
+            payload
+                ?.data
+                ?.booking_draft_token;
+
+        const travelerCount =
+            payload
+                ?.data
+                ?.traveler_count;
+
+        const expiresInSeconds =
+            payload
+                ?.data
+                ?.expires_in_seconds;
+
+        if (
+            typeof bookingDraftToken
+                !== 'string'
+            || bookingDraftToken.length
+                !== 64
+        ) {
+            throw new Error(
+                'The secure booking draft response was invalid.'
+            );
+        }
+
+        if (resultsElement) {
+            resultsElement
+                .dataset
+                .bookingDraftToken =
+                    bookingDraftToken;
+
+            if (
+                Number.isInteger(
+                    expiresInSeconds
+                )
+            ) {
+                resultsElement
+                    .dataset
+                    .bookingDraftExpiresInSeconds =
+                        String(
+                            expiresInSeconds
+                        );
+            }
+
+            const oldNotice =
+                resultsElement
+                    .querySelector(
+                        '[data-flight-booking-draft-status]'
+                    );
+
+            oldNotice?.remove();
+
+            const notice =
+                document.createElement(
+                    'div'
+                );
+
+            notice.className =
+                'flight-booking-draft-status';
+
+            notice
+                .dataset
+                .flightBookingDraftStatus =
+                    '';
+
+            notice.setAttribute(
+                'role',
+                'status'
+            );
+
+            notice.setAttribute(
+                'aria-live',
+                'polite'
+            );
+
+            const countText =
+                Number.isInteger(
+                    travelerCount
+                )
+                    ? ' for '
+                        + travelerCount
+                        + ' traveler'
+                        + (
+                            travelerCount === 1
+                                ? ''
+                                : 's'
+                        )
+                    : '';
+
+            notice.textContent =
+                'Secure booking draft created'
+                + countText
+                + '. This is not a supplier booking, ticket, payment, or confirmed reservation. The draft is short-lived and expires automatically.';
+
+            resultsElement.append(
+                notice
+            );
+        }
+
+        return payload.data;
+    }
+
+const validateFlightTravelers = async (
         review,
         selectionToken,
         button
@@ -789,6 +972,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 return;
             }
+            await createFlightBookingDraft(
+                selectionToken,
+                travelers,
+            );
+
 
             validationPassed = true;
 
@@ -1110,7 +1298,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 'span',
                 '',
                 (
-                    'Traveler details entered here are not saved. '
+                    'Traveler details are stored only in a short-lived encrypted server-side booking draft after successful validation. No supplier booking, ticket, payment, or confirmed reservation is created.. '
                     + 'They are sent only when you choose '
                     + 'Validate travelers.'
                 )
