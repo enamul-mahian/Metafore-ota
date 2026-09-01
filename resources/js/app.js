@@ -657,7 +657,117 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 
-    async function createFlightBookingDraft(
+    async function reviewFlightBookingDraft(bookingDraftToken) {
+    const resultsElement = document.querySelector('[data-flight-results]');
+    const reviewUrl = resultsElement?.dataset.flightBookingDraftReviewUrl;
+    const csrfToken = document.querySelector(
+        '[data-flight-search-form] input[name="_token"]',
+    )?.value;
+
+    if (!resultsElement || !reviewUrl || !csrfToken) {
+        throw new Error(
+            'Secure booking draft review is temporarily unavailable.',
+        );
+    }
+
+    if (
+        typeof bookingDraftToken !== 'string' ||
+        bookingDraftToken.length !== 64
+    ) {
+        throw new Error(
+            'Secure booking draft review token is invalid.',
+        );
+    }
+
+    const response = await fetch(reviewUrl, {
+        method: 'POST',
+        credentials: 'same-origin',
+        headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': csrfToken,
+            'X-Requested-With': 'XMLHttpRequest',
+        },
+        body: JSON.stringify({
+            booking_draft_token: bookingDraftToken,
+        }),
+    });
+
+    let payload = {};
+
+    try {
+        payload = await response.json();
+    } catch {
+        payload = {};
+    }
+
+    if (!response.ok) {
+        if (response.status === 410) {
+            delete resultsElement.dataset.bookingDraftToken;
+            delete resultsElement.dataset.bookingDraftExpiresInSeconds;
+
+            const expiredNotice =
+                resultsElement.querySelector(
+                    '.flight-booking-draft-status',
+                ) ??
+                document.createElement('p');
+
+            expiredNotice.className =
+                'flight-booking-draft-status';
+
+            expiredNotice.textContent =
+                'The secure booking draft has expired or is no longer available. Please select the flight again before continuing. No supplier booking, ticket, payment, or confirmed reservation was created.';
+
+            if (!expiredNotice.isConnected) {
+                resultsElement.prepend(expiredNotice);
+            }
+        }
+
+        const message =
+            payload?.message ??
+            'Secure booking draft review could not be loaded.';
+
+        throw new Error(message);
+    }
+
+    if (
+        !payload ||
+        typeof payload !== 'object' ||
+        !payload.data ||
+        typeof payload.data !== 'object' ||
+        Array.isArray(payload.data)
+    ) {
+        throw new Error(
+            'Secure booking draft review returned an invalid response.',
+        );
+    }
+
+    const previousNotice =
+        resultsElement.querySelector(
+            '.flight-booking-draft-status',
+        );
+
+    if (previousNotice) {
+        previousNotice.remove();
+    }
+
+    const notice = document.createElement('p');
+
+    notice.className =
+        'flight-booking-draft-status';
+
+    notice.dataset.flightBookingDraftReviewStatus =
+        'ready';
+
+    notice.textContent =
+        'Secure booking draft review loaded from server-trusted fare and route data. Traveler details and the draft token are not exposed. This is not a supplier booking, ticket, payment, or confirmed reservation.';
+
+    resultsElement.prepend(notice);
+
+    return payload.data;
+}
+
+async function createFlightBookingDraft(
         selectionToken,
         travelers,
     ) {
@@ -835,7 +945,9 @@ document.addEventListener('DOMContentLoaded', () => {
             );
         }
 
-        return payload.data;
+            await reviewFlightBookingDraft(payload.data.booking_draft_token);
+
+return payload.data;
     }
 
 const validateFlightTravelers = async (
