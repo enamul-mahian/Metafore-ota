@@ -437,6 +437,460 @@ document.addEventListener('DOMContentLoaded', () => {
         return section;
     };
 
+    const createTravelerTextField = (
+        labelText,
+        inputType = 'text'
+    ) => {
+        const field = createFlightElement(
+            'label',
+            'flight-traveler-field'
+        );
+
+        field.append(
+            createFlightElement(
+                'span',
+                'flight-traveler-field-label',
+                labelText
+            )
+        );
+
+        const input = createFlightElement(
+            'input',
+            'flight-traveler-input'
+        );
+
+        input.type = inputType;
+        input.autocomplete = 'off';
+
+        field.append(input);
+
+        return field;
+    };
+
+    const createTravelerTitleField = () => {
+        const field = createFlightElement(
+            'label',
+            'flight-traveler-field'
+        );
+
+        field.append(
+            createFlightElement(
+                'span',
+                'flight-traveler-field-label',
+                'Title'
+            )
+        );
+
+        const select = createFlightElement(
+            'select',
+            'flight-traveler-input'
+        );
+
+        [
+            ['', 'Select'],
+            ['mr', 'Mr'],
+            ['ms', 'Ms'],
+            ['mrs', 'Mrs'],
+            ['mstr', 'Master'],
+            ['miss', 'Miss'],
+        ].forEach(([value, label]) => {
+            const option = createFlightElement(
+                'option',
+                '',
+                label
+            );
+
+            option.value = value;
+
+            select.append(option);
+        });
+
+        field.append(select);
+
+        return field;
+    };
+
+    const renderTravelerReview = (selection) => {
+        const previous = resultsBox.querySelector(
+            '[data-flight-traveler-review]'
+        );
+
+        if (previous) {
+            previous.remove();
+        }
+
+        const criteria = selection?.criteria || {};
+        const offer = selection?.offer || {};
+
+        const review = createFlightElement(
+            'section',
+            'flight-traveler-review'
+        );
+
+        review.dataset.flightTravelerReview = '';
+
+        const reviewHeader = createFlightElement(
+            'div',
+            'flight-traveler-review-header'
+        );
+
+        const reviewHeading = createFlightElement(
+            'div'
+        );
+
+        reviewHeading.append(
+            createFlightElement(
+                'span',
+                'flight-review-kicker',
+                'SECURE SELECTION'
+            ),
+            createFlightElement(
+                'h3',
+                '',
+                'Traveler details'
+            ),
+            createFlightElement(
+                'p',
+                '',
+                (
+                    'Your selected fare was resolved from the '
+                    + 'server-stored offer. Enter traveler details '
+                    + 'for review.'
+                )
+            )
+        );
+
+        const selectedFare = createFlightElement(
+            'div',
+            'flight-selected-fare'
+        );
+
+        selectedFare.append(
+            createFlightElement(
+                'span',
+                '',
+                offer?.owner?.name || 'Selected flight'
+            ),
+            createFlightElement(
+                'strong',
+                '',
+                formatFlightMoney(
+                    offer?.total_amount,
+                    offer?.total_currency
+                )
+            )
+        );
+
+        reviewHeader.append(
+            reviewHeading,
+            selectedFare
+        );
+
+        review.append(reviewHeader);
+
+        if (offer?.provider === 'fixture') {
+            review.append(
+                createFlightElement(
+                    'div',
+                    'flight-review-demo-warning',
+                    (
+                        'DEMO DATA — this selection is for development '
+                        + 'testing only and is not a live booking.'
+                    )
+                )
+            );
+        }
+
+        const passengerSummary = createFlightElement(
+            'div',
+            'flight-passenger-summary'
+        );
+
+        const passengerGroups = [
+            [
+                'Adult',
+                Math.max(
+                    0,
+                    Number(criteria?.adults || 0)
+                ),
+            ],
+            [
+                'Child',
+                Math.max(
+                    0,
+                    Number(criteria?.children || 0)
+                ),
+            ],
+            [
+                'Infant',
+                Math.max(
+                    0,
+                    Number(criteria?.infants || 0)
+                ),
+            ],
+        ];
+
+        passengerGroups.forEach(([label, count]) => {
+            if (count <= 0) {
+                return;
+            }
+
+            passengerSummary.append(
+                createFlightElement(
+                    'span',
+                    'flight-passenger-pill',
+                    `${count} ${label}${
+                        count === 1 ? '' : 's'
+                    }`
+                )
+            );
+        });
+
+        review.append(passengerSummary);
+
+        const travelerList = createFlightElement(
+            'div',
+            'flight-traveler-list'
+        );
+
+        let travelerNumber = 0;
+
+        passengerGroups.forEach(
+            ([travelerType, count]) => {
+                for (
+                    let index = 0;
+                    index < count;
+                    index += 1
+                ) {
+                    travelerNumber += 1;
+
+                    const traveler = createFlightElement(
+                        'article',
+                        'flight-traveler-card'
+                    );
+
+                    const travelerHeader =
+                        createFlightElement(
+                            'div',
+                            'flight-traveler-card-header'
+                        );
+
+                    travelerHeader.append(
+                        createFlightElement(
+                            'strong',
+                            '',
+                            `Traveler ${travelerNumber}`
+                        ),
+                        createFlightElement(
+                            'span',
+                            '',
+                            travelerType
+                        )
+                    );
+
+                    const fields = createFlightElement(
+                        'div',
+                        'flight-traveler-fields'
+                    );
+
+                    fields.append(
+                        createTravelerTitleField(),
+                        createTravelerTextField(
+                            'Given name'
+                        ),
+                        createTravelerTextField(
+                            'Family name'
+                        ),
+                        createTravelerTextField(
+                            'Date of birth',
+                            'date'
+                        )
+                    );
+
+                    traveler.append(
+                        travelerHeader,
+                        fields
+                    );
+
+                    travelerList.append(traveler);
+                }
+            }
+        );
+
+        review.append(travelerList);
+
+        const draftNotice = createFlightElement(
+            'div',
+            'flight-traveler-draft-notice'
+        );
+
+        draftNotice.append(
+            createFlightElement(
+                'strong',
+                '',
+                'Draft only'
+            ),
+            createFlightElement(
+                'span',
+                '',
+                (
+                    'Traveler details entered here are not saved '
+                    + 'or sent to the server yet.'
+                )
+            )
+        );
+
+        review.append(draftNotice);
+
+        const reviewActions = createFlightElement(
+            'div',
+            'flight-traveler-actions'
+        );
+
+        const continueButton = createFlightElement(
+            'button',
+            'flight-booking-continue',
+            'Continue to booking'
+        );
+
+        continueButton.type = 'button';
+        continueButton.disabled = true;
+        continueButton.title =
+            'Server-side traveler validation will be added next.';
+
+        reviewActions.append(
+            createFlightElement(
+                'span',
+                '',
+                (
+                    'Booking submission stays disabled until '
+                    + 'server-side traveler validation is ready.'
+                )
+            ),
+            continueButton
+        );
+
+        review.append(reviewActions);
+
+        resultsBox.append(review);
+
+        review.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start',
+        });
+    };
+
+    const resolveFlightSelection = async (
+        offer,
+        button
+    ) => {
+        const selectionToken =
+            offer?.selection_token;
+
+        const selectionUrl =
+            resultsBox.dataset.flightSelectUrl;
+
+        const csrfToken = form
+            .querySelector(
+                'input[name="_token"]'
+            )
+            ?.value;
+
+        if (
+            !selectionToken ||
+            !selectionUrl ||
+            !csrfToken
+        ) {
+            showStatus(
+                (
+                    'This flight cannot be selected right now. '
+                    + 'Please search again.'
+                ),
+                'error'
+            );
+
+            return;
+        }
+
+        button.disabled = true;
+        button.textContent = 'Selecting...';
+
+        try {
+            const response = await fetch(
+                selectionUrl,
+                {
+                    method: 'POST',
+                    headers: {
+                        Accept: 'application/json',
+                        'Content-Type':
+                            'application/json',
+                        'X-CSRF-TOKEN': csrfToken,
+                    },
+                    body: JSON.stringify({
+                        selection_token:
+                            selectionToken,
+                    }),
+                }
+            );
+
+            const payload = await response
+                .json()
+                .catch(() => ({}));
+
+            if (!response.ok) {
+                if (response.status === 410) {
+                    showStatus(
+                        payload?.message ||
+                            (
+                                'This flight offer has expired. '
+                                + 'Please search again.'
+                            ),
+                        'error'
+                    );
+
+                    return;
+                }
+
+                showStatus(
+                    (
+                        'Could not select this flight right now. '
+                        + 'Please try again.'
+                    ),
+                    'error'
+                );
+
+                return;
+            }
+
+            renderTravelerReview(
+                payload?.data
+            );
+
+            showStatus(
+                (
+                    'Flight selected securely. '
+                    + 'Add traveler details below.'
+                ),
+                'success'
+            );
+        } catch (error) {
+            showStatus(
+                (
+                    'Could not select this flight right now. '
+                    + 'Please check your connection and try again.'
+                ),
+                'error'
+            );
+        } finally {
+            button.disabled =
+                !selectionToken;
+
+            button.textContent =
+                selectionToken
+                    ? 'Select Flight'
+                    : 'Selection unavailable';
+        }
+    };
     const renderFlightOffer = (offer) => {
         const card = createFlightElement(
             'article',
@@ -580,6 +1034,31 @@ document.addEventListener('DOMContentLoaded', () => {
             );
         }
 
+        const selectButton = createFlightElement(
+            'button',
+            'flight-select-button',
+            offer?.selection_token
+                ? 'Select Flight'
+                : 'Selection unavailable'
+        );
+
+        selectButton.type = 'button';
+        selectButton.disabled =
+            !offer?.selection_token;
+
+        if (offer?.selection_token) {
+            selectButton.addEventListener(
+                'click',
+                () => {
+                    resolveFlightSelection(
+                        offer,
+                        selectButton
+                    );
+                }
+            );
+        }
+
+        footer.append(selectButton);
         if (footer.childNodes.length > 0) {
             card.append(footer);
         }

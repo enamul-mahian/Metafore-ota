@@ -3645,3 +3645,303 @@
         margin-left: 0;
     }
 }
+
+/*
+|--------------------------------------------------------------------------
+| Flight Offer Selection & Traveler Review
+|--------------------------------------------------------------------------
+*/
+
+.flight-select-button {
+    flex: 0 0 auto;
+    min-height: 40px;
+    margin-left: auto;
+    padding: 0 18px;
+    border: 0;
+    border-radius: 9px;
+    color: #ffffff;
+    background: #0d4d88;
+    font-size: 13px;
+    font-weight: 800;
+    cursor: pointer;
+    transition:
+        transform .15s ease,
+        box-shadow .15s ease,
+        opacity .15s ease;
+}
+
+.flight-select-button:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 8px 18px rgba(13, 77, 136, .18);
+}
+
+.flight-select-button:disabled {
+    cursor: not-allowed;
+    opacity: .55;
+}
+
+.flight-traveler-review {
+    margin-top: 24px;
+    overflow: hidden;
+    border: 1px solid #dce7f1;
+    border-radius: 16px;
+    background: #ffffff;
+    box-shadow: 0 12px 32px rgba(24, 59, 91, .07);
+}
+
+.flight-traveler-review-header {
+    padding: 22px;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 24px;
+    border-bottom: 1px solid #edf2f7;
+}
+
+.flight-review-kicker {
+    display: block;
+    margin-bottom: 5px;
+    color: #0d4d88;
+    font-size: 10px;
+    font-weight: 900;
+    letter-spacing: .08em;
+}
+
+.flight-traveler-review-header h3 {
+    margin: 0;
+    color: #183b5b;
+    font-size: 21px;
+}
+
+.flight-traveler-review-header p {
+    max-width: 650px;
+    margin: 7px 0 0;
+    color: #748196;
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+.flight-selected-fare {
+    flex: 0 0 auto;
+    text-align: right;
+}
+
+.flight-selected-fare span {
+    display: block;
+    color: #748196;
+    font-size: 12px;
+}
+
+.flight-selected-fare strong {
+    display: block;
+    margin-top: 4px;
+    color: #0d4d88;
+    font-size: 20px;
+}
+
+.flight-review-demo-warning {
+    padding: 11px 22px;
+    border-bottom: 1px solid #f1dfae;
+    color: #765609;
+    background: #fff9e9;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.flight-passenger-summary {
+    padding: 16px 22px 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.flight-passenger-pill {
+    display: inline-flex;
+    min-height: 27px;
+    padding: 0 10px;
+    align-items: center;
+    border-radius: 999px;
+    color: #315b7d;
+    background: #edf5fb;
+    font-size: 11px;
+    font-weight: 800;
+}
+
+.flight-traveler-list {
+    padding: 16px 22px 22px;
+    display: grid;
+    gap: 14px;
+}
+
+.flight-traveler-card {
+    padding: 18px;
+    border: 1px solid #e4ebf2;
+    border-radius: 12px;
+    background: #fbfcfe;
+}
+
+.flight-traveler-card-header {
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.flight-traveler-card-header strong {
+    color: #183b5b;
+    font-size: 14px;
+}
+
+.flight-traveler-card-header span {
+    padding: 4px 8px;
+    border-radius: 6px;
+    color: #56718a;
+    background: #edf2f7;
+    font-size: 10px;
+    font-weight: 800;
+    text-transform: uppercase;
+}
+
+.flight-traveler-fields {
+    display: grid;
+    grid-template-columns:
+        minmax(100px, .6fr)
+        minmax(150px, 1fr)
+        minmax(150px, 1fr)
+        minmax(150px, 1fr);
+    gap: 12px;
+}
+
+.flight-traveler-field {
+    display: block;
+}
+
+.flight-traveler-field-label {
+    display: block;
+    margin-bottom: 6px;
+    color: #53677a;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.flight-traveler-input {
+    width: 100%;
+    min-height: 42px;
+    padding: 0 11px;
+    border: 1px solid #d8e2eb;
+    border-radius: 8px;
+    outline: none;
+    color: #213d55;
+    background: #ffffff;
+    font: inherit;
+    font-size: 13px;
+}
+
+.flight-traveler-input:focus {
+    border-color: #7aa7cc;
+    box-shadow: 0 0 0 3px rgba(13, 77, 136, .07);
+}
+
+.flight-traveler-draft-notice {
+    margin: 0 22px 20px;
+    padding: 12px 14px;
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    border: 1px solid #d8e6f1;
+    border-radius: 9px;
+    color: #5e7182;
+    background: #f7fbfe;
+    font-size: 11px;
+    line-height: 1.5;
+}
+
+.flight-traveler-draft-notice strong {
+    flex: 0 0 auto;
+    color: #315b7d;
+}
+
+.flight-traveler-actions {
+    padding: 16px 22px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+    border-top: 1px solid #edf2f7;
+    background: #fbfcfe;
+}
+
+.flight-traveler-actions > span {
+    max-width: 650px;
+    color: #748196;
+    font-size: 11px;
+    line-height: 1.5;
+}
+
+.flight-booking-continue {
+    flex: 0 0 auto;
+    min-height: 42px;
+    padding: 0 18px;
+    border: 0;
+    border-radius: 9px;
+    color: #ffffff;
+    background: #0d4d88;
+    font-size: 12px;
+    font-weight: 800;
+}
+
+.flight-booking-continue:disabled {
+    cursor: not-allowed;
+    opacity: .45;
+}
+
+@media (max-width: 900px) {
+    .flight-traveler-fields {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+@media (max-width: 700px) {
+    .flight-select-button {
+        width: 100%;
+        margin-left: 0;
+    }
+
+    .flight-traveler-review-header,
+    .flight-traveler-actions {
+        flex-direction: column;
+    }
+
+    .flight-selected-fare {
+        text-align: left;
+    }
+
+    .flight-traveler-fields {
+        grid-template-columns: 1fr;
+    }
+
+    .flight-booking-continue {
+        width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    .flight-traveler-review-header,
+    .flight-passenger-summary,
+    .flight-traveler-list,
+    .flight-traveler-actions {
+        padding-left: 16px;
+        padding-right: 16px;
+    }
+
+    .flight-review-demo-warning {
+        padding-left: 16px;
+        padding-right: 16px;
+    }
+
+    .flight-traveler-draft-notice {
+        margin-left: 16px;
+        margin-right: 16px;
+    }
+}
