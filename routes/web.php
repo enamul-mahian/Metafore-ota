@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\CountryController;
 use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\SettingPageController;
 use App\Http\Controllers\Flight\FlightOfferSelectionController;
+use App\Http\Controllers\Flight\FlightTravelerValidationController;
 use App\Http\Controllers\Flight\FlightSearchController;
 use Illuminate\Support\Facades\Route;
 
@@ -31,6 +32,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
     )
         ->middleware('permission:flights.search')
         ->name('flights.offers.select');
+    Route::post(
+        '/flights/travelers/validate',
+        FlightTravelerValidationController::class
+    )
+        ->middleware('permission:flights.search')
+        ->name('flights.travelers.validate');
 
     Route::prefix('admin')
         ->name('admin.')
