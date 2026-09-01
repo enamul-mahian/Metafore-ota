@@ -134,7 +134,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const flightPlaceCode = (place) => {
-        return place?.iata_code || place?.name || 'â€”';
+        return place?.iata_code || place?.name || 'Ã¢â‚¬â€';
     };
 
     const flightCarrierName = (segment, offer) => {
@@ -317,7 +317,7 @@ document.addEventListener('DOMContentLoaded', () => {
             createFlightElement(
                 'span',
                 'flight-segment-line',
-                'â†’'
+                'Ã¢â€ â€™'
             )
         );
 
@@ -394,7 +394,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 'flight-slice-route',
                 `${flightPlaceCode(
                     slice?.origin
-                )} â†’ ${flightPlaceCode(
+                )} Ã¢â€ â€™ ${flightPlaceCode(
                     slice?.destination
                 )}`
             )
@@ -657,7 +657,471 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 
-    async function reviewFlightBookingDraft(bookingDraftToken) {
+        function clearFlightBookingConfirmationIntentState(
+        resultsElement,
+    ) {
+        delete resultsElement
+            .dataset
+            .flightBookingConfirmationIntentToken;
+
+        delete resultsElement
+            .dataset
+            .flightBookingConfirmationIntentExpiresInSeconds;
+    }
+
+    function renderFlightBookingConfirmationIntentAction(
+        resultsElement,
+        bookingDraftToken,
+        reviewData,
+        csrfToken,
+    ) {
+        const existingPanel =
+            resultsElement.querySelector(
+                '.flight-booking-confirmation-intent-panel',
+            );
+
+        if (existingPanel) {
+            existingPanel.remove();
+        }
+
+        clearFlightBookingConfirmationIntentState(
+            resultsElement,
+        );
+
+        const panel =
+            document.createElement('div');
+
+        panel.className =
+            'flight-booking-confirmation-intent-panel';
+
+        const status =
+            document.createElement('p');
+
+        status.className =
+            'flight-booking-confirmation-intent-status';
+
+        status.setAttribute(
+            'role',
+            'status',
+        );
+
+        status.setAttribute(
+            'aria-live',
+            'polite',
+        );
+
+        panel.append(
+            status,
+        );
+
+        const confirmationIntentUrl =
+            resultsElement
+                .dataset
+                .flightBookingConfirmationIntentUrl;
+
+        const revalidation =
+            reviewData?.revalidation;
+
+        const offer =
+            reviewData?.offer;
+
+        if (
+            !confirmationIntentUrl ||
+            typeof bookingDraftToken !== 'string' ||
+            bookingDraftToken.length !== 64 ||
+            !revalidation ||
+            typeof revalidation !== 'object' ||
+            Array.isArray(revalidation) ||
+            !offer ||
+            typeof offer !== 'object' ||
+            Array.isArray(offer)
+        ) {
+            status.textContent =
+                'Secure fare acknowledgement is unavailable. Please review the flight again.';
+
+            resultsElement.append(
+                panel,
+            );
+
+            return;
+        }
+
+        if (
+            revalidation.status !== 'revalidated' ||
+            revalidation.live_revalidation !== true
+        ) {
+            status.dataset
+                .flightBookingConfirmationIntentStatus =
+                'live-revalidation-required';
+
+            status.textContent =
+                'This fare cannot be acknowledged for confirmation because it is not a live revalidated supplier fare. Demo or fixture results remain non-bookable. No supplier booking, ticket, payment, or confirmed reservation has been created.';
+
+            resultsElement.append(
+                panel,
+            );
+
+            return;
+        }
+
+        let acknowledgedTotalAmount =
+            typeof offer.total_amount === 'string'
+                ? offer.total_amount.trim()
+                : '';
+
+        let acknowledgedCurrency =
+            typeof offer.currency === 'string'
+                ? offer.currency.trim().toUpperCase()
+                : '';
+
+        if (
+            acknowledgedTotalAmount === '' ||
+            acknowledgedCurrency === ''
+        ) {
+            status.textContent =
+                'The latest trusted fare is incomplete. Please review the flight again.';
+
+            resultsElement.append(
+                panel,
+            );
+
+            return;
+        }
+
+        const fareSummary =
+            document.createElement('p');
+
+        fareSummary.className =
+            'flight-booking-confirmation-intent-fare';
+
+        const renderFareSummary = () => {
+            fareSummary.textContent =
+                'Latest live revalidated fare for acknowledgement: '
+                + acknowledgedCurrency
+                + ' '
+                + acknowledgedTotalAmount
+                + '.';
+        };
+
+        renderFareSummary();
+
+        const acknowledgement =
+            document.createElement('p');
+
+        acknowledgement.className =
+            'flight-booking-confirmation-intent-disclaimer';
+
+        acknowledgement.textContent =
+            'Acknowledging this fare only creates a short-lived secure confirmation intent. It does not create a supplier booking, ticket, payment, or confirmed reservation.';
+
+        const button =
+            document.createElement('button');
+
+        button.type =
+            'button';
+
+        button.className =
+            'flight-booking-confirmation-intent-button';
+
+        button.textContent =
+            'Acknowledge latest fare';
+
+        panel.append(
+            fareSummary,
+            acknowledgement,
+            button,
+        );
+
+        button.addEventListener(
+            'click',
+            async () => {
+                clearFlightBookingConfirmationIntentState(
+                    resultsElement,
+                );
+
+                button.disabled =
+                    true;
+
+                button.textContent =
+                    'Checking latest fare...';
+
+                status.dataset
+                    .flightBookingConfirmationIntentStatus =
+                    'checking';
+
+                status.textContent =
+                    'Checking the latest trusted fare before creating a confirmation intent.';
+
+                let response;
+
+                try {
+                    response =
+                        await fetch(
+                            confirmationIntentUrl,
+                            {
+                                method:
+                                    'POST',
+
+                                credentials:
+                                    'same-origin',
+
+                                headers: {
+                                    Accept:
+                                        'application/json',
+
+                                    'Content-Type':
+                                        'application/json',
+
+                                    'X-CSRF-TOKEN':
+                                        csrfToken,
+
+                                    'X-Requested-With':
+                                        'XMLHttpRequest',
+                                },
+
+                                body:
+                                    JSON.stringify({
+                                        booking_draft_token:
+                                            bookingDraftToken,
+
+                                        accept_revalidated_fare:
+                                            true,
+
+                                        acknowledged_total_amount:
+                                            acknowledgedTotalAmount,
+
+                                        acknowledged_currency:
+                                            acknowledgedCurrency,
+                                    }),
+                            },
+                        );
+                } catch {
+                    button.disabled =
+                        false;
+
+                    button.textContent =
+                        'Acknowledge latest fare';
+
+                    status.dataset
+                        .flightBookingConfirmationIntentStatus =
+                        'error';
+
+                    status.textContent =
+                        'The secure fare acknowledgement request could not be completed. Please try again.';
+
+                    return;
+                }
+
+                let payload = {};
+
+                try {
+                    payload =
+                        await response.json();
+                } catch {
+                    payload = {};
+                }
+
+                if (!response.ok) {
+                    if (
+                        response.status === 409 &&
+                        payload?.data?.status === 'fare_changed'
+                    ) {
+                        const latestOffer =
+                            payload?.data?.offer;
+
+                        const latestAmount =
+                            typeof latestOffer?.total_amount === 'string'
+                                ? latestOffer.total_amount.trim()
+                                : '';
+
+                        const latestCurrency =
+                            typeof latestOffer?.currency === 'string'
+                                ? latestOffer.currency.trim().toUpperCase()
+                                : '';
+
+                        if (
+                            latestAmount !== '' &&
+                            latestCurrency !== ''
+                        ) {
+                            acknowledgedTotalAmount =
+                                latestAmount;
+
+                            acknowledgedCurrency =
+                                latestCurrency;
+
+                            renderFareSummary();
+                        }
+
+                        button.disabled =
+                            false;
+
+                        button.textContent =
+                            'Acknowledge updated fare';
+
+                        status.dataset
+                            .flightBookingConfirmationIntentStatus =
+                            'fare-changed';
+
+                        status.textContent =
+                            'The fare changed again. Review the updated trusted fare above, then explicitly acknowledge it again. No confirmation intent was created.';
+
+                        return;
+                    }
+
+                    if (
+                        response.status === 409 &&
+                        payload?.data?.status ===
+                            'live_revalidation_required'
+                    ) {
+                        button.disabled =
+                            true;
+
+                        button.textContent =
+                            'Live revalidation required';
+
+                        status.dataset
+                            .flightBookingConfirmationIntentStatus =
+                            'live-revalidation-required';
+
+                        status.textContent =
+                            'A live supplier fare revalidation is required before a confirmation intent can be created. No supplier booking, ticket, payment, or confirmed reservation was created.';
+
+                        return;
+                    }
+
+                    if (response.status === 410) {
+                        clearFlightBookingConfirmationIntentState(
+                            resultsElement,
+                        );
+
+                        delete resultsElement
+                            .dataset
+                            .bookingDraftToken;
+
+                        delete resultsElement
+                            .dataset
+                            .bookingDraftExpiresInSeconds;
+
+                        button.disabled =
+                            true;
+
+                        button.textContent =
+                            'Booking draft expired';
+
+                        status.dataset
+                            .flightBookingConfirmationIntentStatus =
+                            'expired';
+
+                        status.textContent =
+                            'The secure booking draft is no longer available. Please select the flight again before acknowledging a fare.';
+
+                        return;
+                    }
+
+                    button.disabled =
+                        false;
+
+                    button.textContent =
+                        'Acknowledge latest fare';
+
+                    status.dataset
+                        .flightBookingConfirmationIntentStatus =
+                        'error';
+
+                    status.textContent =
+                        payload?.message ??
+                        'The confirmation intent could not be created. Please review the fare and try again.';
+
+                    return;
+                }
+
+                if (
+                    !payload ||
+                    typeof payload !== 'object' ||
+                    !payload.data ||
+                    typeof payload.data !== 'object' ||
+                    Array.isArray(payload.data) ||
+                    payload.data.status !==
+                        'confirmation_intent'
+                ) {
+                    button.disabled =
+                        false;
+
+                    button.textContent =
+                        'Acknowledge latest fare';
+
+                    status.dataset
+                        .flightBookingConfirmationIntentStatus =
+                        'error';
+
+                    status.textContent =
+                        'The secure confirmation intent response was invalid. Please review the fare and try again.';
+
+                    return;
+                }
+
+                const confirmationIntentToken =
+                    payload.data
+                        .confirmation_intent_token;
+
+                const expiresInSeconds =
+                    payload.data
+                        .expires_in_seconds;
+
+                if (
+                    typeof confirmationIntentToken !== 'string' ||
+                    confirmationIntentToken.length !== 64 ||
+                    !Number.isInteger(expiresInSeconds) ||
+                    expiresInSeconds <= 0
+                ) {
+                    button.disabled =
+                        false;
+
+                    button.textContent =
+                        'Acknowledge latest fare';
+
+                    status.dataset
+                        .flightBookingConfirmationIntentStatus =
+                        'error';
+
+                    status.textContent =
+                        'The secure confirmation intent response was incomplete. Please review the fare and try again.';
+
+                    return;
+                }
+
+                resultsElement
+                    .dataset
+                    .flightBookingConfirmationIntentToken =
+                    confirmationIntentToken;
+
+                resultsElement
+                    .dataset
+                    .flightBookingConfirmationIntentExpiresInSeconds =
+                    String(
+                        expiresInSeconds,
+                    );
+
+                button.disabled =
+                    true;
+
+                button.textContent =
+                    'Fare acknowledged';
+
+                status.dataset
+                    .flightBookingConfirmationIntentStatus =
+                    'ready';
+
+                status.textContent =
+                    'Latest fare acknowledged and a short-lived secure confirmation intent was created. The intent token remains private and is not shown in the page or URL. No supplier booking, ticket, payment, or confirmed reservation has been created.';
+            },
+        );
+
+        resultsElement.append(
+            panel,
+        );
+    }
+async function reviewFlightBookingDraft(bookingDraftToken) {
     const resultsElement = document.querySelector('[data-flight-results]');
     const reviewUrl = resultsElement?.dataset.flightBookingDraftReviewUrl;
     const csrfToken = document.querySelector(
@@ -888,6 +1352,13 @@ document.addEventListener('DOMContentLoaded', () => {
         );
     }
     // END FLIGHT BOOKING REVALIDATION REVIEW UI
+
+    renderFlightBookingConfirmationIntentAction(
+        resultsElement,
+        bookingDraftToken,
+        payload.data,
+        csrfToken,
+    );
 
     return payload.data;
 }
@@ -1345,7 +1816,7 @@ const validateFlightTravelers = async (
                     'div',
                     'flight-review-demo-warning',
                     (
-                        'DEMO DATA â€” this selection is for development '
+                        'DEMO DATA Ã¢â‚¬â€ this selection is for development '
                         + 'testing only and is not a live booking.'
                     )
                 )
@@ -1844,7 +2315,7 @@ const validateFlightTravelers = async (
                 createFlightElement(
                     'span',
                     'flight-demo-note',
-                    'Development fixture â€” not live availability or a bookable fare.'
+                    'Development fixture Ã¢â‚¬â€ not live availability or a bookable fare.'
                 )
             );
         }

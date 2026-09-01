@@ -13,7 +13,7 @@
 
     <header class="dashboard-header">
         <a href="{{ route('dashboard') }}" class="dashboard-logo">
-            <span class="dashboard-logo-icon">✈</span>
+            <span class="dashboard-logo-icon">âœˆ</span>
             <span>MetaFore OTA</span>
         </a>
 
@@ -60,7 +60,7 @@
             </div>
 
             <div class="flight-hero-badge">
-                <span>✈</span>
+                <span>âœˆ</span>
 
                 <div>
                     <strong>MetaFore Flights</strong>
@@ -140,7 +140,7 @@
                     </div>
 
                     <div class="flight-route-arrow" aria-hidden="true">
-                        ⇄
+                        â‡„
                     </div>
 
                     <div class="flight-form-field">
@@ -337,6 +337,7 @@
                     data-flight-results data-flight-select-url="{{ route('flights.offers.select') }}" data-flight-traveler-validation-url="{{ route('flights.travelers.validate') }}"
                     data-flight-booking-draft-url="{{ route('flights.bookings.drafts.store') }}"
                     data-flight-booking-draft-review-url="{{ route('flights.bookings.drafts.review') }}"
+                    data-flight-booking-confirmation-intent-url="{{ route('flights.bookings.confirmation-intents.store') }}"
                     aria-live="polite"
                     hidden
                 ></div>
