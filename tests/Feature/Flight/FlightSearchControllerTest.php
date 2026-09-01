@@ -223,6 +223,11 @@ class FlightSearchControllerTest extends TestCase
 
     public function test_unconfigured_provider_returns_service_unavailable(): void
     {
+        config()->set(
+            'flight.search_provider',
+            'unavailable'
+        );
+
         $this->actingAs($this->customer())
             ->postJson(
                 route('flights.search'),

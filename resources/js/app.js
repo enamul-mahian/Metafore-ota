@@ -115,6 +115,520 @@ document.addEventListener('DOMContentLoaded', () => {
     updateTripType();
     updateReturnMinimum();
 
+    const createFlightElement = (
+        tagName,
+        className = '',
+        text = null
+    ) => {
+        const element = document.createElement(tagName);
+
+        if (className) {
+            element.className = className;
+        }
+
+        if (text !== null && text !== undefined) {
+            element.textContent = String(text);
+        }
+
+        return element;
+    };
+
+    const flightPlaceCode = (place) => {
+        return place?.iata_code || place?.name || '—';
+    };
+
+    const flightCarrierName = (segment, offer) => {
+        return (
+            segment?.marketing_carrier?.name ||
+            segment?.operating_carrier?.name ||
+            offer?.owner?.name ||
+            'Carrier unavailable'
+        );
+    };
+
+    const formatFlightMoney = (amount, currency) => {
+        const numericAmount = Number(amount);
+
+        if (!Number.isFinite(numericAmount)) {
+            return [currency, amount]
+                .filter(Boolean)
+                .join(' ');
+        }
+
+        if (!currency) {
+            return numericAmount.toLocaleString(undefined, {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+            });
+        }
+
+        try {
+            return new Intl.NumberFormat(undefined, {
+                style: 'currency',
+                currency,
+                currencyDisplay: 'code',
+            }).format(numericAmount);
+        } catch (error) {
+            return `${currency} ${numericAmount.toFixed(2)}`;
+        }
+    };
+
+    const formatFlightDateTime = (value) => {
+        if (!value) {
+            return 'Time unavailable';
+        }
+
+        const parsed = new Date(value);
+
+        if (Number.isNaN(parsed.getTime())) {
+            return String(value);
+        }
+
+        return new Intl.DateTimeFormat(undefined, {
+            day: '2-digit',
+            month: 'short',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+        }).format(parsed);
+    };
+
+    const formatFlightDuration = (value) => {
+        if (!value || typeof value !== 'string') {
+            return '';
+        }
+
+        const match = value.match(
+            /^PT(?:(\d+)H)?(?:(\d+)M)?$/
+        );
+
+        if (!match) {
+            return value;
+        }
+
+        const hours = Number(match[1] || 0);
+        const minutes = Number(match[2] || 0);
+        const parts = [];
+
+        if (hours > 0) {
+            parts.push(`${hours}h`);
+        }
+
+        if (minutes > 0) {
+            parts.push(`${minutes}m`);
+        }
+
+        return parts.join(' ') || value;
+    };
+
+    const renderFlightSegment = (
+        segment,
+        offer
+    ) => {
+        const row = createFlightElement(
+            'div',
+            'flight-offer-segment'
+        );
+
+        const carrier = createFlightElement(
+            'div',
+            'flight-segment-carrier'
+        );
+
+        const carrierName = flightCarrierName(
+            segment,
+            offer
+        );
+
+        const carrierMark = createFlightElement(
+            'span',
+            'flight-carrier-mark',
+            carrierName
+                .trim()
+                .charAt(0)
+                .toUpperCase() || 'F'
+        );
+
+        const carrierText = createFlightElement(
+            'div',
+            'flight-carrier-text'
+        );
+
+        carrierText.append(
+            createFlightElement(
+                'strong',
+                '',
+                carrierName
+            )
+        );
+
+        const flightNumber =
+            segment?.marketing_carrier_flight_number ||
+            segment?.operating_carrier_flight_number;
+
+        if (flightNumber) {
+            carrierText.append(
+                createFlightElement(
+                    'span',
+                    '',
+                    `Flight ${flightNumber}`
+                )
+            );
+        }
+
+        carrier.append(
+            carrierMark,
+            carrierText
+        );
+
+        const departure = createFlightElement(
+            'div',
+            'flight-segment-point'
+        );
+
+        departure.append(
+            createFlightElement(
+                'strong',
+                '',
+                flightPlaceCode(segment?.origin)
+            ),
+            createFlightElement(
+                'span',
+                '',
+                formatFlightDateTime(
+                    segment?.departing_at
+                )
+            )
+        );
+
+        const journey = createFlightElement(
+            'div',
+            'flight-segment-journey'
+        );
+
+        journey.append(
+            createFlightElement(
+                'span',
+                'flight-segment-duration',
+                formatFlightDuration(
+                    segment?.duration
+                )
+            ),
+            createFlightElement(
+                'span',
+                'flight-segment-line',
+                '→'
+            )
+        );
+
+        const arrival = createFlightElement(
+            'div',
+            'flight-segment-point flight-segment-point-arrival'
+        );
+
+        arrival.append(
+            createFlightElement(
+                'strong',
+                '',
+                flightPlaceCode(
+                    segment?.destination
+                )
+            ),
+            createFlightElement(
+                'span',
+                '',
+                formatFlightDateTime(
+                    segment?.arriving_at
+                )
+            )
+        );
+
+        row.append(
+            carrier,
+            departure,
+            journey,
+            arrival
+        );
+
+        return row;
+    };
+
+    const renderFlightSlice = (
+        slice,
+        sliceIndex,
+        sliceCount,
+        offer
+    ) => {
+        const section = createFlightElement(
+            'section',
+            'flight-offer-slice'
+        );
+
+        const heading = createFlightElement(
+            'div',
+            'flight-slice-heading'
+        );
+
+        const headingLeft = createFlightElement(
+            'div'
+        );
+
+        let legLabel = `Leg ${sliceIndex + 1}`;
+
+        if (sliceCount === 1) {
+            legLabel = 'Flight';
+        } else if (sliceIndex === 0) {
+            legLabel = 'Outbound';
+        } else if (sliceIndex === 1) {
+            legLabel = 'Return';
+        }
+
+        headingLeft.append(
+            createFlightElement(
+                'span',
+                'flight-slice-label',
+                legLabel
+            ),
+            createFlightElement(
+                'strong',
+                'flight-slice-route',
+                `${flightPlaceCode(
+                    slice?.origin
+                )} → ${flightPlaceCode(
+                    slice?.destination
+                )}`
+            )
+        );
+
+        const duration = formatFlightDuration(
+            slice?.duration
+        );
+
+        if (duration) {
+            heading.append(
+                headingLeft,
+                createFlightElement(
+                    'span',
+                    'flight-slice-duration',
+                    duration
+                )
+            );
+        } else {
+            heading.append(headingLeft);
+        }
+
+        section.append(heading);
+
+        const segments = Array.isArray(
+            slice?.segments
+        )
+            ? slice.segments
+            : [];
+
+        segments.forEach((segment) => {
+            section.append(
+                renderFlightSegment(
+                    segment,
+                    offer
+                )
+            );
+        });
+
+        return section;
+    };
+
+    const renderFlightOffer = (offer) => {
+        const card = createFlightElement(
+            'article',
+            'flight-offer-card'
+        );
+
+        const header = createFlightElement(
+            'header',
+            'flight-offer-header'
+        );
+
+        const identity = createFlightElement(
+            'div',
+            'flight-offer-identity'
+        );
+
+        const ownerName =
+            offer?.owner?.name ||
+            'Flight option';
+
+        const ownerMark = createFlightElement(
+            'span',
+            'flight-owner-mark',
+            ownerName
+                .trim()
+                .charAt(0)
+                .toUpperCase() || 'F'
+        );
+
+        const ownerText = createFlightElement(
+            'div'
+        );
+
+        ownerText.append(
+            createFlightElement(
+                'strong',
+                'flight-owner-name',
+                ownerName
+            )
+        );
+
+        if (offer?.owner?.iata_code) {
+            ownerText.append(
+                createFlightElement(
+                    'span',
+                    'flight-owner-code',
+                    offer.owner.iata_code
+                )
+            );
+        }
+
+        identity.append(
+            ownerMark,
+            ownerText
+        );
+
+        if (offer?.provider === 'fixture') {
+            identity.append(
+                createFlightElement(
+                    'span',
+                    'flight-demo-badge',
+                    'DEMO DATA'
+                )
+            );
+        }
+
+        const price = createFlightElement(
+            'div',
+            'flight-offer-price'
+        );
+
+        price.append(
+            createFlightElement(
+                'span',
+                '',
+                'Total fare'
+            ),
+            createFlightElement(
+                'strong',
+                '',
+                formatFlightMoney(
+                    offer?.total_amount,
+                    offer?.total_currency
+                )
+            )
+        );
+
+        header.append(
+            identity,
+            price
+        );
+
+        card.append(header);
+
+        const slices = Array.isArray(
+            offer?.slices
+        )
+            ? offer.slices
+            : [];
+
+        const sliceList = createFlightElement(
+            'div',
+            'flight-offer-slices'
+        );
+
+        slices.forEach((slice, index) => {
+            sliceList.append(
+                renderFlightSlice(
+                    slice,
+                    index,
+                    slices.length,
+                    offer
+                )
+            );
+        });
+
+        card.append(sliceList);
+
+        const footer = createFlightElement(
+            'footer',
+            'flight-offer-footer'
+        );
+
+        if (offer?.requires_instant_payment) {
+            footer.append(
+                createFlightElement(
+                    'span',
+                    'flight-payment-badge',
+                    'Instant payment required'
+                )
+            );
+        }
+
+        if (offer?.provider === 'fixture') {
+            footer.append(
+                createFlightElement(
+                    'span',
+                    'flight-demo-note',
+                    'Development fixture — not live availability or a bookable fare.'
+                )
+            );
+        }
+
+        if (footer.childNodes.length > 0) {
+            card.append(footer);
+        }
+
+        return card;
+    };
+
+    const renderOffers = (offers) => {
+        resultsBox.textContent = '';
+        resultsBox.classList.add(
+            'flight-offer-list'
+        );
+
+        const heading = createFlightElement(
+            'div',
+            'flight-results-heading'
+        );
+
+        heading.append(
+            createFlightElement(
+                'strong',
+                '',
+                'Available flight options'
+            ),
+            createFlightElement(
+                'span',
+                '',
+                `${offers.length} result${
+                    offers.length === 1 ? '' : 's'
+                }`
+            )
+        );
+
+        resultsBox.append(heading);
+
+        const cards = createFlightElement(
+            'div',
+            'flight-offer-cards'
+        );
+
+        offers.forEach((offer) => {
+            cards.append(
+                renderFlightOffer(offer)
+            );
+        });
+
+        resultsBox.append(cards);
+        resultsBox.hidden = false;
+    };
     form.addEventListener('submit', async (event) => {
         event.preventDefault();
 
@@ -188,11 +702,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 'success'
             );
 
-            resultsBox.hidden = false;
-            resultsBox.textContent =
-                'Flight offers were returned successfully. ' +
-                'Detailed supplier result cards will be enabled with ' +
-                'the supplier integration layer.';
+            renderOffers(offers);
         } catch (error) {
             showStatus(
                 'The flight search service could not be reached. ' +
