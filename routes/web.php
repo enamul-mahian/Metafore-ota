@@ -14,6 +14,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::view('/dashboard', 'dashboard')
         ->name('dashboard');
 
+    Route::view('/flights', 'flights.search')
+        ->middleware('permission:flights.search')
+        ->name('flights.index');
+
     Route::post(
         '/flights/search',
         FlightSearchController::class

@@ -78,17 +78,36 @@
 
             <div class="dashboard-service-grid">
 
-                <article class="dashboard-service-card">
-                    <div class="service-icon">✈</div>
+                @can('flights.search')
+                    <a
+                        href="{{ route('flights.index') }}"
+                        class="dashboard-service-card dashboard-service-card-link"
+                    >
+                        <div class="service-icon">✈</div>
 
-                    <h3>Flights</h3>
+                        <h3>Flights</h3>
 
-                    <p>
-                        Search and book domestic and international flights.
-                    </p>
+                        <p>
+                            Search domestic and international flight options.
+                        </p>
 
-                    <span class="service-status">Coming Soon</span>
-                </article>
+                        <span class="service-status service-status-live">
+                            Search Flights
+                        </span>
+                    </a>
+                @else
+                    <article class="dashboard-service-card">
+                        <div class="service-icon">✈</div>
+
+                        <h3>Flights</h3>
+
+                        <p>
+                            Search and book domestic and international flights.
+                        </p>
+
+                        <span class="service-status">Coming Soon</span>
+                    </article>
+                @endcan
 
                 <article class="dashboard-service-card">
                     <div class="service-icon">⌂</div>
