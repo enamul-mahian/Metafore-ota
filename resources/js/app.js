@@ -467,6 +467,108 @@ document.addEventListener('DOMContentLoaded', () => {
         return field;
     };
 
+    const createTravelerOrderReadyTextField = (
+        labelText,
+        inputType,
+        placeholder,
+        autocomplete
+    ) => {
+        const field = createFlightElement(
+            'label',
+            'flight-traveler-field'
+        );
+
+        field.append(
+            createFlightElement(
+                'span',
+                'flight-traveler-label',
+                labelText
+            )
+        );
+
+        const input = createFlightElement(
+            'input',
+            'flight-traveler-input'
+        );
+
+        input.type = inputType;
+        input.required = true;
+        input.placeholder = placeholder;
+        input.autocomplete = autocomplete;
+
+        if (inputType === 'email') {
+            input.maxLength = 254;
+        }
+
+        if (inputType === 'tel') {
+            input.inputMode = 'tel';
+            input.pattern =
+                String.raw`\+[1-9][0-9]{6,14}`;
+        }
+
+        field.append(input);
+
+        return field;
+    };
+
+    const createTravelerGenderField = () => {
+        const field = createFlightElement(
+            'label',
+            'flight-traveler-field'
+        );
+
+        field.append(
+            createFlightElement(
+                'span',
+                'flight-traveler-label',
+                'Gender'
+            )
+        );
+
+        const select = createFlightElement(
+            'select',
+            'flight-traveler-input'
+        );
+
+        select.required = true;
+
+        const placeholder = createFlightElement(
+            'option',
+            '',
+            'Select gender'
+        );
+
+        placeholder.value = '';
+        placeholder.disabled = true;
+        placeholder.selected = true;
+
+        const male = createFlightElement(
+            'option',
+            '',
+            'Male'
+        );
+
+        male.value = 'm';
+
+        const female = createFlightElement(
+            'option',
+            '',
+            'Female'
+        );
+
+        female.value = 'f';
+
+        select.append(
+            placeholder,
+            male,
+            female
+        );
+
+        field.append(select);
+
+        return field;
+    };
+
     const createTravelerTitleField = () => {
         const field = createFlightElement(
             'label',
@@ -592,6 +694,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     traveler.dataset
                         .flightTravelerType || '',
                 title: value('title'),
+                gender: value('gender'),
+                email: value('email'),
+                phone_number:
+                    value('phone_number'),
                 given_name:
                     value('given_name'),
                 family_name:
@@ -609,7 +715,7 @@ document.addEventListener('DOMContentLoaded', () => {
         Object.keys(errors || {})
             .forEach((key) => {
                 const match = key.match(
-                    /^travelers\.(\d+)\.(title|given_name|family_name|date_of_birth)$/
+                    /^travelers\.(\d+)\.(title|gender|email|phone_number|given_name|family_name|date_of_birth)$/
                 );
 
                 if (!match) {
@@ -1921,6 +2027,19 @@ const validateFlightTravelers = async (
 
                     fields.append(
                         createTravelerTitleField(),
+                        createTravelerGenderField(),
+                        createTravelerOrderReadyTextField(
+                            'Email',
+                            'email',
+                            'traveler@example.com',
+                            'email'
+                        ),
+                        createTravelerOrderReadyTextField(
+                            'Phone number',
+                            'tel',
+                            '+8801700000000',
+                            'tel'
+                        ),
                         createTravelerTextField(
                             'Given name'
                         ),
@@ -1940,6 +2059,9 @@ const validateFlightTravelers = async (
 
                     const travelerFieldNames = [
                         'title',
+                        'gender',
+                        'email',
+                        'phone_number',
                         'given_name',
                         'family_name',
                         'date_of_birth',

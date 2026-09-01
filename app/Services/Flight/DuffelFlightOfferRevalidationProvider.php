@@ -193,6 +193,24 @@ final class DuffelFlightOfferRevalidationProvider implements FlightOfferRevalida
                 false,
             );
 
+        /*
+         * Supplier passenger IDs originate from the trusted Duffel offer.
+         * Never retain stale/client-provided passenger IDs when the live
+         * supplier response does not provide a safe passenger list.
+         */
+        unset($refreshedOffer['passengers']);
+
+        $safePassengers =
+            $this->normalizePassengers(
+                $supplierOffer['passengers']
+                ?? null,
+            );
+
+        if ($safePassengers !== null) {
+            $refreshedOffer['passengers'] =
+                $safePassengers;
+        }
+
         $refreshedOffer['owner'] =
             $this->normalizeOwner(
                 $supplierOffer['owner']
@@ -261,6 +279,98 @@ final class DuffelFlightOfferRevalidationProvider implements FlightOfferRevalida
      * @param mixed $trustedOwner
      * @return array<string, mixed>|mixed
      */
+    /**
+     * @return array<int, array{id: string, type: string}>|null
+     */
+    private function normalizePassengers(
+        mixed $passengers
+    ): ?array {
+        if (
+            ! is_array($passengers)
+            || ! array_is_list($passengers)
+            || count($passengers) < 1
+            || count($passengers) > 9
+        ) {
+            return null;
+        }
+
+        $safePassengers = [];
+
+        foreach ($passengers as $passenger) {
+            if (! is_array($passenger)) {
+                return null;
+            }
+
+            $id = trim(
+                (string) data_get(
+                    $passenger,
+                    'id',
+                    '',
+                ),
+            );
+
+            $type =
+                $this->normalizePassengerType(
+                    data_get(
+                        $passenger,
+                        'type',
+                    ),
+                );
+
+            if (
+                ! $this->isPassengerId($id)
+                || $type === null
+            ) {
+                return null;
+            }
+
+            $safePassengers[] = [
+                'id' => $id,
+                'type' => $type,
+            ];
+        }
+
+        return $safePassengers;
+    }
+
+    private function normalizePassengerType(
+        mixed $value
+    ): ?string {
+        if (! is_string($value)) {
+            return null;
+        }
+
+        $type = strtolower(
+            trim($value),
+        );
+
+        return match ($type) {
+            'adult' => 'adult',
+            'child' => 'child',
+            'infant_without_seat' => 'infant',
+            default => null,
+        };
+    }
+
+    private function isPassengerId(
+        string $value
+    ): bool {
+        if (
+            $value === ''
+            || strlen($value) > 255
+            || ! str_starts_with(
+                $value,
+                'pas_',
+            )
+        ) {
+            return false;
+        }
+
+        return preg_match(
+            '/^[A-Za-z0-9_]+$/',
+            $value,
+        ) === 1;
+    }
     private function normalizeOwner(
         mixed $supplierOwner,
         mixed $trustedOwner,

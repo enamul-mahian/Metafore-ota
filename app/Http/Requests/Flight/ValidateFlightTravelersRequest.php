@@ -67,6 +67,28 @@ final class ValidateFlightTravelersRequest extends FormRequest
                 'regex:/^[\pL\pM][\pL\pM\s.\'-]{0,49}$/u',
             ],
 
+            'travelers.*.gender' => [
+                'sometimes',
+                'required',
+                'string',
+                'in:m,f',
+            ],
+
+            'travelers.*.email' => [
+                'sometimes',
+                'required',
+                'string',
+                'email:rfc',
+                'max:254',
+            ],
+
+            'travelers.*.phone_number' => [
+                'sometimes',
+                'required',
+                'string',
+                'regex:/^\+[1-9][0-9]{6,14}$/',
+            ],
+
             'travelers.*.date_of_birth' => [
                 'required',
                 'date',
