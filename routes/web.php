@@ -228,3 +228,19 @@ Route::post('/flights/bookings/drafts', [FlightBookingDraftController::class, 's
 Route::post('/flights/bookings/drafts/review', [FlightBookingDraftReviewController::class, 'store'])
     ->middleware(['auth', 'verified', 'permission:flights.book'])
     ->name('flights.bookings.drafts.review');
+
+Route::post(
+    '/flights/bookings/confirmation-intents',
+    [
+        \App\Http\Controllers\Flight\FlightBookingConfirmationIntentController::class,
+        'store',
+    ],
+)
+    ->middleware([
+        'auth',
+        'verified',
+        'permission:flights.book',
+    ])
+    ->name(
+        'flights.bookings.confirmation-intents.store'
+    );
