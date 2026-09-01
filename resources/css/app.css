@@ -3945,3 +3945,36 @@
         margin-right: 16px;
     }
 }
+
+.flight-traveler-validation-feedback {
+    margin: 0 22px 18px;
+    padding: 12px 14px;
+    border-radius: 9px;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1.5;
+}
+
+.flight-traveler-validation-feedback.is-error {
+    border: 1px solid #f2c8c8;
+    color: #8b2d2d;
+    background: #fff4f4;
+}
+
+.flight-traveler-validation-feedback.is-success {
+    border: 1px solid #bfe3cb;
+    color: #23663a;
+    background: #f0fbf4;
+}
+
+.flight-traveler-input.is-invalid {
+    border-color: #cf6969;
+    box-shadow: 0 0 0 3px rgba(207, 105, 105, .1);
+}
+
+@media (max-width: 480px) {
+    .flight-traveler-validation-feedback {
+        margin-left: 16px;
+        margin-right: 16px;
+    }
+}

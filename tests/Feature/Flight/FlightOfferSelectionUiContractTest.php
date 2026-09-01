@@ -39,6 +39,14 @@ final class FlightOfferSelectionUiContractTest extends TestCase
             ->assertSee(
                 route('flights.offers.select'),
                 false
+            )
+            ->assertSee(
+                'data-flight-traveler-validation-url',
+                false
+            )
+            ->assertSee(
+                route('flights.travelers.validate'),
+                false
             );
     }
 
@@ -67,6 +75,31 @@ final class FlightOfferSelectionUiContractTest extends TestCase
 
         $this->assertStringContainsString(
             'Traveler details entered here are not saved',
+            $javascript
+        );
+
+        $this->assertStringContainsString(
+            'flightTravelerValidationUrl',
+            $javascript
+        );
+
+        $this->assertStringContainsString(
+            'Validate travelers',
+            $javascript
+        );
+
+        $this->assertStringContainsString(
+            'validateFlightTravelers',
+            $javascript
+        );
+
+        $this->assertStringContainsString(
+            'selection_token:',
+            $javascript
+        );
+
+        $this->assertStringContainsString(
+            'travelers,',
             $javascript
         );
 

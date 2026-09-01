@@ -510,7 +510,333 @@ document.addEventListener('DOMContentLoaded', () => {
         return field;
     };
 
-    const renderTravelerReview = (selection) => {
+    const clearTravelerValidationFeedback = (review) => {
+        review
+            .querySelector(
+                '[data-flight-traveler-validation-feedback]'
+            )
+            ?.remove();
+
+        review
+            .querySelectorAll(
+                '.flight-traveler-input.is-invalid'
+            )
+            .forEach((control) => {
+                control.classList.remove(
+                    'is-invalid'
+                );
+            });
+    };
+
+    const showTravelerValidationFeedback = (
+        review,
+        message,
+        tone = 'error'
+    ) => {
+        review
+            .querySelector(
+                '[data-flight-traveler-validation-feedback]'
+            )
+            ?.remove();
+
+        const feedback = createFlightElement(
+            'div',
+            (
+                'flight-traveler-validation-feedback '
+                + (
+                    tone === 'success'
+                        ? 'is-success'
+                        : 'is-error'
+                )
+            ),
+            message
+        );
+
+        feedback.dataset
+            .flightTravelerValidationFeedback = '';
+
+        const actions = review.querySelector(
+            '.flight-traveler-actions'
+        );
+
+        if (actions) {
+            actions.before(feedback);
+        } else {
+            review.append(feedback);
+        }
+    };
+
+    const collectTravelerPayload = (review) => {
+        return Array.from(
+            review.querySelectorAll(
+                '.flight-traveler-card'
+            )
+        ).map((traveler) => {
+            const value = (fieldName) => {
+                const control =
+                    traveler.querySelector(
+                        (
+                            '[data-flight-traveler-field="'
+                            + fieldName
+                            + '"]'
+                        )
+                    );
+
+                return String(
+                    control?.value || ''
+                ).trim();
+            };
+
+            return {
+                type:
+                    traveler.dataset
+                        .flightTravelerType || '',
+                title: value('title'),
+                given_name:
+                    value('given_name'),
+                family_name:
+                    value('family_name'),
+                date_of_birth:
+                    value('date_of_birth'),
+            };
+        });
+    };
+
+    const markTravelerValidationErrors = (
+        review,
+        errors
+    ) => {
+        Object.keys(errors || {})
+            .forEach((key) => {
+                const match = key.match(
+                    /^travelers\.(\d+)\.(title|given_name|family_name|date_of_birth)$/
+                );
+
+                if (!match) {
+                    return;
+                }
+
+                const travelerIndex =
+                    Number(match[1]);
+
+                const fieldName = match[2];
+
+                const traveler = review
+                    .querySelectorAll(
+                        '.flight-traveler-card'
+                    )[travelerIndex];
+
+                traveler
+                    ?.querySelector(
+                        (
+                            '[data-flight-traveler-field="'
+                            + fieldName
+                            + '"]'
+                        )
+                    )
+                    ?.classList
+                    .add('is-invalid');
+            });
+    };
+
+    const firstTravelerValidationMessage = (
+        payload
+    ) => {
+        const messages = Object.values(
+            payload?.errors || {}
+        ).flat();
+
+        return messages.find(
+            (message) =>
+                typeof message === 'string'
+        ) || payload?.message || (
+            'Please review the traveler details '
+            + 'and try again.'
+        );
+    };
+
+    const validateFlightTravelers = async (
+        review,
+        selectionToken,
+        button
+    ) => {
+        const validationUrl =
+            resultsBox.dataset
+                .flightTravelerValidationUrl;
+
+        const csrfToken = form
+            .querySelector(
+                'input[name="_token"]'
+            )
+            ?.value;
+
+        if (
+            !validationUrl ||
+            !selectionToken ||
+            !csrfToken
+        ) {
+            showStatus(
+                (
+                    'Traveler validation is not '
+                    + 'available right now. '
+                    + 'Please search again.'
+                ),
+                'error'
+            );
+
+            return;
+        }
+
+        clearTravelerValidationFeedback(
+            review
+        );
+
+        const travelers =
+            collectTravelerPayload(review);
+
+        button.disabled = true;
+        button.textContent =
+            'Validating travelers...';
+
+        let validationPassed = false;
+
+        try {
+            const response = await fetch(
+                validationUrl,
+                {
+                    method: 'POST',
+                    headers: {
+                        Accept:
+                            'application/json',
+                        'Content-Type':
+                            'application/json',
+                        'X-CSRF-TOKEN':
+                            csrfToken,
+                    },
+                    body: JSON.stringify({
+                        selection_token:
+                            selectionToken,
+                        travelers,
+                    }),
+                }
+            );
+
+            const payload = await response
+                .json()
+                .catch(() => ({}));
+
+            if (response.status === 422) {
+                markTravelerValidationErrors(
+                    review,
+                    payload?.errors
+                );
+
+                showTravelerValidationFeedback(
+                    review,
+                    firstTravelerValidationMessage(
+                        payload
+                    ),
+                    'error'
+                );
+
+                showStatus(
+                    (
+                        'Please correct the traveler '
+                        + 'details highlighted below.'
+                    ),
+                    'error'
+                );
+
+                return;
+            }
+
+            if (response.status === 410) {
+                showTravelerValidationFeedback(
+                    review,
+                    (
+                        payload?.message ||
+                        (
+                            'This flight offer has '
+                            + 'expired. Please search '
+                            + 'again.'
+                        )
+                    ),
+                    'error'
+                );
+
+                showStatus(
+                    (
+                        'This selected flight is no '
+                        + 'longer available. '
+                        + 'Please search again.'
+                    ),
+                    'error'
+                );
+
+                return;
+            }
+
+            if (!response.ok) {
+                showTravelerValidationFeedback(
+                    review,
+                    (
+                        'Traveler details could not '
+                        + 'be validated right now. '
+                        + 'Please try again.'
+                    ),
+                    'error'
+                );
+
+                return;
+            }
+
+            validationPassed = true;
+
+            review.dataset
+                .flightTravelersValidated =
+                'true';
+
+            showTravelerValidationFeedback(
+                review,
+                (
+                    'Traveler details passed '
+                    + 'server-side validation. '
+                    + 'Nothing has been booked yet.'
+                ),
+                'success'
+            );
+
+            showStatus(
+                (
+                    'Traveler details validated '
+                    + 'successfully.'
+                ),
+                'success'
+            );
+
+            button.textContent =
+                'Travelers validated';
+
+            button.disabled = true;
+        } catch (error) {
+            showTravelerValidationFeedback(
+                review,
+                (
+                    'Traveler validation could not '
+                    + 'be completed. Please check '
+                    + 'your connection and try again.'
+                ),
+                'error'
+            );
+        } finally {
+            if (!validationPassed) {
+                button.disabled = false;
+                button.textContent =
+                    'Validate travelers';
+            }
+        }
+    };
+    const renderTravelerReview = (selection, selectionToken) => {
         const previous = resultsBox.querySelector(
             '[data-flight-traveler-review]'
         );
@@ -669,6 +995,10 @@ document.addEventListener('DOMContentLoaded', () => {
                         'flight-traveler-card'
                     );
 
+                    traveler.dataset
+                        .flightTravelerType =
+                        travelerType.toLowerCase();
+
                     const travelerHeader =
                         createFlightElement(
                             'div',
@@ -707,6 +1037,52 @@ document.addEventListener('DOMContentLoaded', () => {
                         )
                     );
 
+                    const travelerControls =
+                        fields.querySelectorAll(
+                            '.flight-traveler-input'
+                        );
+
+                    const travelerFieldNames = [
+                        'title',
+                        'given_name',
+                        'family_name',
+                        'date_of_birth',
+                    ];
+
+                    travelerControls.forEach(
+                        (control, fieldIndex) => {
+                            control.dataset
+                                .flightTravelerField =
+                                travelerFieldNames[
+                                    fieldIndex
+                                ];
+
+                            control.required = true;
+
+                            const clearFieldError =
+                                () => {
+                                    control.classList
+                                        .remove(
+                                            'is-invalid'
+                                        );
+
+                                    review.dataset
+                                        .flightTravelersValidated =
+                                        'false';
+                                };
+
+                            control.addEventListener(
+                                'input',
+                                clearFieldError
+                            );
+
+                            control.addEventListener(
+                                'change',
+                                clearFieldError
+                            );
+                        }
+                    );
+
                     traveler.append(
                         travelerHeader,
                         fields
@@ -734,8 +1110,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 'span',
                 '',
                 (
-                    'Traveler details entered here are not saved '
-                    + 'or sent to the server yet.'
+                    'Traveler details entered here are not saved. '
+                    + 'They are sent only when you choose '
+                    + 'Validate travelers.'
                 )
             )
         );
@@ -750,21 +1127,33 @@ document.addEventListener('DOMContentLoaded', () => {
         const continueButton = createFlightElement(
             'button',
             'flight-booking-continue',
-            'Continue to booking'
+            'Validate travelers'
         );
 
         continueButton.type = 'button';
-        continueButton.disabled = true;
+        continueButton.disabled = false;
         continueButton.title =
-            'Server-side traveler validation will be added next.';
+            'Validate traveler details securely.';
+
+        continueButton.addEventListener(
+            'click',
+            () => {
+                validateFlightTravelers(
+                    review,
+                    selectionToken,
+                    continueButton
+                );
+            }
+        );
 
         reviewActions.append(
             createFlightElement(
                 'span',
                 '',
                 (
-                    'Booking submission stays disabled until '
-                    + 'server-side traveler validation is ready.'
+                    'Traveler details are validated '
+                    + 'server-side. This step does '
+                    + 'not create a booking.'
                 )
             ),
             continueButton
@@ -863,7 +1252,8 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             renderTravelerReview(
-                payload?.data
+                payload?.data,
+                selectionToken
             );
 
             showStatus(
