@@ -1,6 +1,7 @@
 <?php
 
 use App\Services\Flight\DuffelFlightSearchProvider;
+use App\Services\Flight\FixtureFlightSearchProvider;
 use App\Services\Flight\UnavailableFlightSearchProvider;
 
 return [
@@ -24,10 +25,15 @@ return [
     |--------------------------------------------------------------------------
     | Available Flight Search Providers
     |--------------------------------------------------------------------------
+    |
+    | "fixture" is development/demo data only. It must never be represented
+    | to customers as live supplier availability or live pricing.
+    |
     */
 
     'providers' => [
         'unavailable' => UnavailableFlightSearchProvider::class,
+        'fixture' => FixtureFlightSearchProvider::class,
         'duffel' => DuffelFlightSearchProvider::class,
     ],
 
