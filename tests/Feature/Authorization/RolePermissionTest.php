@@ -130,4 +130,28 @@ class RolePermissionTest extends TestCase
                 'message' => 'Admin role authorized',
             ]);
     }
+
+    public function test_flight_booking_permission_is_assigned_to_customer_admin_and_super_admin(): void
+    {
+        $this->seed(\Database\Seeders\RolePermissionSeeder::class);
+
+        app(\Spatie\Permission\PermissionRegistrar::class)
+            ->forgetCachedPermissions();
+
+        foreach (['customer', 'admin', 'super-admin'] as $roleName) {
+            $user = \App\Models\User::factory()->create([
+                'email_verified_at' => now(),
+            ]);
+
+            $user->assignRole($roleName);
+
+            $this->assertTrue(
+                $user->fresh()->can('flights.book'),
+                sprintf(
+                    'Role [%s] must receive flights.book permission.',
+                    $roleName,
+                ),
+            );
+        }
+    }
 }

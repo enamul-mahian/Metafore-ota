@@ -41,6 +41,7 @@ class RolePermissionSeeder extends Seeder
             'master-data.manage',
 
             'flights.search',
+            'flights.book',
         ];
 
         foreach ($permissions as $permission) {
@@ -99,6 +100,7 @@ class RolePermissionSeeder extends Seeder
             'master-data.manage',
 
             'flights.search',
+            'flights.book',
         ]);
 
         /*
@@ -110,6 +112,7 @@ class RolePermissionSeeder extends Seeder
         $customer->syncPermissions([
             'dashboard.view',
             'flights.search',
+            'flights.book',
         ]);
 
         app(PermissionRegistrar::class)

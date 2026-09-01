@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Flight\FlightBookingDraftController;
 use App\Http\Controllers\Admin\CityController;
 use App\Http\Controllers\Admin\CountryController;
 use App\Http\Controllers\Admin\SettingController;
@@ -218,3 +219,7 @@ Route::get(
         'permission:settings.view',
     ])
     ->name('admin.settings.manage');
+
+Route::post('/flights/bookings/drafts', [FlightBookingDraftController::class, 'store'])
+    ->middleware(['auth', 'verified', 'permission:flights.book'])
+    ->name('flights.bookings.drafts.store');
