@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Flight;
 
+use App\Services\Flight\DuffelFlightOfferRevalidationProvider;
 use App\Services\Flight\FixtureFlightOfferRevalidationProvider;
 use App\Services\Flight\FlightOfferRevalidationService;
 use App\Services\Flight\UnavailableFlightOfferRevalidationProvider;
@@ -71,9 +72,14 @@ final class FlightOfferRevalidationServiceTest extends TestCase
         );
     }
 
-    public function test_duffel_revalidation_is_intentionally_unavailable_in_foundation(): void
+    public function test_duffel_offer_is_dispatched_to_dedicated_adapter_but_missing_token_fails_before_http(): void
     {
         Http::fake();
+
+        config()->set(
+            'flight.duffel.access_token',
+            null,
+        );
 
         $offer = $this->fixtureOffer();
 
@@ -88,7 +94,7 @@ final class FlightOfferRevalidationServiceTest extends TestCase
             );
 
             $this->fail(
-                'Expected Duffel revalidation to remain unavailable in this foundation.',
+                'Expected missing Duffel access token to fail safely.',
             );
         } catch (ServiceUnavailableHttpException $exception) {
             $this->assertSame(
@@ -97,7 +103,7 @@ final class FlightOfferRevalidationServiceTest extends TestCase
             );
 
             $this->assertStringContainsString(
-                'not available',
+                'not configured',
                 $exception->getMessage(),
             );
         }
@@ -111,7 +117,8 @@ final class FlightOfferRevalidationServiceTest extends TestCase
 
         $offer = $this->fixtureOffer();
 
-        $offer['provider'] = 'malicious-provider-name';
+        $offer['provider'] =
+            'malicious-provider-name';
 
         try {
             app(
@@ -188,7 +195,7 @@ final class FlightOfferRevalidationServiceTest extends TestCase
         }
     }
 
-    public function test_revalidation_configuration_keeps_duffel_safely_unavailable(): void
+    public function test_revalidation_configuration_maps_duffel_to_dedicated_adapter(): void
     {
         $this->assertSame(
             FixtureFlightOfferRevalidationProvider::class,
@@ -198,7 +205,7 @@ final class FlightOfferRevalidationServiceTest extends TestCase
         );
 
         $this->assertSame(
-            UnavailableFlightOfferRevalidationProvider::class,
+            DuffelFlightOfferRevalidationProvider::class,
             config(
                 'flight_revalidation.providers.duffel',
             ),

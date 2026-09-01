@@ -1,5 +1,6 @@
 <?php
 
+use App\Services\Flight\DuffelFlightOfferRevalidationProvider;
 use App\Services\Flight\FixtureFlightOfferRevalidationProvider;
 use App\Services\Flight\UnavailableFlightOfferRevalidationProvider;
 
@@ -14,8 +15,8 @@ return [
     | trusted server-side offer stored in the encrypted booking draft.
     |
     | Fixture remains demo-only and non-bookable.
-    | Duffel intentionally remains unavailable until its dedicated adapter is
-    | implemented and verified separately.
+    | Duffel uses a dedicated GET-only adapter that refreshes the trusted
+    | supplier offer before any future order or payment step.
     |
     */
 
@@ -24,7 +25,7 @@ return [
     'providers' => [
         'unavailable' => UnavailableFlightOfferRevalidationProvider::class,
         'fixture' => FixtureFlightOfferRevalidationProvider::class,
-        'duffel' => UnavailableFlightOfferRevalidationProvider::class,
+        'duffel' => DuffelFlightOfferRevalidationProvider::class,
     ],
 
 ];
