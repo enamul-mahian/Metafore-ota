@@ -134,7 +134,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const flightPlaceCode = (place) => {
-        return place?.iata_code || place?.name || '—';
+        return place?.iata_code || place?.name || 'â€”';
     };
 
     const flightCarrierName = (segment, offer) => {
@@ -317,7 +317,7 @@ document.addEventListener('DOMContentLoaded', () => {
             createFlightElement(
                 'span',
                 'flight-segment-line',
-                '→'
+                'â†’'
             )
         );
 
@@ -394,7 +394,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 'flight-slice-route',
                 `${flightPlaceCode(
                     slice?.origin
-                )} → ${flightPlaceCode(
+                )} â†’ ${flightPlaceCode(
                     slice?.destination
                 )}`
             )
@@ -763,6 +763,131 @@ document.addEventListener('DOMContentLoaded', () => {
         'Secure booking draft review loaded from server-trusted fare and route data. Traveler details and the draft token are not exposed. This is not a supplier booking, ticket, payment, or confirmed reservation.';
 
     resultsElement.prepend(notice);
+
+    // BEGIN FLIGHT BOOKING REVALIDATION REVIEW UI
+    const revalidation =
+        payload.data.revalidation;
+
+    const revalidatedOffer =
+        payload.data.offer;
+
+    if (
+        revalidation &&
+        typeof revalidation === 'object' &&
+        !Array.isArray(revalidation) &&
+        revalidatedOffer &&
+        typeof revalidatedOffer === 'object' &&
+        !Array.isArray(revalidatedOffer)
+    ) {
+        const previousRevalidationNotice =
+            resultsElement.querySelector(
+                '.flight-booking-revalidation-status',
+            );
+
+        if (previousRevalidationNotice) {
+            previousRevalidationNotice.remove();
+        }
+
+        const amount =
+            typeof revalidatedOffer.total_amount === 'string'
+                ? revalidatedOffer.total_amount.trim()
+                : '';
+
+        const currency =
+            typeof revalidatedOffer.currency === 'string'
+                ? revalidatedOffer.currency.trim().toUpperCase()
+                : '';
+
+        const fareText =
+            amount !== '' && currency !== ''
+                ? currency + ' ' + amount
+                : 'the current server-trusted fare';
+
+        const isPriceChanged =
+            revalidation.price_changed === true;
+
+        const isLiveRevalidation =
+            revalidation.live_revalidation === true;
+
+        const revalidationStatus =
+            typeof revalidation.status === 'string'
+                ? revalidation.status
+                : '';
+
+        const revalidationProvider =
+            typeof revalidation.provider === 'string'
+                ? revalidation.provider
+                : '';
+
+        const revalidationNotice =
+            document.createElement('p');
+
+        revalidationNotice.className =
+            'flight-booking-revalidation-status';
+
+        revalidationNotice.setAttribute(
+            'role',
+            'status',
+        );
+
+        revalidationNotice.setAttribute(
+            'aria-live',
+            'polite',
+        );
+
+        if (isPriceChanged) {
+            revalidationNotice.dataset
+                .flightBookingRevalidationStatus =
+                'price-changed';
+
+            revalidationNotice.textContent =
+                'Fare changed during live revalidation. '
+                + 'Latest trusted fare: '
+                + fareText
+                + '. Please review the updated price before any future booking step. '
+                + 'This is not a supplier booking, ticket, payment, or confirmed reservation.';
+        } else if (isLiveRevalidation) {
+            revalidationNotice.dataset
+                .flightBookingRevalidationStatus =
+                'live-revalidated';
+
+            revalidationNotice.textContent =
+                'Live fare revalidation completed. '
+                + 'Current trusted fare: '
+                + fareText
+                + '. The latest supplier fare has been reviewed, but no booking has been created. '
+                + 'This is not a supplier booking, ticket, payment, or confirmed reservation.';
+        } else if (
+            revalidationStatus === 'demo_only' ||
+            revalidationProvider === 'fixture'
+        ) {
+            revalidationNotice.dataset
+                .flightBookingRevalidationStatus =
+                'demo-only';
+
+            revalidationNotice.textContent =
+                'Demo fare review completed. '
+                + 'Current fixture fare: '
+                + fareText
+                + '. This fixture result is demo-only, not live, and not bookable. '
+                + 'This is not a supplier booking, ticket, payment, or confirmed reservation.';
+        } else {
+            revalidationNotice.dataset
+                .flightBookingRevalidationStatus =
+                'reviewed';
+
+            revalidationNotice.textContent =
+                'Fare review completed using server-trusted data. '
+                + 'Current trusted fare: '
+                + fareText
+                + '. This is not a supplier booking, ticket, payment, or confirmed reservation.';
+        }
+
+        resultsElement.prepend(
+            revalidationNotice,
+        );
+    }
+    // END FLIGHT BOOKING REVALIDATION REVIEW UI
 
     return payload.data;
 }
@@ -1220,7 +1345,7 @@ const validateFlightTravelers = async (
                     'div',
                     'flight-review-demo-warning',
                     (
-                        'DEMO DATA — this selection is for development '
+                        'DEMO DATA â€” this selection is for development '
                         + 'testing only and is not a live booking.'
                     )
                 )
@@ -1719,7 +1844,7 @@ const validateFlightTravelers = async (
                 createFlightElement(
                     'span',
                     'flight-demo-note',
-                    'Development fixture — not live availability or a bookable fare.'
+                    'Development fixture â€” not live availability or a bookable fare.'
                 )
             );
         }
