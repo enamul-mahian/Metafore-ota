@@ -5,46 +5,74 @@ namespace App\Http\Controllers\Flight;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Flight\ReviewFlightBookingDraftRequest;
 use App\Services\Flight\FlightBookingDraftStore;
+use App\Services\Flight\FlightOfferRevalidationService;
 use Illuminate\Http\JsonResponse;
+use Symfony\Component\HttpKernel\Exception\ServiceUnavailableHttpException;
 
 final class FlightBookingDraftReviewController extends Controller
 {
-    public function __construct(
-        private readonly FlightBookingDraftStore $bookingDraftStore,
-    ) {
-    }
-
     public function store(
         ReviewFlightBookingDraftRequest $request,
+        FlightBookingDraftStore $bookingDraftStore,
+        FlightOfferRevalidationService $revalidationService,
     ): JsonResponse {
-        $validated = $request->validated();
+        $bookingDraftToken = (string) $request->validated(
+            'booking_draft_token',
+        );
 
-        $userId = (int) $request
-            ->user()
+        $userId = (int) $request->user()
             ->getAuthIdentifier();
 
-        $draft = $this->bookingDraftStore->get(
+        $draft = $bookingDraftStore->get(
             $userId,
-            $validated['booking_draft_token'],
+            $bookingDraftToken,
         );
 
         if ($draft === null) {
-            return $this->draftGoneResponse();
+            return $this->goneResponse();
         }
 
-        $criteria = $draft['criteria'] ?? null;
-        $offer = $draft['offer'] ?? null;
-        $travelers = $draft['travelers'] ?? null;
-        $createdAt = $draft['created_at'] ?? null;
+        $criteria =
+            $draft['criteria']
+            ?? null;
+
+        $trustedOffer =
+            $draft['offer']
+            ?? null;
+
+        $travelers =
+            $draft['travelers']
+            ?? null;
 
         if (
             ! is_array($criteria)
-            || ! is_array($offer)
+            || ! is_array($trustedOffer)
             || ! is_array($travelers)
-            || ! is_string($createdAt)
-            || $createdAt === ''
         ) {
-            return $this->draftGoneResponse();
+            return $this->goneResponse();
+        }
+
+        /*
+         * Revalidation receives only the offer recovered from the encrypted,
+         * customer-scoped booking draft. No client-supplied fare, carrier,
+         * route, currency, or supplier offer ID is accepted here.
+         *
+         * Fixture revalidation remains demo-only and sends no HTTP request.
+         * Duffel revalidation uses its dedicated GET-only adapter.
+         */
+        $revalidation = $revalidationService->revalidate(
+            $trustedOffer,
+        );
+
+        $reviewOffer =
+            $revalidation['offer']
+            ?? null;
+
+        if (! is_array($reviewOffer)) {
+            throw new ServiceUnavailableHttpException(
+                60,
+                'Flight offer revalidation is temporarily unavailable.',
+            );
         }
 
         $response = response()->json([
@@ -52,105 +80,32 @@ final class FlightBookingDraftReviewController extends Controller
                 'status' => 'draft_review',
 
                 'traveler_count' => count(
-                    $travelers
+                    $travelers,
                 ),
 
-                'criteria' => [
-                    'trip_type' => data_get(
-                        $criteria,
-                        'trip_type'
-                    ),
+                'criteria' => $this->criteriaForReview(
+                    $criteria,
+                ),
 
-                    'origin' => data_get(
-                        $criteria,
-                        'origin'
-                    ),
+                /*
+                 * The review uses the provider-neutral revalidation result.
+                 * For Duffel this means the latest supplier fare/currency and
+                 * carrier summary for the same trusted supplier offer ID.
+                 */
+                'offer' => $this->offerForReview(
+                    $reviewOffer,
+                ),
 
-                    'destination' => data_get(
-                        $criteria,
-                        'destination'
-                    ),
+                'revalidation' => $this->revalidationForReview(
+                    $revalidation,
+                ),
 
-                    'departure_date' => data_get(
-                        $criteria,
-                        'departure_date'
-                    ),
-
-                    'return_date' => data_get(
-                        $criteria,
-                        'return_date'
-                    ),
-
-                    'adults' => data_get(
-                        $criteria,
-                        'adults'
-                    ),
-
-                    'children' => data_get(
-                        $criteria,
-                        'children'
-                    ),
-
-                    'infants' => data_get(
-                        $criteria,
-                        'infants'
-                    ),
-
-                    'cabin_class' => data_get(
-                        $criteria,
-                        'cabin_class'
-                    ),
-                ],
-
-                'offer' => [
-                    'id' => data_get(
-                        $offer,
-                        'id'
-                    ),
-
-                    'provider' => data_get(
-                        $offer,
-                        'provider'
-                    ),
-
-                    'total_amount' => data_get(
-                        $offer,
-                        'total_amount'
-                    ),
-
-                    'currency' => data_get(
-                        $offer,
-                        'currency'
-                    ),
-
-                    'owner' => [
-                        'code' => data_get(
-                            $offer,
-                            'owner.code'
-                        ),
-
-                        'name' => data_get(
-                            $offer,
-                            'owner.name'
-                        ),
-                    ],
-
-                    'origin' => data_get(
-                        $offer,
-                        'origin'
-                    ),
-
-                    'destination' => data_get(
-                        $offer,
-                        'destination'
-                    ),
-                ],
-
-                'created_at' => $createdAt,
+                'created_at' =>
+                    $draft['created_at']
+                    ?? null,
 
                 'expires_in_seconds' =>
-                    $this->bookingDraftStore
-                        ->expiresInSeconds(),
+                    $bookingDraftStore->expiresInSeconds(),
             ],
         ]);
 
@@ -162,12 +117,148 @@ final class FlightBookingDraftReviewController extends Controller
         return $response;
     }
 
-    private function draftGoneResponse(): JsonResponse
+    /**
+     * @param array<string, mixed> $criteria
+     * @return array<string, mixed>
+     */
+    private function criteriaForReview(
+        array $criteria,
+    ): array {
+        return [
+            'trip_type' =>
+                $criteria['trip_type']
+                ?? null,
+
+            'origin' =>
+                $criteria['origin']
+                ?? null,
+
+            'destination' =>
+                $criteria['destination']
+                ?? null,
+
+            'departure_date' =>
+                $criteria['departure_date']
+                ?? null,
+
+            'return_date' =>
+                $criteria['return_date']
+                ?? null,
+
+            'adults' =>
+                $criteria['adults']
+                ?? null,
+
+            'children' =>
+                $criteria['children']
+                ?? null,
+
+            'infants' =>
+                $criteria['infants']
+                ?? null,
+
+            'cabin_class' =>
+                $criteria['cabin_class']
+                ?? null,
+        ];
+    }
+
+    /**
+     * @param array<string, mixed> $offer
+     * @return array<string, mixed>
+     */
+    private function offerForReview(
+        array $offer,
+    ): array {
+        $owner =
+            $offer['owner']
+            ?? null;
+
+        return [
+            'id' =>
+                $offer['id']
+                ?? null,
+
+            'provider' =>
+                $offer['provider']
+                ?? null,
+
+            'total_amount' =>
+                $offer['total_amount']
+                ?? null,
+
+            'currency' =>
+                $offer['currency']
+                ?? null,
+
+            'owner' => [
+                'code' =>
+                    is_array($owner)
+                        ? ($owner['code'] ?? null)
+                        : null,
+
+                'name' =>
+                    is_array($owner)
+                        ? ($owner['name'] ?? null)
+                        : null,
+            ],
+
+            /*
+             * The Duffel adapter deliberately preserves the trusted normalized
+             * route/slices from the original server-side selection.
+             */
+            'origin' =>
+                $offer['origin']
+                ?? null,
+
+            'destination' =>
+                $offer['destination']
+                ?? null,
+        ];
+    }
+
+    /**
+     * Expose only review-safe revalidation metadata.
+     *
+     * No supplier payload, traveler PII, token, order, payment, or ticket
+     * object is returned through this response.
+     *
+     * @param array<string, mixed> $revalidation
+     * @return array<string, mixed>
+     */
+    private function revalidationForReview(
+        array $revalidation,
+    ): array {
+        return [
+            'status' =>
+                $revalidation['status']
+                ?? null,
+
+            'provider' =>
+                $revalidation['provider']
+                ?? null,
+
+            'live_revalidation' => (bool) (
+                $revalidation['live_revalidation']
+                ?? false
+            ),
+
+            'price_changed' => (bool) (
+                $revalidation['price_changed']
+                ?? false
+            ),
+        ];
+    }
+
+    private function goneResponse(): JsonResponse
     {
-        $response = response()->json([
-            'message' =>
-                'Booking draft is no longer available. Please create a new draft.',
-        ], 410);
+        $response = response()->json(
+            [
+                'message' =>
+                    'Booking draft is no longer available. Please create a new draft.',
+            ],
+            410,
+        );
 
         $response->headers->set(
             'Cache-Control',
