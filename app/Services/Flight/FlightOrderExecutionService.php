@@ -3,6 +3,7 @@
 namespace App\Services\Flight;
 
 use App\Exceptions\Flight\FlightOrderProcessingException;
+use Symfony\Component\HttpKernel\Exception\ServiceUnavailableHttpException;
 
 final class FlightOrderExecutionService
 {
@@ -128,6 +129,30 @@ final class FlightOrderExecutionService
                 );
         }
 
+        $attemptReference =
+            null;
+
+        if (
+            $provider === 'duffel'
+            && ($result['status'] ?? null)
+                === 'created'
+            && ($result['live_order_creation'] ?? false)
+                === true
+            && ($result['order_created'] ?? false)
+                === true
+            && is_string(
+                $result['supplier_order_id']
+                    ?? null,
+            )
+        ) {
+            $attemptReference =
+                $this->persistDirectCreatedDuffelAttempt(
+                    $userId,
+                    $trustedIntent,
+                    $result,
+                );
+        }
+
         $status =
             $result['status']
                 ?? null;
@@ -136,7 +161,7 @@ final class FlightOrderExecutionService
             $result['provider']
                 ?? null;
 
-        return [
+        $normalized = [
             'status' =>
                 is_string($status)
                 && $status !== ''
@@ -168,6 +193,117 @@ final class FlightOrderExecutionService
             'confirmation_intent_consumed' =>
                 true,
         ];
+
+        if ($attemptReference !== null) {
+            $normalized['attempt_reference'] =
+                $attemptReference;
+        }
+
+        return $normalized;
+    }
+
+    /**
+     * @param array<string, mixed> $trustedIntent
+     * @param array<string, mixed> $result
+     */
+    private function persistDirectCreatedDuffelAttempt(
+        int $userId,
+        array $trustedIntent,
+        array $result,
+    ): string {
+        $supplierOfferId =
+            data_get(
+                $trustedIntent,
+                'offer.id',
+            );
+
+        $supplierOrderId =
+            $result['supplier_order_id']
+                ?? null;
+
+        if (
+            ! is_string($supplierOfferId)
+            || ! is_string($supplierOrderId)
+        ) {
+            throw $this->durabilityUnavailable();
+        }
+
+        $supplierOfferId =
+            trim($supplierOfferId);
+
+        $supplierOrderId =
+            trim($supplierOrderId);
+
+        if (
+            ! str_starts_with($supplierOfferId, 'off_')
+            || ! str_starts_with($supplierOrderId, 'ord_')
+            || strlen($supplierOfferId) > 255
+            || strlen($supplierOrderId) > 255
+            || preg_match(
+                '/^[A-Za-z0-9_]+$/',
+                $supplierOfferId,
+            ) !== 1
+            || preg_match(
+                '/^[A-Za-z0-9_]+$/',
+                $supplierOrderId,
+            ) !== 1
+        ) {
+            throw $this->durabilityUnavailable();
+        }
+
+        try {
+            $processing =
+                $this->orderAttemptRecordStore
+                    ->createProcessing(
+                        $userId,
+                        'duffel',
+                        $supplierOfferId,
+                    );
+
+            $attemptReference =
+                is_array($processing)
+                    ? ($processing['reference'] ?? null)
+                    : null;
+
+            if (
+                ! is_string($attemptReference)
+                || strlen($attemptReference) !== 64
+                || preg_match(
+                    '/^[A-Za-z0-9]+$/',
+                    $attemptReference,
+                ) !== 1
+            ) {
+                throw $this->durabilityUnavailable();
+            }
+
+            $created =
+                $this->orderAttemptRecordStore
+                    ->markCreated(
+                        'duffel',
+                        $supplierOfferId,
+                        $supplierOrderId,
+                    );
+
+            if ($created === null) {
+                throw $this->durabilityUnavailable();
+            }
+
+            return $attemptReference;
+        } catch (ServiceUnavailableHttpException $exception) {
+            throw $exception;
+        } catch (\Throwable $exception) {
+            report($exception);
+
+            throw $this->durabilityUnavailable();
+        }
+    }
+
+    private function durabilityUnavailable(
+    ): ServiceUnavailableHttpException {
+        return new ServiceUnavailableHttpException(
+            null,
+            'Flight order durability is temporarily unavailable.',
+        );
     }
 
     /**

@@ -46,6 +46,7 @@ final class DuffelFlightOrderAttemptGuardTest extends TestCase
             'status' => 'created',
             'live_order_creation' => true,
             'order_created' => true,
+            'supplier_order_id' => 'ord_attempt_guard_1',
         ], $first);
 
         try {

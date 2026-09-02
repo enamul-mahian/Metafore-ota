@@ -153,6 +153,7 @@ final class DuffelFlightOrderProviderTest extends TestCase
             'status' => 'created',
             'live_order_creation' => true,
             'order_created' => true,
+            'supplier_order_id' => 'ord_safe_order_1',
         ], $result);
 
         $this->assertSame(
@@ -160,6 +161,7 @@ final class DuffelFlightOrderProviderTest extends TestCase
                 'status',
                 'live_order_creation',
                 'order_created',
+                'supplier_order_id',
             ],
             array_keys($result),
         );

@@ -129,8 +129,32 @@ final class FlightOrderExecutionController extends Controller
             && $liveOrderCreation
             && $orderCreated
         ) {
+            $attemptReference =
+                is_string(
+                    $result['attempt_reference']
+                        ?? null
+                )
+                    ? trim(
+                        $result['attempt_reference'],
+                    )
+                    : null;
+
+            if (
+                $attemptReference !== null
+                && (
+                    strlen($attemptReference) !== 64
+                    || preg_match(
+                        '/^[A-Za-z0-9]+$/',
+                        $attemptReference,
+                    ) !== 1
+                )
+            ) {
+                $attemptReference = null;
+            }
+
             return $this->createdResponse(
                 $provider,
+                $attemptReference,
             );
         }
 
@@ -228,25 +252,34 @@ final class FlightOrderExecutionController extends Controller
     }
     private function createdResponse(
         string $provider,
+        ?string $attemptReference,
     ): JsonResponse {
+        $data = [
+            'status' =>
+                'created',
+
+            'provider' =>
+                $provider,
+
+            'live_order_creation' =>
+                true,
+
+            'order_created' =>
+                true,
+
+            'confirmation_intent_consumed' =>
+                true,
+        ];
+
+        if ($attemptReference !== null) {
+            $data['attempt_reference'] =
+                $attemptReference;
+        }
+
         return $this->noStore(
             response()->json([
-                'data' => [
-                    'status' =>
-                        'created',
-
-                    'provider' =>
-                        $provider,
-
-                    'live_order_creation' =>
-                        true,
-
-                    'order_created' =>
-                        true,
-
-                    'confirmation_intent_consumed' =>
-                        true,
-                ],
+                'data' =>
+                    $data,
 
                 'message' =>
                     'Flight order creation completed.',

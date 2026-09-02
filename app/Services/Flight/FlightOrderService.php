@@ -51,7 +51,7 @@ final class FlightOrderService
 
         $status = $result['status'] ?? null;
 
-        return [
+        $normalized = [
             'status' => is_string($status) && $status !== ''
                 ? $status
                 : 'unavailable',
@@ -66,6 +66,17 @@ final class FlightOrderService
             'order_created' =>
                 ($result['order_created'] ?? false) === true,
         ];
+
+        $supplierOrderId =
+            $result['supplier_order_id']
+                ?? null;
+
+        if (is_string($supplierOrderId)) {
+            $normalized['supplier_order_id'] =
+                $supplierOrderId;
+        }
+
+        return $normalized;
     }
 
     private function normalizeProvider(mixed $provider): ?string

@@ -1107,7 +1107,654 @@ document.addEventListener('DOMContentLoaded', () => {
                         'outcome-uncertain';
 
                     status.textContent =
-    function renderFlightOrderAttemptRecoveryAction(
+        function renderFlightOrderPaymentAction(
+        resultsElement,
+        orderAttemptReference,
+    ) {
+        if (
+            typeof orderAttemptReference !== 'string' ||
+            !/^[A-Za-z0-9]{64}$/.test(orderAttemptReference)
+        ) {
+            return;
+        }
+
+        resultsElement
+            .querySelector('.flight-order-payment-panel')
+            ?.remove();
+
+        const readinessTemplate =
+            resultsElement.dataset
+                .flightPaymentReadinessUrlTemplate;
+
+        const executionTemplate =
+            resultsElement.dataset
+                .flightPaymentExecutionUrlTemplate;
+
+        const paymentStatusTemplate =
+            resultsElement.dataset
+                .flightPaymentAttemptStatusUrlTemplate;
+
+        const reconciliationTemplate =
+            resultsElement.dataset
+                .flightPaymentReconciliationUrlTemplate;
+
+        const csrfToken =
+            document.querySelector(
+                '[data-flight-search-form] input[name="_token"]',
+            )?.value;
+
+        const buildUrl = (
+            template,
+        ) => {
+            if (typeof template !== 'string') {
+                return '';
+            }
+
+            const url =
+                template.replace(
+                    '__ATTEMPT_REFERENCE__',
+                    encodeURIComponent(
+                        orderAttemptReference,
+                    ),
+                );
+
+            return url.includes(
+                '__ATTEMPT_REFERENCE__',
+            )
+                ? ''
+                : url;
+        };
+
+        const buildPaymentAttemptUrl = (
+            template,
+            paymentAttemptReference,
+        ) => {
+            if (
+                typeof template !== 'string' ||
+                typeof paymentAttemptReference !== 'string' ||
+                !/^[A-Za-z0-9]{64}$/.test(paymentAttemptReference)
+            ) {
+                return '';
+            }
+
+            const url =
+                template.replace(
+                    '__ATTEMPT_REFERENCE__',
+                    encodeURIComponent(
+                        paymentAttemptReference,
+                    ),
+                );
+
+            return url.includes(
+                '__ATTEMPT_REFERENCE__',
+            )
+                ? ''
+                : url;
+        };
+        const readinessUrl =
+            buildUrl(
+                readinessTemplate,
+            );
+
+        const executionUrl =
+            buildUrl(
+                executionTemplate,
+            );
+
+        const panel =
+            document.createElement('div');
+
+        panel.className =
+            'flight-order-payment-panel';
+
+        const status =
+            document.createElement('p');
+
+        status.className =
+            'flight-order-payment-status';
+
+        status.setAttribute(
+            'role',
+            'status',
+        );
+
+        status.setAttribute(
+            'aria-live',
+            'polite',
+        );
+
+        const button =
+            document.createElement('button');
+
+        button.type =
+            'button';
+
+        button.className =
+            'flight-booking-confirmation-intent-button flight-order-payment-button';
+
+        button.disabled =
+            true;
+
+        button.textContent =
+            'Checking payment readiness...';
+
+        status.textContent =
+            'Checking current server-side payment readiness.';
+
+        panel.append(
+            status,
+            button,
+        );
+
+        resultsElement.append(
+            panel,
+        );
+
+        if (
+            readinessUrl === '' ||
+            executionUrl === '' ||
+            typeof csrfToken !== 'string' ||
+            csrfToken === ''
+        ) {
+            button.textContent =
+                'Payment unavailable';
+
+            status.textContent =
+                'Secure payment controls are unavailable. No payment request was sent.';
+
+            return;
+        }
+
+        const renderPaymentRecoveryAction = (
+            paymentAttemptReference,
+        ) => {
+            const statusUrl =
+                buildPaymentAttemptUrl(
+                    paymentStatusTemplate,
+                    paymentAttemptReference,
+                );
+
+            const reconciliationUrl =
+                buildPaymentAttemptUrl(
+                    reconciliationTemplate,
+                    paymentAttemptReference,
+                );
+
+            button.remove();
+
+            if (
+                statusUrl === '' ||
+                reconciliationUrl === ''
+            ) {
+                status.textContent =
+                    'Secure payment recovery is unavailable. Do not retry payment blindly.';
+
+                return;
+            }
+
+            const checkButton =
+                document.createElement('button');
+
+            checkButton.type =
+                'button';
+
+            checkButton.className =
+                'flight-booking-confirmation-intent-button flight-payment-status-button';
+
+            checkButton.textContent =
+                'Check payment status';
+
+            const resetCheckButton = () => {
+                delete checkButton.dataset
+                    .flightPaymentRecoveryBusy;
+
+                checkButton.disabled =
+                    false;
+
+                checkButton.textContent =
+                    'Check payment status';
+            };
+
+            checkButton.addEventListener(
+                'click',
+                async () => {
+                    if (
+                        checkButton.dataset
+                            .flightPaymentRecoveryBusy ===
+                        'true'
+                    ) {
+                        return;
+                    }
+
+                    checkButton.dataset
+                        .flightPaymentRecoveryBusy =
+                        'true';
+
+                    checkButton.disabled =
+                        true;
+
+                    checkButton.textContent =
+                        'Checking payment status...';
+
+                    status.textContent =
+                        'Checking the current local payment status.';
+
+                    let statusResponse;
+
+                    try {
+                        statusResponse =
+                            await fetch(
+                                statusUrl,
+                                {
+                                    method:
+                                        'GET',
+
+                                    credentials:
+                                        'same-origin',
+
+                                    headers: {
+                                        Accept:
+                                            'application/json',
+
+                                        'X-Requested-With':
+                                            'XMLHttpRequest',
+                                    },
+                                },
+                            );
+                    } catch {
+                        status.textContent =
+                            'Payment status could not be reached. No payment retry was sent. You can check again.';
+
+                        resetCheckButton();
+
+                        return;
+                    }
+
+                    let statusPayload = {};
+
+                    try {
+                        statusPayload =
+                            await statusResponse.json();
+                    } catch {
+                        statusPayload = {};
+                    }
+
+                    if (!statusResponse.ok) {
+                        status.textContent =
+                            'Payment status is unavailable. No payment retry was sent. You can check again.';
+
+                        resetCheckButton();
+
+                        return;
+                    }
+
+                    const localStatus =
+                        statusPayload?.data?.status;
+
+                    if (
+                        localStatus === 'succeeded' ||
+                        localStatus === 'failed'
+                    ) {
+                        delete resultsElement.dataset
+                            .flightPaymentAttemptReference;
+
+                        checkButton.remove();
+
+                        status.textContent =
+                            localStatus === 'succeeded'
+                                ? 'Payment succeeded. Ticketing has not been performed yet.'
+                                : 'Payment failed. No automatic payment retry was sent.';
+
+                        return;
+                    }
+
+                    if (localStatus !== 'processing') {
+                        status.textContent =
+                            'The local payment status response was incomplete. No payment retry was sent.';
+
+                        resetCheckButton();
+
+                        return;
+                    }
+
+                    status.textContent =
+                        'Payment remains processing locally. Running one explicit reconciliation check.';
+
+                    let reconciliationResponse;
+
+                    try {
+                        reconciliationResponse =
+                            await fetch(
+                                reconciliationUrl,
+                                {
+                                    method:
+                                        'POST',
+
+                                    credentials:
+                                        'same-origin',
+
+                                    headers: {
+                                        Accept:
+                                            'application/json',
+
+                                        'X-CSRF-TOKEN':
+                                            csrfToken,
+
+                                        'X-Requested-With':
+                                            'XMLHttpRequest',
+                                    },
+                                },
+                            );
+                    } catch {
+                        status.textContent =
+                            'Payment reconciliation could not be reached. No payment retry was sent. You can check again.';
+
+                        resetCheckButton();
+
+                        return;
+                    }
+
+                    let reconciliationPayload = {};
+
+                    try {
+                        reconciliationPayload =
+                            await reconciliationResponse.json();
+                    } catch {
+                        reconciliationPayload = {};
+                    }
+
+                    if (reconciliationResponse.status === 503) {
+                        status.textContent =
+                            'Payment reconciliation is temporarily unavailable. No payment retry was sent. You can check again.';
+
+                        resetCheckButton();
+
+                        return;
+                    }
+
+                    const reconciledStatus =
+                        reconciliationPayload?.data?.status;
+
+                    if (
+                        reconciliationResponse.status === 202 &&
+                        reconciledStatus === 'processing'
+                    ) {
+                        status.textContent =
+                            'Payment is still processing. No duplicate payment request was sent. You can check again later.';
+
+                        resetCheckButton();
+
+                        return;
+                    }
+
+                    if (
+                        reconciliationResponse.ok &&
+                        (
+                            reconciledStatus === 'succeeded' ||
+                            reconciledStatus === 'failed'
+                        )
+                    ) {
+                        delete resultsElement.dataset
+                            .flightPaymentAttemptReference;
+
+                        checkButton.remove();
+
+                        status.textContent =
+                            reconciledStatus === 'succeeded'
+                                ? 'Payment succeeded. Ticketing has not been performed yet.'
+                                : 'Payment failed. No automatic payment retry was sent.';
+
+                        return;
+                    }
+
+                    status.textContent =
+                        'Payment reconciliation returned no usable state. No payment retry was sent.';
+
+                    resetCheckButton();
+                },
+            );
+
+            panel.append(
+                checkButton,
+            );
+        };
+        button.addEventListener(
+            'click',
+            async () => {
+                if (
+                    button.dataset
+                        .flightPaymentExecutionBusy ===
+                    'true'
+                ) {
+                    return;
+                }
+
+                button.dataset
+                    .flightPaymentExecutionBusy =
+                    'true';
+
+                button.disabled =
+                    true;
+
+                button.textContent =
+                    'Submitting payment...';
+
+                status.textContent =
+                    'Submitting one protected payment request.';
+
+                let response;
+
+                try {
+                    response =
+                        await fetch(
+                            executionUrl,
+                            {
+                                method:
+                                    'POST',
+
+                                credentials:
+                                    'same-origin',
+
+                                headers: {
+                                    Accept:
+                                        'application/json',
+
+                                    'X-CSRF-TOKEN':
+                                        csrfToken,
+
+                                    'X-Requested-With':
+                                        'XMLHttpRequest',
+                                },
+                            },
+                        );
+                } catch {
+                    button.textContent =
+                        'Payment outcome uncertain';
+
+                    status.textContent =
+                        'The payment outcome could not be received. Do not retry payment blindly.';
+
+                    return;
+                }
+
+                let payload = {};
+
+                try {
+                    payload =
+                        await response.json();
+                } catch {
+                    payload = {};
+                }
+
+                const paymentStatus =
+                    payload?.data?.status;
+
+                const paymentAttemptReference =
+                    typeof payload?.data
+                        ?.attempt_reference === 'string'
+                        ? payload.data
+                            .attempt_reference
+                            .trim()
+                        : '';
+
+                if (
+                    response.status === 202 &&
+                    paymentStatus === 'processing' &&
+                    /^[A-Za-z0-9]{64}$/.test(
+                        paymentAttemptReference,
+                    )
+                ) {
+                    resultsElement.dataset
+                        .flightPaymentAttemptReference =
+                        paymentAttemptReference;
+
+                    status.textContent =
+                        'Payment is processing. Use Check payment status before any further payment action.';
+
+                    renderPaymentRecoveryAction(
+                        paymentAttemptReference,
+                    );
+
+                    return;
+                }
+
+                if (
+                    response.ok &&
+                    paymentStatus === 'succeeded'
+                ) {
+                    delete resultsElement.dataset
+                        .flightPaymentAttemptReference;
+
+                    button.remove();
+
+                    status.textContent =
+                        'Payment succeeded. Ticketing has not been performed yet.';
+
+                    return;
+                }
+
+                if (
+                    response.ok &&
+                    paymentStatus === 'failed'
+                ) {
+                    delete resultsElement.dataset
+                        .flightPaymentAttemptReference;
+
+                    button.remove();
+
+                    status.textContent =
+                        'Payment failed. No automatic payment retry was sent.';
+
+                    return;
+                }
+
+                if (response.status === 503) {
+                    delete button.dataset
+                        .flightPaymentExecutionBusy;
+
+                    button.disabled =
+                        false;
+
+                    button.textContent =
+                        'Pay now';
+
+                    status.textContent =
+                        'Payment execution is temporarily unavailable. No payment result was created.';
+
+                    return;
+                }
+
+                button.textContent =
+                    'Payment unavailable';
+
+                status.textContent =
+                    'Payment execution is unavailable or already consumed. Do not retry payment blindly.';
+            },
+        );
+
+        const checkReadiness =
+            async () => {
+                let response;
+
+                try {
+                    response =
+                        await fetch(
+                            readinessUrl,
+                            {
+                                method:
+                                    'GET',
+
+                                credentials:
+                                    'same-origin',
+
+                                headers: {
+                                    Accept:
+                                        'application/json',
+
+                                    'X-Requested-With':
+                                        'XMLHttpRequest',
+                                },
+                            },
+                        );
+                } catch {
+                    button.textContent =
+                        'Payment unavailable';
+
+                    status.textContent =
+                        'Payment readiness could not be reached. No payment request was sent.';
+
+                    return;
+                }
+
+                let payload = {};
+
+                try {
+                    payload =
+                        await response.json();
+                } catch {
+                    payload = {};
+                }
+
+                if (!response.ok) {
+                    button.textContent =
+                        'Payment unavailable';
+
+                    status.textContent =
+                        response.status === 503
+                            ? 'Payment readiness is temporarily unavailable. No payment request was sent.'
+                            : 'This order is not currently available for payment.';
+
+                    return;
+                }
+
+                if (
+                    payload?.data?.status !==
+                        'ready_for_payment' ||
+                    payload?.data
+                        ?.awaiting_payment !== true
+                ) {
+                    button.textContent =
+                        'Payment not ready';
+
+                    status.textContent =
+                        'This order is not currently ready for payment.';
+
+                    return;
+                }
+
+                button.disabled =
+                    false;
+
+                button.textContent =
+                    'Pay now';
+
+                status.textContent =
+                    'The order is ready for payment. Payment requires this separate explicit Pay now action.';
+            };
+
+        void checkReadiness();
+    }
+function renderFlightOrderAttemptRecoveryAction(
         resultsElement,
         executionButton,
         executionStatus,
@@ -1237,6 +1884,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 executionStatus.textContent =
                     'Flight order creation completed. No payment or ticketing action was performed by this step.';
+
+                renderFlightOrderPaymentAction(
+                    resultsElement,
+                    attemptReference,
+                );
 
                 recoveryButton.remove();
 
@@ -1491,6 +2143,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 status.textContent =
                     'Flight order creation completed. No payment or ticketing action was performed by this step.';
+
+                renderFlightOrderPaymentAction(
+                    resultsElement,
+                    attemptReference,
+                );
             },
         );
 

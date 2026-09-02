@@ -216,6 +216,14 @@ final class DuffelFlightOrderProvider implements FlightOrderProvider
             'status' => 'created',
             'live_order_creation' => true,
             'order_created' => true,
+
+            /*
+             * Internal server-only durability bridge.
+             *
+             * Controllers must never expose this supplier identity.
+             */
+            'supplier_order_id' =>
+                $supplierOrderId,
         ];
     }
 

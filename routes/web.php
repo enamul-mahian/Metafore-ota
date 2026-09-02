@@ -300,6 +300,17 @@ Route::get(
         'permission:flights.book',
     ])
     ->name('flights.bookings.orders.attempts.payment-readiness.show');
+Route::post(
+    '/flights/bookings/orders/attempts/{attemptReference}/payments',
+    \App\Http\Controllers\Flight\FlightOrderPaymentExecutionController::class,
+)
+    ->middleware([
+        'auth',
+        'verified',
+        'permission:flights.book',
+    ])
+    ->name('flights.bookings.orders.attempts.payments.store');
+
 Route::get(
     '/flights/bookings/orders/payments/attempts/{attemptReference}',
     \App\Http\Controllers\Flight\FlightOrderPaymentAttemptStatusController::class,
