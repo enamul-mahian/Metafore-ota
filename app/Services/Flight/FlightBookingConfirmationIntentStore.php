@@ -11,8 +11,13 @@ final class FlightBookingConfirmationIntentStore
 {
     private const TTL_SECONDS = 600;
 
+    private const CONSUME_LOCK_SECONDS = 15;
+
     private const CACHE_PREFIX =
         'flight_booking_confirmation_intent:';
+
+    private const CONSUME_LOCK_PREFIX =
+        'flight_booking_confirmation_intent_consume_lock:';
 
     public function __construct(
         private readonly Encrypter $encrypter,
@@ -62,6 +67,14 @@ final class FlightBookingConfirmationIntentStore
     }
 
     /**
+     * Read without consuming.
+     *
+     * This remains available for safe server-side inspection and
+     * compatibility with the existing confirmation-intent foundation.
+     *
+     * Future supplier order execution must use take(), not get()
+     * followed later by forget().
+     *
      * @return array{
      *     criteria: array<string, mixed>,
      *     offer: array<string, mixed>,
@@ -78,14 +91,118 @@ final class FlightBookingConfirmationIntentStore
             return null;
         }
 
-        $encryptedPayload =
+        return $this->decryptPayload(
             Cache::get(
                 $this->cacheKey(
                     $userId,
                     $token,
                 ),
+            ),
+        );
+    }
+
+    /**
+     * Atomically claim and consume a confirmation intent.
+     *
+     * The per-user, per-token cache lock prevents two execution
+     * requests from both receiving the same trusted snapshot.
+     *
+     * The cached intent is removed while the lock is held and before
+     * the trusted snapshot is returned to the future supplier-order
+     * execution boundary.
+     *
+     * @return array{
+     *     criteria: array<string, mixed>,
+     *     offer: array<string, mixed>,
+     *     travelers: array<int, array<string, mixed>>,
+     *     revalidation: array<string, mixed>,
+     *     created_at: string
+     * }|null
+     */
+    public function take(
+        int $userId,
+        string $token,
+    ): ?array {
+        if (strlen($token) !== 64) {
+            return null;
+        }
+
+        $cacheKey =
+            $this->cacheKey(
+                $userId,
+                $token,
             );
 
+        $lock =
+            Cache::lock(
+                $this->consumeLockKey(
+                    $userId,
+                    $token,
+                ),
+                self::CONSUME_LOCK_SECONDS,
+            );
+
+        if (! $lock->get()) {
+            return null;
+        }
+
+        try {
+            /*
+             * Consume while the lock is held.
+             *
+             * Do not implement this as get() followed later by forget()
+             * outside the lock; that would leave a replay race.
+             */
+            $encryptedPayload =
+                Cache::get(
+                    $cacheKey,
+                );
+
+            Cache::forget(
+                $cacheKey,
+            );
+
+            return $this->decryptPayload(
+                $encryptedPayload,
+            );
+        } finally {
+            $lock->release();
+        }
+    }
+
+    public function forget(
+        int $userId,
+        string $token,
+    ): void {
+        if (strlen($token) !== 64) {
+            return;
+        }
+
+        Cache::forget(
+            $this->cacheKey(
+                $userId,
+                $token,
+            ),
+        );
+    }
+
+    public function expiresInSeconds(): int
+    {
+        return self::TTL_SECONDS;
+    }
+
+    /**
+     * @return array{
+     *     criteria: array<string, mixed>,
+     *     offer: array<string, mixed>,
+     *     travelers: array<int, array<string, mixed>>,
+     *     revalidation: array<string, mixed>,
+     *     created_at: string
+     * }|null
+     */
+    private function decryptPayload(
+        mixed $encryptedPayload,
+    ): ?array {
         if (! is_string($encryptedPayload)) {
             return null;
         }
@@ -120,32 +237,24 @@ final class FlightBookingConfirmationIntentStore
         return $intent;
     }
 
-    public function forget(
-        int $userId,
-        string $token,
-    ): void {
-        if (strlen($token) !== 64) {
-            return;
-        }
-
-        Cache::forget(
-            $this->cacheKey(
-                $userId,
-                $token,
-            ),
-        );
-    }
-
-    public function expiresInSeconds(): int
-    {
-        return self::TTL_SECONDS;
-    }
-
     private function cacheKey(
         int $userId,
         string $token,
     ): string {
         return self::CACHE_PREFIX
+            . $userId
+            . ':'
+            . hash(
+                'sha256',
+                $token,
+            );
+    }
+
+    private function consumeLockKey(
+        int $userId,
+        string $token,
+    ): string {
+        return self::CONSUME_LOCK_PREFIX
             . $userId
             . ':'
             . hash(
