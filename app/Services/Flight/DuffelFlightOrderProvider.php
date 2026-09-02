@@ -11,6 +11,7 @@ final class DuffelFlightOrderProvider implements FlightOrderProvider
 {
     public function __construct(
         private readonly DuffelFlightOrderRequestBuilder $requestBuilder,
+        private readonly FlightOrderAttemptStore $attemptStore,
     ) {
     }
 
@@ -104,6 +105,32 @@ final class DuffelFlightOrderProvider implements FlightOrderProvider
             ),
         );
 
+        /*
+         * Claim immediately before the supplier HTTP boundary.
+         *
+         * The identity is the exact trusted offer ID emitted by the
+         * request builder into selected_offers. This means multiple
+         * confirmation-intent tokens for the same supplier offer cannot
+         * result in multiple local POST /air/orders attempts.
+         *
+         * Local failures before this point do not burn the claim.
+         * Once claimed, the marker is deliberately retained even when
+         * the supplier result is uncertain.
+         */
+        $attemptOfferId =
+            $this->attemptOfferId(
+                $requestBody,
+            );
+
+        if (
+            ! $this->attemptStore->claim(
+                'duffel',
+                $attemptOfferId,
+            )
+        ) {
+            throw $this->supplierUnavailable();
+        }
+
         try {
             $response = Http::baseUrl(
                 $baseUrl,
@@ -123,10 +150,18 @@ final class DuffelFlightOrderProvider implements FlightOrderProvider
                     $requestBody,
                 );
         } catch (ConnectionException) {
+            /*
+             * Do not release the attempt claim.
+             * The supplier outcome can be uncertain.
+             */
             throw $this->supplierUnavailable();
         }
 
         if ($response->failed()) {
+            /*
+             * Do not release the attempt claim.
+             * The current boundary must not blindly replay order creation.
+             */
             throw $this->supplierUnavailable();
         }
 
@@ -135,6 +170,12 @@ final class DuffelFlightOrderProvider implements FlightOrderProvider
         );
 
         if (! is_array($supplierOrder)) {
+            /*
+             * Includes accepted/ambiguous responses that do not yet
+             * contain a normalized Duffel order object.
+             *
+             * Do not release the attempt claim.
+             */
             throw $this->supplierUnavailable();
         }
 
@@ -180,6 +221,37 @@ final class DuffelFlightOrderProvider implements FlightOrderProvider
         ) {
             throw $this->supplierUnavailable();
         }
+    }
+
+    /**
+     * @param array<string, mixed> $requestBody
+     */
+    private function attemptOfferId(
+        array $requestBody,
+    ): string {
+        $offerId =
+            data_get(
+                $requestBody,
+                'data.selected_offers.0',
+            );
+
+        if (! is_string($offerId)) {
+            throw $this->supplierUnavailable();
+        }
+
+        $offerId =
+            trim(
+                $offerId,
+            );
+
+        if (
+            $offerId === ''
+            || strlen($offerId) > 255
+        ) {
+            throw $this->supplierUnavailable();
+        }
+
+        return $offerId;
     }
 
     private function isOrderId(

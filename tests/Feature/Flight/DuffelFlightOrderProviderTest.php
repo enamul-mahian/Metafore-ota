@@ -5,12 +5,20 @@ namespace Tests\Feature\Flight;
 use App\Services\Flight\DuffelFlightOrderProvider;
 use App\Services\Flight\DuffelFlightOrderRequestBuilder;
 use Illuminate\Http\Client\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 use Symfony\Component\HttpKernel\Exception\ServiceUnavailableHttpException;
 use Tests\TestCase;
 
 final class DuffelFlightOrderProviderTest extends TestCase
 {
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        Cache::flush();
+    }
+
     public function test_live_order_gate_is_disabled_by_default_without_http(): void
     {
         Http::fake();
