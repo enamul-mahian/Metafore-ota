@@ -2,11 +2,14 @@
 
 namespace App\Services\Flight;
 
+use App\Exceptions\Flight\FlightOrderProcessingException;
+
 final class FlightOrderExecutionService
 {
     public function __construct(
         private readonly FlightBookingConfirmationIntentStore $confirmationIntentStore,
         private readonly FlightOrderService $orderService,
+        private readonly FlightOrderAttemptRecordStore $orderAttemptRecordStore,
     ) {
     }
 
@@ -14,7 +17,9 @@ final class FlightOrderExecutionService
      * Consume one user-scoped confirmation intent and delegate its
      * server-trusted snapshot to the provider-neutral order service.
      *
-     * This service performs no direct supplier HTTP and no persistence.
+     * This service performs no direct supplier HTTP. On an explicit
+     * asynchronous processing outcome, it persists only the minimal
+     * user-owned durable attempt identity needed for reconciliation.
      *
      * A consumed execution attempt is intentionally single-use even when
      * the downstream provider returns unavailable. This prevents replay of
@@ -69,11 +74,59 @@ final class FlightOrderExecutionService
         $trustedIntent['provider'] =
             $provider;
 
-        $result =
-            $this->orderService
-                ->createFromTrustedConfirmationIntent(
-                    $trustedIntent,
+        try {
+            $result =
+                $this->orderService
+                    ->createFromTrustedConfirmationIntent(
+                        $trustedIntent,
+                    );
+        } catch (FlightOrderProcessingException $exception) {
+            $supplierOfferId =
+                $exception->supplierOfferId();
+
+            if ($supplierOfferId === null) {
+                throw $exception;
+            }
+
+            try {
+                $processingRecord =
+                    $this->orderAttemptRecordStore
+                        ->createProcessing(
+                            $userId,
+                            $exception->provider(),
+                            $supplierOfferId,
+                        );
+            } catch (\Throwable $persistenceException) {
+                /*
+                 * The supplier outcome remains uncertain even when
+                 * durable persistence is temporarily unavailable.
+                 * Keep the externally safe processing semantics and
+                 * never turn this into a retry instruction.
+                 */
+                report(
+                    $persistenceException,
                 );
+
+                throw $exception;
+            }
+
+            $attemptReference =
+                is_array($processingRecord)
+                    ? ($processingRecord['reference'] ?? null)
+                    : null;
+
+            if (
+                ! is_string($attemptReference)
+                || $attemptReference === ''
+            ) {
+                throw $exception;
+            }
+
+            throw $exception
+                ->withAttemptReference(
+                    $attemptReference,
+                );
+        }
 
         $status =
             $result['status']

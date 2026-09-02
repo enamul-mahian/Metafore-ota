@@ -166,8 +166,10 @@ final class DuffelFlightOrderProvider implements FlightOrderProvider
          * Do not parse the response as a completed order and do not retry.
          */
         if ($response->status() === 202) {
-            throw new FlightOrderProcessingException(
+            throw (new FlightOrderProcessingException(
                 'duffel',
+            ))->withSupplierOfferId(
+                $attemptOfferId,
             );
         }
         if ($response->failed()) {
