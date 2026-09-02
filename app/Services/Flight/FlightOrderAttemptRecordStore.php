@@ -188,6 +188,159 @@ final class FlightOrderAttemptRecordStore
             ->first();
     }
 
+    public function markCreated(
+        string $provider,
+        string $supplierOfferId,
+        string $supplierOrderId,
+    ): ?FlightOrderAttempt {
+        $provider =
+            $this->normalizeProvider(
+                $provider,
+            );
+
+        $supplierOfferId =
+            $this->normalizeSupplierOfferId(
+                $supplierOfferId,
+            );
+
+        $supplierOrderId =
+            $this->normalizeSupplierOrderId(
+                $supplierOrderId,
+            );
+
+        if (
+            $provider === null
+            || $supplierOfferId === null
+            || $supplierOrderId === null
+        ) {
+            return null;
+        }
+
+        $attemptIdentityHash =
+            $this->attemptIdentityHash(
+                $provider,
+                $supplierOfferId,
+            );
+
+        $updated =
+            FlightOrderAttempt::query()
+                ->where(
+                    'attempt_identity_hash',
+                    $attemptIdentityHash,
+                )
+                ->where(
+                    'status',
+                    FlightOrderAttempt::STATUS_PROCESSING,
+                )
+                ->update([
+                    'status' =>
+                        FlightOrderAttempt::STATUS_CREATED,
+
+                    'supplier_order_id' =>
+                        $supplierOrderId,
+
+                    'resolved_at' =>
+                        now(),
+                ]);
+
+        if ($updated !== 1) {
+            return null;
+        }
+
+        return FlightOrderAttempt::query()
+            ->where(
+                'attempt_identity_hash',
+                $attemptIdentityHash,
+            )
+            ->first();
+    }
+
+    public function markFailed(
+        string $provider,
+        string $supplierOfferId,
+    ): ?FlightOrderAttempt {
+        $provider =
+            $this->normalizeProvider(
+                $provider,
+            );
+
+        $supplierOfferId =
+            $this->normalizeSupplierOfferId(
+                $supplierOfferId,
+            );
+
+        if (
+            $provider === null
+            || $supplierOfferId === null
+        ) {
+            return null;
+        }
+
+        $attemptIdentityHash =
+            $this->attemptIdentityHash(
+                $provider,
+                $supplierOfferId,
+            );
+
+        $updated =
+            FlightOrderAttempt::query()
+                ->where(
+                    'attempt_identity_hash',
+                    $attemptIdentityHash,
+                )
+                ->where(
+                    'status',
+                    FlightOrderAttempt::STATUS_PROCESSING,
+                )
+                ->update([
+                    'status' =>
+                        FlightOrderAttempt::STATUS_FAILED,
+
+                    'supplier_order_id' =>
+                        null,
+
+                    'resolved_at' =>
+                        now(),
+                ]);
+
+        if ($updated !== 1) {
+            return null;
+        }
+
+        return FlightOrderAttempt::query()
+            ->where(
+                'attempt_identity_hash',
+                $attemptIdentityHash,
+            )
+            ->first();
+    }
+
+    private function normalizeSupplierOrderId(
+        string $supplierOrderId,
+    ): ?string {
+        $supplierOrderId =
+            trim(
+                $supplierOrderId,
+            );
+
+        $controlCharacterMatch =
+            preg_match(
+                '/[\x00-\x1F\x7F]/',
+                $supplierOrderId,
+            );
+
+        if (
+            $supplierOrderId === ''
+            || strlen(
+                $supplierOrderId,
+            ) > 255
+            || $controlCharacterMatch !== 0
+        ) {
+            return null;
+        }
+
+        return $supplierOrderId;
+    }
     private function normalizeProvider(
         string $provider,
     ): ?string {
