@@ -1,9 +1,14 @@
 <?php
 
+use App\Http\Controllers\Flight\FlightBookingDraftController;
+use App\Http\Controllers\Flight\FlightBookingDraftReviewController;
 use App\Http\Controllers\Admin\CityController;
 use App\Http\Controllers\Admin\CountryController;
 use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\SettingPageController;
+use App\Http\Controllers\Flight\FlightOfferSelectionController;
+use App\Http\Controllers\Flight\FlightTravelerValidationController;
+use App\Http\Controllers\Flight\FlightSearchController;
 use Illuminate\Support\Facades\Route;
 
 Route::view('/', 'welcome')->name('home');
@@ -12,6 +17,29 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::view('/dashboard', 'dashboard')
         ->name('dashboard');
+
+    Route::view('/flights', 'flights.search')
+        ->middleware('permission:flights.search')
+        ->name('flights.index');
+
+    Route::post(
+        '/flights/search',
+        FlightSearchController::class
+    )
+        ->middleware('permission:flights.search')
+        ->name('flights.search');
+    Route::post(
+        '/flights/offers/select',
+        FlightOfferSelectionController::class
+    )
+        ->middleware('permission:flights.search')
+        ->name('flights.offers.select');
+    Route::post(
+        '/flights/travelers/validate',
+        FlightTravelerValidationController::class
+    )
+        ->middleware('permission:flights.search')
+        ->name('flights.travelers.validate');
 
     Route::prefix('admin')
         ->name('admin.')
@@ -192,3 +220,126 @@ Route::get(
         'permission:settings.view',
     ])
     ->name('admin.settings.manage');
+
+Route::post('/flights/bookings/drafts', [FlightBookingDraftController::class, 'store'])
+    ->middleware(['auth', 'verified', 'permission:flights.book'])
+    ->name('flights.bookings.drafts.store');
+
+Route::post('/flights/bookings/drafts/review', [FlightBookingDraftReviewController::class, 'store'])
+    ->middleware(['auth', 'verified', 'permission:flights.book'])
+    ->name('flights.bookings.drafts.review');
+
+Route::post(
+    '/flights/bookings/confirmation-intents',
+    [
+        \App\Http\Controllers\Flight\FlightBookingConfirmationIntentController::class,
+        'store',
+    ],
+)
+    ->middleware([
+        'auth',
+        'verified',
+        'permission:flights.book',
+    ])
+    ->name(
+        'flights.bookings.confirmation-intents.store'
+    );
+
+Route::get(
+    '/flights/bookings/orders/attempts/{attemptReference}',
+    [
+        \App\Http\Controllers\Flight\FlightOrderAttemptStatusController::class,
+        'show',
+    ],
+)
+    ->middleware([
+        'auth',
+        'verified',
+        'permission:flights.book',
+    ])
+    ->name(
+        'flights.bookings.orders.attempts.show',
+    );
+Route::post(
+    '/flights/bookings/orders/attempts/{attemptReference}/reconcile',
+    [
+        \App\Http\Controllers\Flight\FlightOrderReconciliationController::class,
+        'store',
+    ],
+)
+    ->middleware([
+        'auth',
+        'verified',
+        'permission:flights.book',
+    ])
+    ->name(
+        'flights.bookings.orders.attempts.reconcile',
+    );
+Route::post(
+    '/flights/bookings/orders/execute',
+    [
+        \App\Http\Controllers\Flight\FlightOrderExecutionController::class,
+        'store',
+    ],
+)
+    ->middleware([
+        'auth',
+        'verified',
+        'permission:flights.book',
+    ])
+    ->name(
+        'flights.bookings.orders.execute'
+    );
+Route::get(
+    '/flights/bookings/orders/attempts/{attemptReference}/payment-readiness',
+    \App\Http\Controllers\Flight\FlightOrderPaymentReadinessController::class,
+)
+    ->middleware([
+        'auth',
+        'verified',
+        'permission:flights.book',
+    ])
+    ->name('flights.bookings.orders.attempts.payment-readiness.show');
+Route::post(
+    '/flights/bookings/orders/attempts/{attemptReference}/payments',
+    \App\Http\Controllers\Flight\FlightOrderPaymentExecutionController::class,
+)
+    ->middleware([
+        'auth',
+        'verified',
+        'permission:flights.book',
+    ])
+    ->name('flights.bookings.orders.attempts.payments.store');
+
+Route::get(
+    '/flights/bookings/orders/payments/attempts/{attemptReference}',
+    \App\Http\Controllers\Flight\FlightOrderPaymentAttemptStatusController::class,
+)
+    ->middleware([
+        'auth',
+        'verified',
+        'permission:flights.book',
+    ])
+    ->name('flights.bookings.orders.payments.attempts.show');
+
+Route::post(
+    '/flights/bookings/orders/payments/attempts/{attemptReference}/reconcile',
+    \App\Http\Controllers\Flight\FlightOrderPaymentReconciliationController::class,
+)
+    ->middleware([
+        'auth',
+        'verified',
+        'permission:flights.book',
+    ])
+    ->name('flights.bookings.orders.payments.attempts.reconcile');
+
+Route::get(
+    '/flights/bookings/orders/attempts/{attemptReference}/confirmation',
+    \App\Http\Controllers\Flight\FlightOrderConfirmationController::class,
+)
+    ->middleware([
+        'auth',
+        'verified',
+        'permission:flights.book',
+    ])
+    ->name('flights.bookings.orders.attempts.confirmation.show');

@@ -14,7 +14,8 @@ class RolePermissionSeeder extends Seeder
      */
     public function run(): void
     {
-        app(PermissionRegistrar::class)->forgetCachedPermissions();
+        app(PermissionRegistrar::class)
+            ->forgetCachedPermissions();
 
         $guard = 'web';
 
@@ -38,6 +39,9 @@ class RolePermissionSeeder extends Seeder
 
             'master-data.view',
             'master-data.manage',
+
+            'flights.search',
+            'flights.book',
         ];
 
         foreach ($permissions as $permission) {
@@ -94,6 +98,9 @@ class RolePermissionSeeder extends Seeder
 
             'master-data.view',
             'master-data.manage',
+
+            'flights.search',
+            'flights.book',
         ]);
 
         /*
@@ -104,8 +111,11 @@ class RolePermissionSeeder extends Seeder
 
         $customer->syncPermissions([
             'dashboard.view',
+            'flights.search',
+            'flights.book',
         ]);
 
-        app(PermissionRegistrar::class)->forgetCachedPermissions();
+        app(PermissionRegistrar::class)
+            ->forgetCachedPermissions();
     }
 }
