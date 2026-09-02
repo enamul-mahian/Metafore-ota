@@ -245,6 +245,21 @@ Route::post(
         'flights.bookings.confirmation-intents.store'
     );
 
+Route::get(
+    '/flights/bookings/orders/attempts/{attemptReference}',
+    [
+        \App\Http\Controllers\Flight\FlightOrderAttemptStatusController::class,
+        'show',
+    ],
+)
+    ->middleware([
+        'auth',
+        'verified',
+        'permission:flights.book',
+    ])
+    ->name(
+        'flights.bookings.orders.attempts.show',
+    );
 Route::post(
     '/flights/bookings/orders/execute',
     [
