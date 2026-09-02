@@ -3,6 +3,7 @@
 namespace Tests\Feature\Flight;
 
 use App\Contracts\Flight\FlightOrderProvider;
+use App\Services\Flight\DuffelFlightOrderProvider;
 use App\Services\Flight\FlightOrderService;
 use App\Services\Flight\UnavailableFlightOrderProvider;
 use Illuminate\Support\Facades\Http;
@@ -40,9 +41,14 @@ final class FlightOrderServiceTest extends TestCase
         Http::assertNothingSent();
     }
 
-    public function test_duffel_provider_is_unavailable_without_http(): void
+    public function test_duffel_provider_is_default_disabled_without_http(): void
     {
         Http::fake();
+
+        config()->set(
+            'flight_orders.duffel.live_order_creation_enabled',
+            false,
+        );
 
         $result = $this->service()->createFromTrustedConfirmationIntent([
             'provider' => 'duffel',
@@ -164,7 +170,7 @@ final class FlightOrderServiceTest extends TestCase
         Http::assertNothingSent();
     }
 
-    public function test_config_maps_current_providers_to_unavailable_provider(): void
+    public function test_config_maps_fixture_to_unavailable_and_duffel_to_dedicated_provider(): void
     {
         $this->assertSame(
             UnavailableFlightOrderProvider::class,
@@ -172,8 +178,15 @@ final class FlightOrderServiceTest extends TestCase
         );
 
         $this->assertSame(
-            UnavailableFlightOrderProvider::class,
+            DuffelFlightOrderProvider::class,
             config('flight_orders.providers.duffel')
+        );
+
+        $this->assertFalse(
+            (bool) config(
+                'flight_orders.duffel.live_order_creation_enabled',
+                false,
+            ),
         );
     }
 
