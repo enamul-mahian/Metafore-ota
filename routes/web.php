@@ -261,6 +261,21 @@ Route::get(
         'flights.bookings.orders.attempts.show',
     );
 Route::post(
+    '/flights/bookings/orders/attempts/{attemptReference}/reconcile',
+    [
+        \App\Http\Controllers\Flight\FlightOrderReconciliationController::class,
+        'store',
+    ],
+)
+    ->middleware([
+        'auth',
+        'verified',
+        'permission:flights.book',
+    ])
+    ->name(
+        'flights.bookings.orders.attempts.reconcile',
+    );
+Route::post(
     '/flights/bookings/orders/execute',
     [
         \App\Http\Controllers\Flight\FlightOrderExecutionController::class,
