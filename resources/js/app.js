@@ -134,7 +134,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const flightPlaceCode = (place) => {
-        return place?.iata_code || place?.name || 'Ã¢â‚¬â€';
+        return place?.iata_code || place?.name || 'ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â';
     };
 
     const flightCarrierName = (segment, offer) => {
@@ -317,7 +317,7 @@ document.addEventListener('DOMContentLoaded', () => {
             createFlightElement(
                 'span',
                 'flight-segment-line',
-                'Ã¢â€ â€™'
+                'ÃƒÂ¢Ã¢â‚¬Â Ã¢â‚¬â„¢'
             )
         );
 
@@ -394,7 +394,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 'flight-slice-route',
                 `${flightPlaceCode(
                     slice?.origin
-                )} Ã¢â€ â€™ ${flightPlaceCode(
+                )} ÃƒÂ¢Ã¢â‚¬Â Ã¢â‚¬â„¢ ${flightPlaceCode(
                     slice?.destination
                 )}`
             )
@@ -763,7 +763,335 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 
-        function clearFlightBookingConfirmationIntentState(
+        function renderFlightOrderExecutionAction(
+        resultsElement,
+        csrfToken,
+    ) {
+        const existingPanel =
+            resultsElement.querySelector(
+                '.flight-order-execution-panel',
+            );
+
+        if (existingPanel) {
+            existingPanel.remove();
+        }
+
+        const executionUrl =
+            resultsElement
+                .dataset
+                .flightOrderExecutionUrl;
+
+        let confirmationIntentToken =
+            resultsElement
+                .dataset
+                .flightBookingConfirmationIntentToken;
+
+        if (
+            !executionUrl ||
+            !csrfToken ||
+            typeof confirmationIntentToken !== 'string' ||
+            confirmationIntentToken.length !== 64
+        ) {
+            return;
+        }
+
+        const discardConfirmationIntent = () => {
+            delete resultsElement
+                .dataset
+                .flightBookingConfirmationIntentToken;
+
+            delete resultsElement
+                .dataset
+                .flightBookingConfirmationIntentExpiresInSeconds;
+
+            confirmationIntentToken =
+                '';
+        };
+
+        const panel =
+            document.createElement('div');
+
+        panel.className =
+            'flight-order-execution-panel';
+
+        const status =
+            document.createElement('p');
+
+        status.className =
+            'flight-order-execution-status';
+
+        status.setAttribute(
+            'role',
+            'status',
+        );
+
+        status.setAttribute(
+            'aria-live',
+            'polite',
+        );
+
+        status.dataset
+            .flightOrderExecutionStatus =
+            'ready';
+
+        status.textContent =
+            'A secure confirmation intent is ready. Creating the flight order requires a separate explicit action.';
+
+        const disclaimer =
+            document.createElement('p');
+
+        disclaimer.className =
+            'flight-order-execution-disclaimer';
+
+        disclaimer.textContent =
+            'The confirmation intent is single-use. If an execution attempt is consumed or its outcome is uncertain, do not retry that intent. Payment and ticketing remain outside this step.';
+
+        const button =
+            document.createElement('button');
+
+        button.type =
+            'button';
+
+        button.className =
+            'flight-order-execution-button';
+
+        button.textContent =
+            'Create flight order';
+
+        panel.append(
+            status,
+            disclaimer,
+            button,
+        );
+
+        button.addEventListener(
+            'click',
+            async () => {
+                if (
+                    typeof confirmationIntentToken !== 'string' ||
+                    confirmationIntentToken.length !== 64
+                ) {
+                    button.disabled =
+                        true;
+
+                    button.textContent =
+                        'Review flight again';
+
+                    status.dataset
+                        .flightOrderExecutionStatus =
+                        'unavailable';
+
+                    status.textContent =
+                        'The secure confirmation intent is no longer available. Review the flight again before another order attempt.';
+
+                    return;
+                }
+
+                button.disabled =
+                    true;
+
+                button.textContent =
+                    'Creating flight order...';
+
+                status.dataset
+                    .flightOrderExecutionStatus =
+                    'executing';
+
+                status.textContent =
+                    'Submitting the single-use secure confirmation intent. Do not refresh or retry while this request is in progress.';
+
+                let response;
+
+                try {
+                    response =
+                        await fetch(
+                            executionUrl,
+                            {
+                                method:
+                                    'POST',
+
+                                credentials:
+                                    'same-origin',
+
+                                headers: {
+                                    Accept:
+                                        'application/json',
+
+                                    'Content-Type':
+                                        'application/json',
+
+                                    'X-CSRF-TOKEN':
+                                        csrfToken,
+
+                                    'X-Requested-With':
+                                        'XMLHttpRequest',
+                                },
+
+                                body:
+                                    JSON.stringify({
+                                        confirmation_intent_token:
+                                            confirmationIntentToken,
+                                    }),
+                            },
+                        );
+                } catch {
+                    discardConfirmationIntent();
+
+                    button.disabled =
+                        true;
+
+                    button.textContent =
+                        'Review flight again';
+
+                    status.dataset
+                        .flightOrderExecutionStatus =
+                        'outcome-uncertain';
+
+                    status.textContent =
+                        'The order request outcome is uncertain because the response could not be received. Do not retry this confirmation intent. Review the flight again before any further attempt.';
+
+                    return;
+                }
+
+                let payload = {};
+
+                try {
+                    payload =
+                        await response.json();
+                } catch {
+                    payload = {};
+                }
+
+                const confirmationIntentConsumed =
+                    payload?.data
+                        ?.confirmation_intent_consumed === true;
+
+                if (confirmationIntentConsumed) {
+                    discardConfirmationIntent();
+                }
+
+                if (response.status === 410) {
+                    discardConfirmationIntent();
+
+                    button.disabled =
+                        true;
+
+                    button.textContent =
+                        'Review flight again';
+
+                    status.dataset
+                        .flightOrderExecutionStatus =
+                        'confirmation-unavailable';
+
+                    status.textContent =
+                        'This confirmation intent is expired, unavailable, or already used. Review the flight again before creating another order attempt.';
+
+                    return;
+                }
+
+                if (!response.ok) {
+                    if (
+                        response.status === 503 &&
+                        payload?.data?.status ===
+                            'execution_disabled' &&
+                        confirmationIntentConsumed === false
+                    ) {
+                        button.disabled =
+                            false;
+
+                        button.textContent =
+                            'Create flight order';
+
+                        status.dataset
+                            .flightOrderExecutionStatus =
+                            'execution-disabled';
+
+                        status.textContent =
+                            'Flight order execution is currently unavailable. The short-lived confirmation intent was not consumed.';
+
+                        return;
+                    }
+
+                    if (confirmationIntentConsumed) {
+                        button.disabled =
+                            true;
+
+                        button.textContent =
+                            'Review flight again';
+
+                        status.dataset
+                            .flightOrderExecutionStatus =
+                            'attempt-consumed';
+
+                        status.textContent =
+                            'The single-use order attempt was consumed, but the order result is unavailable or uncertain. Do not retry this confirmation intent. Review the flight again.';
+
+                        return;
+                    }
+
+                    discardConfirmationIntent();
+
+                    button.disabled =
+                        true;
+
+                    button.textContent =
+                        'Review flight again';
+
+                    status.dataset
+                        .flightOrderExecutionStatus =
+                        'outcome-uncertain';
+
+                    status.textContent =
+                        'The order execution response was not safe to retry. Do not retry this confirmation intent. Review the flight again before another attempt.';
+
+                    return;
+                }
+
+                if (
+                    response.status !== 201 ||
+                    payload?.data?.status !== 'created' ||
+                    payload?.data?.order_created !== true ||
+                    payload?.data?.live_order_creation !== true ||
+                    confirmationIntentConsumed !== true
+                ) {
+                    discardConfirmationIntent();
+
+                    button.disabled =
+                        true;
+
+                    button.textContent =
+                        'Review flight again';
+
+                    status.dataset
+                        .flightOrderExecutionStatus =
+                        'outcome-uncertain';
+
+                    status.textContent =
+                        'The flight order response was incomplete or uncertain. Do not retry this confirmation intent. Review the flight again.';
+
+                    return;
+                }
+
+                button.disabled =
+                    true;
+
+                button.textContent =
+                    'Order created';
+
+                status.dataset
+                    .flightOrderExecutionStatus =
+                    'created';
+
+                status.textContent =
+                    'Flight order creation completed. No payment or ticketing action was performed by this step.';
+            },
+        );
+
+        resultsElement.append(
+            panel,
+        );
+    }
+function clearFlightBookingConfirmationIntentState(
         resultsElement,
     ) {
         delete resultsElement
@@ -773,6 +1101,15 @@ document.addEventListener('DOMContentLoaded', () => {
         delete resultsElement
             .dataset
             .flightBookingConfirmationIntentExpiresInSeconds;
+
+        const executionPanel =
+            resultsElement.querySelector(
+                '.flight-order-execution-panel',
+            );
+
+        if (executionPanel) {
+            executionPanel.remove();
+        }
     }
 
     function renderFlightBookingConfirmationIntentAction(
@@ -1220,6 +1557,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 status.textContent =
                     'Latest fare acknowledged and a short-lived secure confirmation intent was created. The intent token remains private and is not shown in the page or URL. No supplier booking, ticket, payment, or confirmed reservation has been created.';
+
+                renderFlightOrderExecutionAction(
+                    resultsElement,
+                    csrfToken,
+                );
             },
         );
 
@@ -1922,7 +2264,7 @@ const validateFlightTravelers = async (
                     'div',
                     'flight-review-demo-warning',
                     (
-                        'DEMO DATA Ã¢â‚¬â€ this selection is for development '
+                        'DEMO DATA ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â this selection is for development '
                         + 'testing only and is not a live booking.'
                     )
                 )
@@ -2437,7 +2779,7 @@ const validateFlightTravelers = async (
                 createFlightElement(
                     'span',
                     'flight-demo-note',
-                    'Development fixture Ã¢â‚¬â€ not live availability or a bookable fare.'
+                    'Development fixture ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â not live availability or a bookable fare.'
                 )
             );
         }
