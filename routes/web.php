@@ -244,3 +244,19 @@ Route::post(
     ->name(
         'flights.bookings.confirmation-intents.store'
     );
+
+Route::post(
+    '/flights/bookings/orders/execute',
+    [
+        \App\Http\Controllers\Flight\FlightOrderExecutionController::class,
+        'store',
+    ],
+)
+    ->middleware([
+        'auth',
+        'verified',
+        'permission:flights.book',
+    ])
+    ->name(
+        'flights.bookings.orders.execute'
+    );
