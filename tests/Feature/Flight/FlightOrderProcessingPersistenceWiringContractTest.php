@@ -147,7 +147,7 @@ final class FlightOrderProcessingPersistenceWiringContractTest extends TestCase
         }
     }
 
-    public function test_current_controller_and_ui_are_not_yet_given_the_durable_reference(): void
+    public function test_controller_gets_only_the_opaque_reference_while_ui_remains_unwired(): void
     {
         $controller =
             file_get_contents(
@@ -171,17 +171,35 @@ final class FlightOrderProcessingPersistenceWiringContractTest extends TestCase
             $ui,
         );
 
+        $this->assertStringContainsString(
+            '$exception->attemptReference()',
+            $controller,
+        );
+
+        $this->assertStringContainsString(
+            "'attempt_reference'",
+            $controller,
+        );
+
+        foreach ([
+            'attempt_id',
+            'resolution_token',
+            'processing_reference',
+            'supplier_offer_id',
+            'supplier_order_id',
+        ] as $forbiddenControllerKey) {
+            $this->assertStringNotContainsString(
+                $forbiddenControllerKey,
+                $controller,
+            );
+        }
+
         foreach ([
             'attempt_reference',
             'attempt_id',
             'resolution_token',
             'processing_reference',
         ] as $referenceKey) {
-            $this->assertStringNotContainsString(
-                $referenceKey,
-                $controller,
-            );
-
             $this->assertStringNotContainsString(
                 $referenceKey,
                 $ui,

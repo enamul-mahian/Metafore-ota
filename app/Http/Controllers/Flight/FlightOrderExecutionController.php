@@ -58,6 +58,7 @@ final class FlightOrderExecutionController extends Controller
              */
             return $this->processingResponse(
                 $exception->provider(),
+                $exception->attemptReference(),
             );
         } catch (
             ServiceUnavailableHttpException
@@ -191,25 +192,34 @@ final class FlightOrderExecutionController extends Controller
 
     private function processingResponse(
         string $provider,
+        ?string $attemptReference,
     ): JsonResponse {
+        $data = [
+            'status' =>
+                'processing',
+
+            'provider' =>
+                $provider,
+
+            'live_order_creation' =>
+                true,
+
+            'order_created' =>
+                false,
+
+            'confirmation_intent_consumed' =>
+                true,
+        ];
+
+        if ($attemptReference !== null) {
+            $data['attempt_reference'] =
+                $attemptReference;
+        }
+
         return $this->noStore(
             response()->json([
-                'data' => [
-                    'status' =>
-                        'processing',
-
-                    'provider' =>
-                        $provider,
-
-                    'live_order_creation' =>
-                        true,
-
-                    'order_created' =>
-                        false,
-
-                    'confirmation_intent_consumed' =>
-                        true,
-                ],
+                'data' =>
+                    $data,
 
                 'message' =>
                     'Flight order creation is still processing. Do not retry this confirmation intent. Review or reconciliation is required before any further order attempt.',

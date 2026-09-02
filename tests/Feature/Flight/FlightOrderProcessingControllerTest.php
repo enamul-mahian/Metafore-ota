@@ -28,8 +28,13 @@ final class ProcessingSignalTestFlightOrderProvider implements FlightOrderProvid
     ): array {
         self::$calls++;
 
-        throw new FlightOrderProcessingException(
+        throw (new FlightOrderProcessingException(
             'processing_signal',
+        ))->withAttemptReference(
+            str_repeat(
+                'A',
+                64,
+            ),
         );
     }
 }
@@ -194,6 +199,13 @@ final class FlightOrderProcessingControllerTest extends TestCase
                     'data.confirmation_intent_consumed',
                     true,
                 )
+                ->assertJsonPath(
+                    'data.attempt_reference',
+                    str_repeat(
+                        'A',
+                        64,
+                    ),
+                )
                 ->assertHeader(
                     'Cache-Control',
                     'no-store, private',
@@ -209,6 +221,45 @@ final class FlightOrderProcessingControllerTest extends TestCase
                 $userId,
                 $token,
             ),
+        );
+
+        $data =
+            $response->json(
+                'data',
+            );
+
+        $this->assertIsArray(
+            $data,
+        );
+
+        $this->assertArrayNotHasKey(
+            'supplier_offer_id',
+            $data,
+        );
+
+        $this->assertArrayNotHasKey(
+            'supplier_order_id',
+            $data,
+        );
+
+        $attemptReference =
+            $data['attempt_reference']
+                ?? null;
+
+        $this->assertIsString(
+            $attemptReference,
+        );
+
+        $this->assertSame(
+            64,
+            strlen(
+                $attemptReference,
+            ),
+        );
+
+        $this->assertMatchesRegularExpression(
+            '/^[A-Za-z0-9]{64}$/',
+            $attemptReference,
         );
 
         $content =
