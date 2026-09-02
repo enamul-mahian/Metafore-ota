@@ -332,3 +332,14 @@ Route::post(
         'permission:flights.book',
     ])
     ->name('flights.bookings.orders.payments.attempts.reconcile');
+
+Route::get(
+    '/flights/bookings/orders/attempts/{attemptReference}/confirmation',
+    \App\Http\Controllers\Flight\FlightOrderConfirmationController::class,
+)
+    ->middleware([
+        'auth',
+        'verified',
+        'permission:flights.book',
+    ])
+    ->name('flights.bookings.orders.attempts.confirmation.show');

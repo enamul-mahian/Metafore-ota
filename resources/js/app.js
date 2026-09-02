@@ -1265,6 +1265,160 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
+        const renderBookingConfirmationAction = () => {
+            button.remove();
+
+            const template =
+                resultsElement.dataset
+                    .flightOrderConfirmationUrlTemplate;
+
+            const confirmationUrl =
+                buildUrl(
+                    template,
+                    orderAttemptReference,
+                );
+
+            if (confirmationUrl === '') {
+                status.textContent =
+                    'Payment succeeded, but booking confirmation is temporarily unavailable.';
+
+                return;
+            }
+
+            if (
+                panel.querySelector(
+                    '.flight-order-confirmation-button',
+                )
+            ) {
+                return;
+            }
+
+            const confirmationButton =
+                document.createElement('button');
+
+            confirmationButton.type =
+                'button';
+
+            confirmationButton.className =
+                'flight-booking-confirmation-intent-button flight-order-confirmation-button';
+
+            confirmationButton.textContent =
+                'View booking confirmation';
+
+            confirmationButton.addEventListener(
+                'click',
+                async () => {
+                    if (
+                        confirmationButton.dataset
+                            .flightOrderConfirmationBusy ===
+                        'true'
+                    ) {
+                        return;
+                    }
+
+                    confirmationButton.dataset
+                        .flightOrderConfirmationBusy =
+                        'true';
+
+                    confirmationButton.disabled =
+                        true;
+
+                    confirmationButton.textContent =
+                        'Loading confirmation...';
+
+                    status.textContent =
+                        'Loading confirmed booking reference.';
+
+                    let response;
+
+                    try {
+                        response =
+                            await fetch(
+                                confirmationUrl,
+                                {
+                                    method:
+                                        'GET',
+
+                                    credentials:
+                                        'same-origin',
+
+                                    headers: {
+                                        Accept:
+                                            'application/json',
+
+                                        'X-Requested-With':
+                                            'XMLHttpRequest',
+                                    },
+                                },
+                            );
+                    } catch {
+                        delete confirmationButton.dataset
+                            .flightOrderConfirmationBusy;
+
+                        confirmationButton.disabled =
+                            false;
+
+                        confirmationButton.textContent =
+                            'View booking confirmation';
+
+                        status.textContent =
+                            'Booking confirmation could not be reached. No payment or ticketing request was sent.';
+
+                        return;
+                    }
+
+                    let payload = {};
+
+                    try {
+                        payload =
+                            await response.json();
+                    } catch {
+                        payload = {};
+                    }
+
+                    const confirmationStatus =
+                        payload?.data?.status;
+
+                    const confirmationProvider =
+                        payload?.data?.provider;
+
+                    const bookingReference =
+                        payload?.data?.booking_reference;
+
+                    if (
+                        response.ok &&
+                        confirmationStatus === 'confirmed' &&
+                        confirmationProvider === 'duffel' &&
+                        typeof bookingReference === 'string' &&
+                        bookingReference.trim() !== '' &&
+                        bookingReference.trim().length <= 64
+                    ) {
+                        confirmationButton.remove();
+
+                        status.textContent =
+                            `Booking confirmed. Reference: ${bookingReference.trim()}.`;
+
+                        return;
+                    }
+
+                    delete confirmationButton.dataset
+                        .flightOrderConfirmationBusy;
+
+                    confirmationButton.disabled =
+                        false;
+
+                    confirmationButton.textContent =
+                        'View booking confirmation';
+
+                    status.textContent =
+                        'Booking confirmation is temporarily unavailable. No payment or ticketing request was sent.';
+                },
+            );
+
+            panel.append(
+                confirmationButton,
+            );
+        };
         const renderPaymentRecoveryAction = (
             paymentAttemptReference,
         ) => {
@@ -1404,6 +1558,9 @@ document.addEventListener('DOMContentLoaded', () => {
                             localStatus === 'succeeded'
                                 ? 'Payment succeeded. Ticketing has not been performed yet.'
                                 : 'Payment failed. No automatic payment retry was sent.';
+                        if (localStatus === 'succeeded') {
+                            renderBookingConfirmationAction();
+                        }
 
                         return;
                     }
@@ -1503,6 +1660,9 @@ document.addEventListener('DOMContentLoaded', () => {
                             reconciledStatus === 'succeeded'
                                 ? 'Payment succeeded. Ticketing has not been performed yet.'
                                 : 'Payment failed. No automatic payment retry was sent.';
+                        if (reconciledStatus === 'succeeded') {
+                            renderBookingConfirmationAction();
+                        }
 
                         return;
                     }
@@ -1629,6 +1789,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
                     status.textContent =
                         'Payment succeeded. Ticketing has not been performed yet.';
+                    if (paymentStatus === 'succeeded') {
+                        renderBookingConfirmationAction();
+                    }
 
                     return;
                 }
