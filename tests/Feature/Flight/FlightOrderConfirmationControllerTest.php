@@ -72,28 +72,59 @@ final class FlightOrderConfirmationControllerTest extends TestCase
         );
 
         Http::fake([
-            'https://api.duffel.test/air/orders/ord_confirmation1' =>
-                Http::response([
-                    'data' => [
-                        'id' =>
-                            'ord_confirmation1',
+            'https://api.duffel.test/air/orders/ord_confirmation1' => Http::response([
+                'data' => [
+                    'id' => 'ord_confirmation1',
 
-                        'booking_reference' =>
-                            'ABC123',
+                    'booking_reference' => 'ABC123',
+                    'slices' => [
+                        [
+                            'segments' => [
+                                [
+                                    'origin' => [
+                                        'iata_code' => 'DAC',
+                                        'name' => 'Hazrat Shahjalal International Airport',
+                                    ],
 
-                        'payment_status' => [
-                            'awaiting_payment' =>
-                                false,
-                        ],
+                                    'destination' => [
+                                        'iata_code' => 'DXB',
+                                        'name' => 'Dubai International Airport',
+                                    ],
 
-                        'passengers' => [
-                            [
-                                'email' =>
-                                    'private@example.test',
+                                    'departing_at' => '2026-11-01T08:30:00',
+
+                                    'arriving_at' => '2026-11-01T12:15:00',
+
+                                    'origin_terminal' => '1',
+                                    'destination_terminal' => '3',
+
+                                    'operating_carrier' => [
+                                        'name' => 'Emirates',
+                                    ],
+
+                                    'operating_carrier_flight_number' => '585',
+
+                                    'marketing_carrier' => [
+                                        'name' => 'Emirates',
+                                    ],
+
+                                    'marketing_carrier_flight_number' => '585',
+                                ],
                             ],
                         ],
                     ],
-                ], 200),
+
+                    'payment_status' => [
+                        'awaiting_payment' => false,
+                    ],
+
+                    'passengers' => [
+                        [
+                            'email' => 'private@example.test',
+                        ],
+                    ],
+                ],
+            ], 200),
         ]);
 
         $response =
@@ -102,8 +133,7 @@ final class FlightOrderConfirmationControllerTest extends TestCase
                     route(
                         'flights.bookings.orders.attempts.confirmation.show',
                         [
-                            'attemptReference' =>
-                                $order['reference'],
+                            'attemptReference' => $order['reference'],
                         ],
                     ),
                 );
@@ -160,8 +190,7 @@ final class FlightOrderConfirmationControllerTest extends TestCase
                 route(
                     'flights.bookings.orders.attempts.confirmation.show',
                     [
-                        'attemptReference' =>
-                            $order['reference'],
+                        'attemptReference' => $order['reference'],
                     ],
                 ),
             )
@@ -199,8 +228,7 @@ final class FlightOrderConfirmationControllerTest extends TestCase
                 route(
                     'flights.bookings.orders.attempts.confirmation.show',
                     [
-                        'attemptReference' =>
-                            $order['reference'],
+                        'attemptReference' => $order['reference'],
                     ],
                 ),
             )
@@ -224,8 +252,7 @@ final class FlightOrderConfirmationControllerTest extends TestCase
         $user =
             User::factory()
                 ->create([
-                    'email_verified_at' =>
-                        now(),
+                    'email_verified_at' => now(),
                 ]);
 
         $user->givePermissionTo(
@@ -274,11 +301,9 @@ final class FlightOrderConfirmationControllerTest extends TestCase
         );
 
         return [
-            'id' =>
-                (int) $created->getKey(),
+            'id' => (int) $created->getKey(),
 
-            'reference' =>
-                $processing['reference'],
+            'reference' => $processing['reference'],
         ];
     }
 
