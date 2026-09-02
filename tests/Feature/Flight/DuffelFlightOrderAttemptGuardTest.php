@@ -159,10 +159,33 @@ final class DuffelFlightOrderAttemptGuardTest extends TestCase
                 'off_attempt_guard_accepted_1',
             );
 
-        $this->assertSupplierUnavailable(
-            $intent,
-        );
+        try {
+            $this->provider()
+                ->createFromTrustedConfirmationIntent(
+                    $intent,
+                );
 
+            $this->fail(
+                'HTTP 202 must produce a processing signal.',
+            );
+        } catch (
+            \App\Exceptions\Flight\FlightOrderProcessingException $exception
+        ) {
+            $this->assertSame(
+                'duffel',
+                $exception->provider(),
+            );
+
+            $this->assertSame(
+                'Flight order creation is still processing.',
+                $exception->getMessage(),
+            );
+        }
+
+        /*
+         * The accepted request keeps the provider + trusted-offer claim.
+         * The same offer therefore cannot cross supplier HTTP again.
+         */
         $this->assertSupplierUnavailable(
             $intent,
         );
@@ -171,7 +194,6 @@ final class DuffelFlightOrderAttemptGuardTest extends TestCase
             1,
         );
     }
-
     public function test_missing_token_failure_does_not_burn_attempt_claim(): void
     {
         Http::fake([

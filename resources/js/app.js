@@ -134,7 +134,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const flightPlaceCode = (place) => {
-        return place?.iata_code || place?.name || 'ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â';
+        return place?.iata_code || place?.name || 'ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â';
     };
 
     const flightCarrierName = (segment, offer) => {
@@ -317,7 +317,7 @@ document.addEventListener('DOMContentLoaded', () => {
             createFlightElement(
                 'span',
                 'flight-segment-line',
-                'ÃƒÂ¢Ã¢â‚¬Â Ã¢â‚¬â„¢'
+                'ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢'
             )
         );
 
@@ -394,7 +394,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 'flight-slice-route',
                 `${flightPlaceCode(
                     slice?.origin
-                )} ÃƒÂ¢Ã¢â‚¬Â Ã¢â‚¬â„¢ ${flightPlaceCode(
+                )} ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ ${flightPlaceCode(
                     slice?.destination
                 )}`
             )
@@ -968,6 +968,29 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 if (confirmationIntentConsumed) {
                     discardConfirmationIntent();
+                }
+
+                if (
+                    response.status === 202 &&
+                    payload?.data?.status === 'processing' &&
+                    payload?.data?.live_order_creation === true &&
+                    payload?.data?.order_created === false &&
+                    confirmationIntentConsumed === true
+                ) {
+                    button.disabled =
+                        true;
+
+                    button.textContent =
+                        'Order processing';
+
+                    status.dataset
+                        .flightOrderExecutionStatus =
+                        'processing';
+
+                    status.textContent =
+                        'The supplier accepted the order request and order creation is still processing. Do not retry this confirmation intent. Review or reconciliation is required before any further order attempt.';
+
+                    return;
                 }
 
                 if (response.status === 410) {
@@ -2264,7 +2287,7 @@ const validateFlightTravelers = async (
                     'div',
                     'flight-review-demo-warning',
                     (
-                        'DEMO DATA ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â this selection is for development '
+                        'DEMO DATA ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â this selection is for development '
                         + 'testing only and is not a live booking.'
                     )
                 )
@@ -2779,7 +2802,7 @@ const validateFlightTravelers = async (
                 createFlightElement(
                     'span',
                     'flight-demo-note',
-                    'Development fixture ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â not live availability or a bookable fare.'
+                    'Development fixture ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â not live availability or a bookable fare.'
                 )
             );
         }

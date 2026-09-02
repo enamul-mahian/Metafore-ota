@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Flight;
 
+use App\Exceptions\Flight\FlightOrderProcessingException;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Flight\CreateFlightOrderExecutionRequest;
 use App\Services\Flight\FlightOrderExecutionService;
@@ -47,6 +48,17 @@ final class FlightOrderExecutionController extends Controller
                         'confirmation_intent_token'
                     ],
                 );
+        } catch (
+            FlightOrderProcessingException $exception
+        ) {
+            /*
+             * The confirmation intent has already been consumed and the
+             * supplier accepted the create-order request. Processing is
+             * not a completed order and is not safe to replay.
+             */
+            return $this->processingResponse(
+                $exception->provider(),
+            );
         } catch (
             ServiceUnavailableHttpException
         ) {
@@ -177,6 +189,33 @@ final class FlightOrderExecutionController extends Controller
         );
     }
 
+    private function processingResponse(
+        string $provider,
+    ): JsonResponse {
+        return $this->noStore(
+            response()->json([
+                'data' => [
+                    'status' =>
+                        'processing',
+
+                    'provider' =>
+                        $provider,
+
+                    'live_order_creation' =>
+                        true,
+
+                    'order_created' =>
+                        false,
+
+                    'confirmation_intent_consumed' =>
+                        true,
+                ],
+
+                'message' =>
+                    'Flight order creation is still processing. Do not retry this confirmation intent. Review or reconciliation is required before any further order attempt.',
+            ], 202),
+        );
+    }
     private function createdResponse(
         string $provider,
     ): JsonResponse {

@@ -3,6 +3,7 @@
 namespace App\Services\Flight;
 
 use App\Contracts\Flight\FlightOrderProvider;
+use App\Exceptions\Flight\FlightOrderProcessingException;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Facades\Http;
 use Symfony\Component\HttpKernel\Exception\ServiceUnavailableHttpException;
@@ -157,6 +158,18 @@ final class DuffelFlightOrderProvider implements FlightOrderProvider
             throw $this->supplierUnavailable();
         }
 
+        /*
+         * HTTP 202 means Duffel accepted the create-order request but the
+         * final order outcome is not available yet.
+         *
+         * Keep the existing provider + trusted-offer attempt claim.
+         * Do not parse the response as a completed order and do not retry.
+         */
+        if ($response->status() === 202) {
+            throw new FlightOrderProcessingException(
+                'duffel',
+            );
+        }
         if ($response->failed()) {
             /*
              * Do not release the attempt claim.
