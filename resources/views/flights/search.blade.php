@@ -339,6 +339,8 @@
                     data-flight-booking-draft-review-url="{{ route('flights.bookings.drafts.review') }}"
                     data-flight-booking-confirmation-intent-url="{{ route('flights.bookings.confirmation-intents.store') }}"
                     data-flight-order-execution-url="{{ route('flights.bookings.orders.execute') }}"
+                    data-flight-order-attempt-status-url-template="{{ route('flights.bookings.orders.attempts.show', ['attemptReference' => '__ATTEMPT_REFERENCE__']) }}"
+                    data-flight-order-reconciliation-url-template="{{ route('flights.bookings.orders.attempts.reconcile', ['attemptReference' => '__ATTEMPT_REFERENCE__']) }}"
                     aria-live="polite"
                     hidden
                 ></div>

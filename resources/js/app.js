@@ -970,13 +970,23 @@ document.addEventListener('DOMContentLoaded', () => {
                     discardConfirmationIntent();
                 }
 
+                const attemptReference =
+                    typeof payload?.data?.attempt_reference === 'string'
+                        ? payload.data.attempt_reference.trim()
+                        : '';
+
                 if (
                     response.status === 202 &&
                     payload?.data?.status === 'processing' &&
                     payload?.data?.live_order_creation === true &&
                     payload?.data?.order_created === false &&
-                    confirmationIntentConsumed === true
+                    confirmationIntentConsumed === true &&
+                    /^[A-Za-z0-9]{64}$/.test(attemptReference)
                 ) {
+                    resultsElement.dataset
+                        .flightOrderAttemptReference =
+                        attemptReference;
+
                     button.disabled =
                         true;
 
@@ -988,7 +998,14 @@ document.addEventListener('DOMContentLoaded', () => {
                         'processing';
 
                     status.textContent =
-                        'The supplier accepted the order request and order creation is still processing. Do not retry this confirmation intent. Review or reconciliation is required before any further order attempt.';
+                        'The order request was accepted and order creation is still processing. Do not retry this confirmation intent. Review or reconciliation is required before any further order attempt. Use Check order status below.';
+
+                    renderFlightOrderAttemptRecoveryAction(
+                        resultsElement,
+                        button,
+                        status,
+                        attemptReference,
+                    );
 
                     return;
                 }
@@ -1090,6 +1107,373 @@ document.addEventListener('DOMContentLoaded', () => {
                         'outcome-uncertain';
 
                     status.textContent =
+    function renderFlightOrderAttemptRecoveryAction(
+        resultsElement,
+        executionButton,
+        executionStatus,
+        attemptReference,
+    ) {
+        const existingRecoveryButton =
+            resultsElement.querySelector(
+                '.flight-order-attempt-recovery-button',
+            );
+
+        if (existingRecoveryButton) {
+            existingRecoveryButton.remove();
+        }
+
+        const statusUrlTemplate =
+            resultsElement.dataset
+                .flightOrderAttemptStatusUrlTemplate;
+
+        const reconciliationUrlTemplate =
+            resultsElement.dataset
+                .flightOrderReconciliationUrlTemplate;
+
+        const csrfToken =
+            document.querySelector(
+                '[data-flight-search-form] input[name="_token"]',
+            )?.value;
+
+        if (
+            typeof attemptReference !== 'string' ||
+            !/^[A-Za-z0-9]{64}$/.test(attemptReference) ||
+            typeof statusUrlTemplate !== 'string' ||
+            !statusUrlTemplate.includes(
+                '__ATTEMPT_REFERENCE__',
+            ) ||
+            typeof reconciliationUrlTemplate !== 'string' ||
+            !reconciliationUrlTemplate.includes(
+                '__ATTEMPT_REFERENCE__',
+            ) ||
+            typeof csrfToken !== 'string' ||
+            csrfToken === ''
+        ) {
+            executionStatus.dataset
+                .flightOrderExecutionStatus =
+                'outcome-uncertain';
+
+            executionStatus.textContent =
+                'The order attempt is still protected from replay, but secure status recovery is unavailable. Review the flight before any new order attempt.';
+
+            return;
+        }
+
+        const statusUrl =
+            statusUrlTemplate.replace(
+                '__ATTEMPT_REFERENCE__',
+                attemptReference,
+            );
+
+        const reconciliationUrl =
+            reconciliationUrlTemplate.replace(
+                '__ATTEMPT_REFERENCE__',
+                attemptReference,
+            );
+
+        if (
+            statusUrl.includes(
+                '__ATTEMPT_REFERENCE__',
+            ) ||
+            reconciliationUrl.includes(
+                '__ATTEMPT_REFERENCE__',
+            )
+        ) {
+            executionStatus.dataset
+                .flightOrderExecutionStatus =
+                'outcome-uncertain';
+
+            executionStatus.textContent =
+                'Secure order status recovery is unavailable. Do not retry the consumed confirmation intent.';
+
+            return;
+        }
+
+        const recoveryButton =
+            document.createElement(
+                'button',
+            );
+
+        recoveryButton.type =
+            'button';
+
+        recoveryButton.className =
+            'flight-booking-confirmation-intent-button flight-order-attempt-recovery-button';
+
+        recoveryButton.textContent =
+            'Check order status';
+
+        const resetRecoveryButton = () => {
+            delete recoveryButton.dataset
+                .flightOrderRecoveryBusy;
+
+            recoveryButton.disabled =
+                false;
+
+            recoveryButton.textContent =
+                'Check order status';
+        };
+
+        const clearAttemptReference = () => {
+            delete resultsElement.dataset
+                .flightOrderAttemptReference;
+        };
+
+        const applyTerminalStatus = (
+            attemptStatus,
+        ) => {
+            if (attemptStatus === 'created') {
+                clearAttemptReference();
+
+                executionButton.disabled =
+                    true;
+
+                executionButton.textContent =
+                    'Order created';
+
+                executionStatus.dataset
+                    .flightOrderExecutionStatus =
+                    'created';
+
+                executionStatus.textContent =
+                    'Flight order creation completed. No payment or ticketing action was performed by this step.';
+
+                recoveryButton.remove();
+
+                return true;
+            }
+
+            if (attemptStatus === 'failed') {
+                clearAttemptReference();
+
+                executionButton.disabled =
+                    true;
+
+                executionButton.textContent =
+                    'Review flight again';
+
+                executionStatus.dataset
+                    .flightOrderExecutionStatus =
+                    'failed';
+
+                executionStatus.textContent =
+                    'The flight order attempt is in a failed state. Review the flight again before any new order attempt.';
+
+                recoveryButton.remove();
+
+                return true;
+            }
+
+            return false;
+        };
+
+        const showProcessingState = (
+            message,
+        ) => {
+            executionButton.disabled =
+                true;
+
+            executionButton.textContent =
+                'Order processing';
+
+            executionStatus.dataset
+                .flightOrderExecutionStatus =
+                'processing';
+
+            executionStatus.textContent =
+                message;
+
+            resetRecoveryButton();
+        };
+
+        recoveryButton.addEventListener(
+            'click',
+            async () => {
+                if (
+                    recoveryButton.dataset
+                        .flightOrderRecoveryBusy === 'true'
+                ) {
+                    return;
+                }
+
+                recoveryButton.dataset
+                    .flightOrderRecoveryBusy =
+                    'true';
+
+                recoveryButton.disabled =
+                    true;
+
+                recoveryButton.textContent =
+                    'Checking order status...';
+
+                executionStatus.dataset
+                    .flightOrderExecutionStatus =
+                    'checking-status';
+
+                executionStatus.textContent =
+                    'Checking the current local order status.';
+
+                let statusResponse;
+
+                try {
+                    statusResponse =
+                        await fetch(
+                            statusUrl,
+                            {
+                                method:
+                                    'GET',
+
+                                credentials:
+                                    'same-origin',
+
+                                headers: {
+                                    Accept:
+                                        'application/json',
+
+                                    'X-Requested-With':
+                                        'XMLHttpRequest',
+                                },
+                            },
+                        );
+                } catch {
+                    showProcessingState(
+                        'The order status could not be reached. The consumed confirmation intent will not be retried. You can check the order status again.',
+                    );
+
+                    return;
+                }
+
+                let statusPayload = {};
+
+                try {
+                    statusPayload =
+                        await statusResponse.json();
+                } catch {
+                    statusPayload = {};
+                }
+
+                if (!statusResponse.ok) {
+                    showProcessingState(
+                        'The order status is temporarily unavailable. The consumed confirmation intent will not be retried. You can check the order status again.',
+                    );
+
+                    return;
+                }
+
+                const localStatus =
+                    typeof statusPayload?.data?.status === 'string'
+                        ? statusPayload.data.status
+                        : '';
+
+                if (
+                    applyTerminalStatus(
+                        localStatus,
+                    )
+                ) {
+                    return;
+                }
+
+                if (localStatus !== 'processing') {
+                    showProcessingState(
+                        'The local order status response was incomplete. Do not retry the consumed confirmation intent. You can check the order status again.',
+                    );
+
+                    return;
+                }
+
+                executionStatus.dataset
+                    .flightOrderExecutionStatus =
+                    'reconciling';
+
+                executionStatus.textContent =
+                    'The local order attempt is still processing. Checking reconciliation once for this explicit status request.';
+
+                let reconciliationResponse;
+
+                try {
+                    reconciliationResponse =
+                        await fetch(
+                            reconciliationUrl,
+                            {
+                                method:
+                                    'POST',
+
+                                credentials:
+                                    'same-origin',
+
+                                headers: {
+                                    Accept:
+                                        'application/json',
+
+                                    'X-CSRF-TOKEN':
+                                        csrfToken,
+
+                                    'X-Requested-With':
+                                        'XMLHttpRequest',
+                                },
+                            },
+                        );
+                } catch {
+                    showProcessingState(
+                        'Order reconciliation could not be reached. The local attempt remains protected from duplicate order creation. You can check the order status again.',
+                    );
+
+                    return;
+                }
+
+                let reconciliationPayload = {};
+
+                try {
+                    reconciliationPayload =
+                        await reconciliationResponse.json();
+                } catch {
+                    reconciliationPayload = {};
+                }
+
+                const reconciledStatus =
+                    typeof reconciliationPayload?.data?.status === 'string'
+                        ? reconciliationPayload.data.status
+                        : '';
+
+                if (
+                    reconciliationResponse.status === 202 &&
+                    reconciledStatus === 'processing'
+                ) {
+                    showProcessingState(
+                        'The flight order is still processing. No duplicate order creation request was sent. You can check the order status again later.',
+                    );
+
+                    return;
+                }
+
+                if (!reconciliationResponse.ok) {
+                    showProcessingState(
+                        reconciliationResponse.status === 503
+                            ? 'Order reconciliation is temporarily unavailable. The local attempt remains processing and no duplicate order creation request was sent.'
+                            : 'The order reconciliation result is unavailable. Do not retry the consumed confirmation intent. You can check the order status again.',
+                    );
+
+                    return;
+                }
+
+                if (
+                    applyTerminalStatus(
+                        reconciledStatus,
+                    )
+                ) {
+                    return;
+                }
+
+                showProcessingState(
+                    'The order reconciliation response was incomplete. No duplicate order creation request was sent. You can check the order status again.',
+                );
+            },
+        );
+
+        executionStatus.after(
+            recoveryButton,
+        );
+    }
                         'The flight order response was incomplete or uncertain. Do not retry this confirmation intent. Review the flight again.';
 
                     return;

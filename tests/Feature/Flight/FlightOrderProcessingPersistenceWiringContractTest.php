@@ -195,7 +195,6 @@ final class FlightOrderProcessingPersistenceWiringContractTest extends TestCase
         }
 
         foreach ([
-            'attempt_reference',
             'attempt_id',
             'resolution_token',
             'processing_reference',

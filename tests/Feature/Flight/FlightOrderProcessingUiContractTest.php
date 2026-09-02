@@ -137,6 +137,177 @@ final class FlightOrderProcessingUiContractTest extends TestCase
         }
     }
 
+    public function test_processing_exposes_manual_attempt_recovery_contract(): void
+    {
+        $blade =
+            file_get_contents(
+                resource_path(
+                    'views/flights/search.blade.php',
+                ),
+            );
+
+        $this->assertIsString(
+            $blade,
+        );
+
+        $this->assertStringContainsString(
+            'data-flight-order-attempt-status-url-template',
+            $blade,
+        );
+
+        $this->assertStringContainsString(
+            "route('flights.bookings.orders.attempts.show'",
+            $blade,
+        );
+
+        $this->assertStringContainsString(
+            'data-flight-order-reconciliation-url-template',
+            $blade,
+        );
+
+        $this->assertStringContainsString(
+            "route('flights.bookings.orders.attempts.reconcile'",
+            $blade,
+        );
+
+        $source =
+            $this->executionSource();
+
+        foreach ([
+            'payload?.data?.attempt_reference',
+            '/^[A-Za-z0-9]{64}$/',
+            '.flightOrderAttemptReference',
+            'renderFlightOrderAttemptRecoveryAction(',
+            "'Check order status'",
+        ] as $required) {
+            $this->assertStringContainsString(
+                $required,
+                $source,
+            );
+        }
+
+        $this->assertStringNotContainsString(
+            'textContent = attemptReference',
+            $source,
+        );
+    }
+
+    public function test_manual_recovery_checks_local_status_before_reconciliation(): void
+    {
+        $source =
+            $this->recoverySource();
+
+        foreach ([
+            'flightOrderAttemptStatusUrlTemplate',
+            'flightOrderReconciliationUrlTemplate',
+            'await fetch(',
+            'statusUrl,',
+            "'GET'",
+            'reconciliationUrl,',
+            "'POST'",
+            "'X-CSRF-TOKEN'",
+            "'Check order status'",
+            "attemptStatus === 'created'",
+            "attemptStatus === 'failed'",
+            "localStatus !== 'processing'",
+            'reconciliationResponse.status === 202',
+        ] as $required) {
+            $this->assertStringContainsString(
+                $required,
+                $source,
+            );
+        }
+
+        $statusFetch =
+            strpos(
+                $source,
+                'statusUrl,',
+            );
+
+        $reconciliationFetch =
+            strpos(
+                $source,
+                'reconciliationUrl,',
+            );
+
+        $this->assertNotFalse(
+            $statusFetch,
+        );
+
+        $this->assertNotFalse(
+            $reconciliationFetch,
+        );
+
+        $this->assertGreaterThan(
+            $statusFetch,
+            $reconciliationFetch,
+        );
+
+        foreach ([
+            'setTimeout(',
+            'setInterval(',
+            'localStorage',
+            'sessionStorage',
+            'URLSearchParams',
+            '/air/orders',
+            'supplier_offer_id',
+            'supplier_order_id',
+            'reference_hash',
+            'attempt_identity_hash',
+            'provider:',
+            'body:',
+        ] as $forbidden) {
+            $this->assertStringNotContainsString(
+                $forbidden,
+                $source,
+            );
+        }
+    }
+
+    private function recoverySource(): string
+    {
+        $source =
+            file_get_contents(
+                resource_path(
+                    'js/app.js',
+                ),
+            );
+
+        $this->assertIsString(
+            $source,
+        );
+
+        $start =
+            strpos(
+                $source,
+                'function renderFlightOrderAttemptRecoveryAction(',
+            );
+
+        $end =
+            strpos(
+                $source,
+                'function clearFlightBookingConfirmationIntentState(',
+            );
+
+        $this->assertNotFalse(
+            $start,
+        );
+
+        $this->assertNotFalse(
+            $end,
+        );
+
+        $this->assertGreaterThan(
+            $start,
+            $end,
+        );
+
+        return substr(
+            $source,
+            $start,
+            $end - $start,
+        );
+    }
     private function executionSource(): string
     {
         $source =
