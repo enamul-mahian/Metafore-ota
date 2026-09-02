@@ -290,3 +290,13 @@ Route::post(
     ->name(
         'flights.bookings.orders.execute'
     );
+Route::get(
+    '/flights/bookings/orders/attempts/{attemptReference}/payment-readiness',
+    \App\Http\Controllers\Flight\FlightOrderPaymentReadinessController::class,
+)
+    ->middleware([
+        'auth',
+        'verified',
+        'permission:flights.book',
+    ])
+    ->name('flights.bookings.orders.attempts.payment-readiness.show');
