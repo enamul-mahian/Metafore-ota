@@ -23,6 +23,15 @@ use Illuminate\Support\Facades\Route;
 
 Route::view('/', 'home')->name('home');
 
+Route::view('/about', 'public.about')
+    ->name('about');
+
+Route::view('/support', 'public.support')
+    ->name('support');
+
+Route::view('/terms', 'public.terms')
+    ->name('terms');
+
 Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::view('/dashboard', 'dashboard')

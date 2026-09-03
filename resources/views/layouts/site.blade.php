@@ -47,6 +47,33 @@
                     Home
                 </a>
 
+                <a
+                    href="{{ route('about') }}"
+                    @class([
+                        'is-active' => request()->routeIs('about')
+                    ])
+                >
+                    About
+                </a>
+
+                <a
+                    href="{{ route('support') }}"
+                    @class([
+                        'is-active' => request()->routeIs('support')
+                    ])
+                >
+                    Support
+                </a>
+
+                <a
+                    href="{{ route('terms') }}"
+                    @class([
+                        'is-active' => request()->routeIs('terms')
+                    ])
+                >
+                    Terms
+                </a>
+
                 @auth
                     <a
                         href="{{ route('dashboard') }}"
@@ -173,6 +200,9 @@
 
             <div class="site-footer-links">
                 <a href="{{ route('home') }}">Home</a>
+                <a href="{{ route('about') }}">About</a>
+                <a href="{{ route('support') }}">Support</a>
+                <a href="{{ route('terms') }}">Terms</a>
 
                 @auth
                     <a href="{{ route('dashboard') }}">Dashboard</a>
