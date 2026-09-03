@@ -1,78 +1,158 @@
-<!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+@extends('layouts.site')
 
-    <title>Dashboard | Eagle Global Hub LTD</title>
+@section('title', 'Dashboard')
+@section('body_class', 'dashboard-body')
 
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
-</head>
-
-<body class="dashboard-body">
-
-    <header class="dashboard-header">
-        <a href="{{ route('dashboard') }}" class="dashboard-logo">
-            <span class="dashboard-logo-icon">✈</span>
-
-            <span>Eagle Global Hub LTD</span>
-        </a>
-
-        <div class="dashboard-user-area">
-            <div class="dashboard-user">
-                <div class="dashboard-avatar">
-                    {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
-                </div>
-
-                <div>
-                    <strong>{{ auth()->user()->name }}</strong>
-                    <span>{{ auth()->user()->email }}</span>
-                </div>
-            </div>
-
-            <form method="POST" action="{{ route('logout') }}">
-                @csrf
-
-                <button type="submit" class="dashboard-logout">
-                    Logout
-                </button>
-            </form>
-        </div>
-    </header>
+@section('content')
 
     <main class="dashboard-container">
 
         <section class="dashboard-welcome">
+
             <div>
                 <span class="dashboard-kicker">
-                    WELCOME TO Eagle Global Hub LTD
+                    WELCOME BACK
                 </span>
 
                 <h1>
-                    Hello, {{ auth()->user()->name }} 👋
+                    Hello, {{ auth()->user()->name }}
                 </h1>
 
                 <p>
-                    Your travel dashboard is ready. Booking services and
-                    account features will appear here as development continues.
+                    Search flights, review your account details and continue
+                    your travel journey from one secure dashboard.
                 </p>
+
+                <div class="dashboard-welcome-actions">
+
+                    @can('flights.search')
+                        <a
+                            href="{{ route('flights.index') }}"
+                            class="site-button site-button-primary"
+                        >
+                            Search Flights
+                        </a>
+                    @endcan
+
+                    <a
+                        href="{{ route('account.overview') }}"
+                        class="site-button site-button-secondary"
+                    >
+                        View Account
+                    </a>
+
+                </div>
             </div>
 
             <div class="dashboard-verified">
-                <span>✓</span>
+                <span aria-hidden="true">&#10003;</span>
 
                 <div>
                     <strong>Email Verified</strong>
-                    <small>Your account is active and secured.</small>
+
+                    <small>
+                        Your verified account can access protected travel pages.
+                    </small>
                 </div>
             </div>
+
         </section>
 
         <section class="dashboard-section">
+
             <div class="dashboard-section-heading">
                 <div>
-                    <span class="dashboard-kicker">TRAVEL SERVICES</span>
-                    <h2>Explore Services</h2>
+                    <span class="dashboard-kicker">
+                        QUICK ACCESS
+                    </span>
+
+                    <h2>
+                        Continue your journey
+                    </h2>
+                </div>
+            </div>
+
+            <div class="dashboard-quick-grid">
+
+                @can('flights.search')
+                    <a
+                        href="{{ route('flights.index') }}"
+                        class="dashboard-quick-card"
+                    >
+                        <span class="dashboard-quick-icon" aria-hidden="true">
+                            &#9992;
+                        </span>
+
+                        <div>
+                            <strong>Flight Search</strong>
+
+                            <small>
+                                Search available flight options by route,
+                                date, cabin and travelers.
+                            </small>
+                        </div>
+
+                        <b aria-hidden="true">&rarr;</b>
+                    </a>
+                @endcan
+
+                <a
+                    href="{{ route('account.overview') }}"
+                    class="dashboard-quick-card"
+                >
+                    <span class="dashboard-quick-icon" aria-hidden="true">
+                        A
+                    </span>
+
+                    <div>
+                        <strong>Account Overview</strong>
+
+                        <small>
+                            Review your name, email, verification and
+                            account timeline.
+                        </small>
+                    </div>
+
+                    <b aria-hidden="true">&rarr;</b>
+                </a>
+
+                @can('flights.book')
+                    <a
+                        href="{{ route('bookings.index') }}"
+                        class="dashboard-quick-card"
+                    >
+                        <span class="dashboard-quick-icon" aria-hidden="true">
+                            B
+                        </span>
+
+                        <div>
+                            <strong>My Bookings</strong>
+
+                            <small>
+                                Review your flight booking attempts, order
+                                status and payment status.
+                            </small>
+                        </div>
+
+                        <b aria-hidden="true">&rarr;</b>
+                    </a>
+                @endcan
+
+            </div>
+
+        </section>
+
+        <section class="dashboard-section">
+
+            <div class="dashboard-section-heading">
+                <div>
+                    <span class="dashboard-kicker">
+                        TRAVEL SERVICES
+                    </span>
+
+                    <h2>
+                        Services
+                    </h2>
                 </div>
             </div>
 
@@ -83,7 +163,9 @@
                         href="{{ route('flights.index') }}"
                         class="dashboard-service-card dashboard-service-card-link"
                     >
-                        <div class="service-icon">✈</div>
+                        <div class="service-icon" aria-hidden="true">
+                            &#9992;
+                        </div>
 
                         <h3>Flights</h3>
 
@@ -92,68 +174,98 @@
                         </p>
 
                         <span class="service-status service-status-live">
-                            Search Flights
+                            Available
                         </span>
                     </a>
                 @else
                     <article class="dashboard-service-card">
-                        <div class="service-icon">✈</div>
+                        <div class="service-icon" aria-hidden="true">
+                            &#9992;
+                        </div>
 
                         <h3>Flights</h3>
 
                         <p>
-                            Search and book domestic and international flights.
+                            Flight access is not enabled for this account.
                         </p>
 
-                        <span class="service-status">Coming Soon</span>
+                        <span class="service-status">
+                            Unavailable
+                        </span>
                     </article>
                 @endcan
 
                 <article class="dashboard-service-card">
-                    <div class="service-icon">⌂</div>
+                    <div class="service-icon" aria-hidden="true">
+                        H
+                    </div>
 
                     <h3>Hotels</h3>
 
                     <p>
-                        Discover hotels and accommodation for your journey.
+                        Hotel booking is not part of the active service yet.
                     </p>
 
-                    <span class="service-status">Coming Soon</span>
+                    <span class="service-status">
+                        Coming Soon
+                    </span>
                 </article>
 
                 <article class="dashboard-service-card">
-                    <div class="service-icon">⌖</div>
+                    <div class="service-icon" aria-hidden="true">
+                        T
+                    </div>
 
                     <h3>Tours</h3>
 
                     <p>
-                        Explore curated tour packages and travel experiences.
+                        Tour booking is not part of the active service yet.
                     </p>
 
-                    <span class="service-status">Coming Soon</span>
+                    <span class="service-status">
+                        Coming Soon
+                    </span>
                 </article>
 
                 <article class="dashboard-service-card">
-                    <div class="service-icon">✓</div>
+                    <div class="service-icon" aria-hidden="true">
+                        V
+                    </div>
 
                     <h3>Visa</h3>
 
                     <p>
-                        Manage visa assistance and application services.
+                        Visa services are not part of the active service yet.
                     </p>
 
-                    <span class="service-status">Coming Soon</span>
+                    <span class="service-status">
+                        Coming Soon
+                    </span>
                 </article>
 
             </div>
+
         </section>
 
         <section class="dashboard-account-card">
 
-            <div>
-                <span class="dashboard-kicker">YOUR ACCOUNT</span>
+            <div class="dashboard-account-heading">
+                <div>
+                    <span class="dashboard-kicker">
+                        YOUR ACCOUNT
+                    </span>
 
-                <h2>Account Overview</h2>
+                    <h2>
+                        Account snapshot
+                    </h2>
+                </div>
+
+                <a
+                    href="{{ route('account.overview') }}"
+                    class="dashboard-account-link"
+                >
+                    Open Account
+                </a>
             </div>
 
             <div class="dashboard-account-grid">
@@ -176,8 +288,11 @@
                 </div>
 
                 <div>
-                    <span>Account Type</span>
-                    <strong>Customer</strong>
+                    <span>Member Since</span>
+
+                    <strong>
+                        {{ auth()->user()->created_at?->format('M Y') ?? 'Not available' }}
+                    </strong>
                 </div>
 
             </div>
@@ -186,5 +301,4 @@
 
     </main>
 
-</body>
-</html>
+@endsection
