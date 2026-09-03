@@ -5,7 +5,7 @@
     'meta_description',
     'Terms and policy notes for using the Eagle Global Hub LTD travel website.'
 )
-@section('body_class', 'public-page-body')
+@section('body_class', 'public-page-body terms-page-body')
 
 @section('content')
 
