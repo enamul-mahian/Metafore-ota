@@ -172,7 +172,7 @@ class SettingServiceTest extends TestCase
         $this->settings->set(
             'general',
             'site_name',
-            'MetaFore Travel'
+            'Updated Site Name'
         );
 
         $this->assertSame(
@@ -184,7 +184,7 @@ class SettingServiceTest extends TestCase
         );
 
         $this->assertSame(
-            'MetaFore Travel',
+            'Updated Site Name',
             $this->settings->get(
                 'general',
                 'site_name'

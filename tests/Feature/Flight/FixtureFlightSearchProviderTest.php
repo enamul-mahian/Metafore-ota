@@ -30,7 +30,7 @@ class FixtureFlightSearchProviderTest extends TestCase
     {
         Http::fake();
 
-        $offers = (new FixtureFlightSearchProvider())
+        $offers = (new FixtureFlightSearchProvider)
             ->search($this->criteria());
 
         $this->assertCount(2, $offers);
@@ -46,7 +46,7 @@ class FixtureFlightSearchProviderTest extends TestCase
         );
 
         $this->assertSame(
-            'MetaFore Demo Air',
+            'Eagle Global Hub LTD Demo Air',
             $offers[0]['owner']['name']
         );
 
@@ -70,7 +70,7 @@ class FixtureFlightSearchProviderTest extends TestCase
 
     public function test_round_trip_fixture_contains_return_slice(): void
     {
-        $offers = (new FixtureFlightSearchProvider())
+        $offers = (new FixtureFlightSearchProvider)
             ->search(
                 $this->criteria([
                     'trip_type' => 'round_trip',
@@ -96,7 +96,7 @@ class FixtureFlightSearchProviderTest extends TestCase
 
     public function test_fixture_pricing_changes_with_passengers_and_cabin(): void
     {
-        $provider = new FixtureFlightSearchProvider();
+        $provider = new FixtureFlightSearchProvider;
 
         $economy = (float) $provider->search(
             $this->criteria()
@@ -127,7 +127,7 @@ class FixtureFlightSearchProviderTest extends TestCase
 
     public function test_fixture_offer_ids_are_deterministic_for_same_search(): void
     {
-        $provider = new FixtureFlightSearchProvider();
+        $provider = new FixtureFlightSearchProvider;
         $criteria = $this->criteria();
 
         $first = $provider->search($criteria);
@@ -145,7 +145,7 @@ class FixtureFlightSearchProviderTest extends TestCase
     }
 
     /**
-     * @param array<string, mixed> $overrides
+     * @param  array<string, mixed>  $overrides
      * @return array<string, mixed>
      */
     private function criteria(

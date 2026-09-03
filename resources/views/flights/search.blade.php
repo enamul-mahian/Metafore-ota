@@ -63,7 +63,7 @@
                 <span>Ã¢Å“Ë†</span>
 
                 <div>
-                    <strong>MetaFore Flights</strong>
+                    <strong>Eagle Global Hub LTD Flights</strong>
                     <small>Fast, simple and secure search.</small>
                 </div>
             </div>

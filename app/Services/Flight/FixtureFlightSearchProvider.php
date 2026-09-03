@@ -14,7 +14,7 @@ final class FixtureFlightSearchProvider implements FlightSearchProvider
      * This provider never performs an external HTTP request and its
      * results must never be represented as live airline inventory.
      *
-     * @param array<string, mixed> $criteria
+     * @param  array<string, mixed>  $criteria
      * @return array<int, array<string, mixed>>
      */
     public function search(array $criteria): array
@@ -23,7 +23,7 @@ final class FixtureFlightSearchProvider implements FlightSearchProvider
             $this->buildOffer(
                 criteria: $criteria,
                 offerIndex: 1,
-                carrierName: 'MetaFore Demo Air',
+                carrierName: 'Eagle Global Hub LTD Demo Air',
                 flightNumber: 'D101',
                 departureMinuteOffset: 0,
                 priceMultiplier: 1.00
@@ -41,7 +41,7 @@ final class FixtureFlightSearchProvider implements FlightSearchProvider
     }
 
     /**
-     * @param array<string, mixed> $criteria
+     * @param  array<string, mixed>  $criteria
      * @return array<string, mixed>
      */
     private function buildOffer(
@@ -90,8 +90,8 @@ final class FixtureFlightSearchProvider implements FlightSearchProvider
     }
 
     /**
-     * @param array<string, mixed> $criteria
-     * @param array<string, mixed> $carrier
+     * @param  array<string, mixed>  $criteria
+     * @param  array<string, mixed>  $carrier
      * @return array<int, array<string, mixed>>
      */
     private function buildSlices(
@@ -132,7 +132,7 @@ final class FixtureFlightSearchProvider implements FlightSearchProvider
     }
 
     /**
-     * @param array<string, mixed> $carrier
+     * @param  array<string, mixed>  $carrier
      * @return array<string, mixed>
      */
     private function buildSlice(
@@ -180,13 +180,11 @@ final class FixtureFlightSearchProvider implements FlightSearchProvider
 
                     'marketing_carrier' => $carrier,
 
-                    'marketing_carrier_flight_number'
-                        => $flightNumber,
+                    'marketing_carrier_flight_number' => $flightNumber,
 
                     'operating_carrier' => $carrier,
 
-                    'operating_carrier_flight_number'
-                        => $flightNumber,
+                    'operating_carrier_flight_number' => $flightNumber,
                 ],
             ],
         ];
@@ -204,7 +202,7 @@ final class FixtureFlightSearchProvider implements FlightSearchProvider
     }
 
     /**
-     * @param array<string, mixed> $criteria
+     * @param  array<string, mixed>  $criteria
      */
     private function price(
         array $criteria,
@@ -247,7 +245,7 @@ final class FixtureFlightSearchProvider implements FlightSearchProvider
     }
 
     /**
-     * @param array<string, mixed> $criteria
+     * @param  array<string, mixed>  $criteria
      */
     private function offerId(
         array $criteria,
@@ -255,10 +253,10 @@ final class FixtureFlightSearchProvider implements FlightSearchProvider
     ): string {
         $hash = hash(
             'sha256',
-            serialize($criteria) . "|{$offerIndex}"
+            serialize($criteria)."|{$offerIndex}"
         );
 
-        return 'fixture-' . substr(
+        return 'fixture-'.substr(
             $hash,
             0,
             16
