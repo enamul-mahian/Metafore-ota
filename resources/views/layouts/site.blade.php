@@ -38,60 +38,7 @@
 
             <nav class="site-nav" aria-label="Primary navigation">
 
-                <a
-                    href="{{ route('home') }}"
-                    @class([
-                        'is-active' => request()->routeIs('home')
-                    ])
-                >
-                    Home
-                </a>
-
-                <a
-                    href="{{ route('about') }}"
-                    @class([
-                        'is-active' => request()->routeIs('about')
-                    ])
-                >
-                    About
-                </a>
-
-                <a
-                    href="{{ route('support') }}"
-                    @class([
-                        'is-active' => request()->routeIs('support')
-                    ])
-                >
-                    Support
-                </a>
-
-                <a
-                    href="{{ route('terms') }}"
-                    @class([
-                        'is-active' => request()->routeIs('terms')
-                    ])
-                >
-                    Terms
-                </a>
-
                 @auth
-                    <a
-                        href="{{ route('dashboard') }}"
-                        @class([
-                            'is-active' => request()->routeIs('dashboard')
-                        ])
-                    >
-                        Dashboard
-                    </a>
-
-                    <a
-                        href="{{ route('account.overview') }}"
-                        @class([
-                            'is-active' => request()->routeIs('account.*')
-                        ])
-                    >
-                        Account
-                    </a>
                     @can('flights.search')
                         <a
                             href="{{ route('flights.index') }}"
@@ -99,6 +46,10 @@
                                 'is-active' => request()->routeIs('flights.*')
                             ])
                         >
+                            Flights
+                        </a>
+                    @else
+                        <a href="{{ route('dashboard') }}">
                             Flights
                         </a>
                     @endcan
@@ -112,8 +63,49 @@
                         >
                             My Bookings
                         </a>
+                    @else
+                        <a href="{{ route('dashboard') }}">
+                            My Bookings
+                        </a>
                     @endcan
+
+                @else
+                    <a href="{{ route('login') }}">
+                        Flights
+                    </a>
+
+                    <a href="{{ route('login') }}">
+                        My Bookings
+                    </a>
+
                 @endauth
+
+                @auth
+                    <a
+                        href="{{ route('account.overview') }}"
+                        @class([
+                            'is-active' => request()->routeIs([
+                                'dashboard',
+                                'account.*'
+                            ])
+                        ])
+                    >
+                        Manage
+                    </a>
+                @else
+                    <a href="{{ route('login') }}">
+                        Manage
+                    </a>
+                @endauth
+
+                <a
+                    href="{{ route('support') }}"
+                    @class([
+                        'is-active' => request()->routeIs('support')
+                    ])
+                >
+                    Support
+                </a>
 
             </nav>
 
@@ -166,7 +158,10 @@
         </div>
     </header>
 
-    @if (app()->environment(['local', 'testing']))
+    @if (
+        app()->environment(['local', 'testing']) &&
+        ! request()->routeIs('home')
+    )
         <div
             class="site-environment-banner"
             role="status"

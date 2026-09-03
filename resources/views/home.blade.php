@@ -4,251 +4,230 @@
 
 @section(
     'meta_description',
-    'Search and manage flight journeys with Eagle Global Hub LTD.'
+    'Search flights and manage your travel bookings with Eagle Global Hub LTD.'
 )
 
 @section('content')
 
-    <main class="site-home">
+    @php
+        $flightSearchAction = route('login');
+        $flightSearchMethod = 'GET';
 
-        <section class="site-hero">
-            <div class="site-hero-inner">
+        if (auth()->check()) {
+            if (auth()->user()->can('flights.search')) {
+                $flightSearchAction = route('flights.search');
+                $flightSearchMethod = 'POST';
+            } else {
+                $flightSearchAction = route('dashboard');
+            }
+        }
+    @endphp
 
-                <div class="site-hero-copy">
+    <main class="site-home site-ota-home">
+
+        <section class="ota-hero">
+            <div class="ota-hero-inner">
+
+                <div class="ota-hero-copy">
                     <span class="site-eyebrow">
-                        FLIGHT-FIRST TRAVEL EXPERIENCE
+                        FLIGHTS FROM EAGLE GLOBAL HUB LTD
                     </span>
 
                     <h1>
-                        Plan your next journey with clarity.
+                        Discover the World<br>
+                        Your Journey Starts Here
                     </h1>
 
                     <p>
-                        Search flight options, review itinerary details and
-                        move through a structured booking journey from one
-                        secure account.
+                        Search available journeys, compare fare details and
+                        manage your booking from one secure account.
                     </p>
-
-                    <div class="site-hero-actions">
-
-                        @auth
-                            @can('flights.search')
-                                <a
-                                    href="{{ route('flights.index') }}"
-                                    class="site-button site-button-primary site-button-large"
-                                >
-                                    Search Flights
-                                </a>
-                            @endcan
-
-                            <a
-                                href="{{ route('dashboard') }}"
-                                class="site-button site-button-secondary site-button-large"
-                            >
-                                Open Dashboard
-                            </a>
-                        @else
-                            <a
-                                href="{{ route('register') }}"
-                                class="site-button site-button-primary site-button-large"
-                            >
-                                Create Account
-                            </a>
-
-                            <a
-                                href="{{ route('login') }}"
-                                class="site-button site-button-secondary site-button-large"
-                            >
-                                Login to Search
-                            </a>
-                        @endauth
-
-                    </div>
-
-                    <div class="site-hero-points">
-                        <span>Secure account access</span>
-                        <span>Clear itinerary review</span>
-                        <span>Booking-state visibility</span>
-                    </div>
                 </div>
 
-                <div class="site-journey-card">
-
-                    <span class="site-journey-kicker">
-                        YOUR FLIGHT JOURNEY
-                    </span>
-
-                    <div class="site-journey-route">
-
-                        <div>
-                            <small>From</small>
-                            <strong>DAC</strong>
-                            <span>Dhaka</span>
-                        </div>
-
-                        <div
-                            class="site-journey-line"
-                            aria-hidden="true"
-                        >
-                            <span></span>
-                            <b>&#9992;</b>
-                            <span></span>
-                        </div>
-
-                        <div>
-                            <small>To</small>
-                            <strong>DXB</strong>
-                            <span>Dubai</span>
-                        </div>
-
-                    </div>
-
-                    <div class="site-journey-meta">
-
-                        <div>
-                            <small>Step 1</small>
-                            <strong>Search</strong>
-                        </div>
-
-                        <div>
-                            <small>Step 2</small>
-                            <strong>Review</strong>
-                        </div>
-
-                        <div>
-                            <small>Step 3</small>
-                            <strong>Confirm</strong>
-                        </div>
-
-                    </div>
-
-                    <p class="site-journey-note">
-                        Route shown for presentation only. Actual availability
-                        is returned by the configured flight data source.
-                    </p>
-
-                </div>
-
-            </div>
-        </section>
-
-        <section class="site-section">
-
-            <div class="site-section-heading">
-                <span class="site-eyebrow">
-                    A BETTER BOOKING FLOW
-                </span>
-
-                <h2>
-                    Everything important stays visible.
-                </h2>
-
-                <p>
-                    The booking experience is designed around clear decisions,
-                    secure account access and transparent booking progress.
-                </p>
-            </div>
-
-            <div class="site-feature-grid">
-
-                <article class="site-feature-card">
-                    <span class="site-feature-number">01</span>
-
-                    <h3>Search confidently</h3>
-
-                    <p>
-                        Enter route, date, cabin and passenger details through
-                        a focused flight-search experience.
-                    </p>
-                </article>
-
-                <article class="site-feature-card">
-                    <span class="site-feature-number">02</span>
-
-                    <h3>Review before continuing</h3>
-
-                    <p>
-                        Keep itinerary, traveler and booking details visible as
-                        you move through the booking flow.
-                    </p>
-                </article>
-
-                <article class="site-feature-card">
-                    <span class="site-feature-number">03</span>
-
-                    <h3>Follow booking status</h3>
-
-                    <p>
-                        Order, payment and confirmation states remain part of
-                        the controlled server-authoritative workflow.
-                    </p>
-                </article>
-
-            </div>
-        </section>
-
-        <section class="site-section site-services-section">
-
-            <div class="site-section-heading">
-                <span class="site-eyebrow">
-                    TRAVEL SERVICES
-                </span>
-
-                <h2>
-                    Flights now. More services when ready.
-                </h2>
-            </div>
-
-            <div class="site-service-list">
-
-                <article
-                    class="site-service-item site-service-item-active"
+                <form
+                    method="{{ $flightSearchMethod }}"
+                    action="{{ $flightSearchAction }}"
+                    class="ota-search-card"
+                    aria-label="Flight search"
                 >
-                    <span>&#9992;</span>
+                    @if ($flightSearchMethod === 'POST')
+                        @csrf
+                    @endif
 
-                    <div>
-                        <strong>Flights</strong>
-                        <small>Current booking experience</small>
+                    <input type="hidden" name="children" value="0">
+                    <input type="hidden" name="infants" value="0">
+
+                    <fieldset class="ota-trip-tabs">
+                        <legend>Trip type</legend>
+
+                        <label>
+                            <input
+                                type="radio"
+                                name="trip_type"
+                                value="round_trip"
+                                checked
+                            >
+                            <span>Round Trip</span>
+                        </label>
+
+                        <label>
+                            <input
+                                type="radio"
+                                name="trip_type"
+                                value="one_way"
+                            >
+                            <span>One Way</span>
+                        </label>
+                    </fieldset>
+
+                    <div class="ota-search-grid">
+                        <label>
+                            <span>From</span>
+                            <input
+                                type="text"
+                                name="origin"
+                                maxlength="3"
+                                minlength="3"
+                                pattern="[A-Za-z]{3}"
+                                placeholder="Airport code"
+                                autocomplete="off"
+                                required
+                            >
+                        </label>
+
+                        <label>
+                            <span>To</span>
+                            <input
+                                type="text"
+                                name="destination"
+                                maxlength="3"
+                                minlength="3"
+                                pattern="[A-Za-z]{3}"
+                                placeholder="Airport code"
+                                autocomplete="off"
+                                required
+                            >
+                        </label>
+
+                        <label>
+                            <span>Depart</span>
+                            <input
+                                type="date"
+                                name="departure_date"
+                                min="{{ now()->toDateString() }}"
+                                required
+                            >
+                        </label>
+
+                        <label>
+                            <span>Return</span>
+                            <input
+                                type="date"
+                                name="return_date"
+                                min="{{ now()->addDay()->toDateString() }}"
+                                required
+                            >
+                        </label>
+
+                        <label>
+                            <span>Travelers</span>
+                            <select name="adults">
+                                <option value="1">1 Traveler</option>
+                                <option value="2">2 Travelers</option>
+                                <option value="3">3 Travelers</option>
+                                <option value="4">4 Travelers</option>
+                                <option value="5">5 Travelers</option>
+                                <option value="6">6 Travelers</option>
+                            </select>
+                        </label>
+
+                        <label>
+                            <span>Cabin</span>
+                            <select name="cabin_class">
+                                <option value="economy">Economy</option>
+                                <option value="premium_economy">
+                                    Premium Economy
+                                </option>
+                                <option value="business">Business</option>
+                                <option value="first">First Class</option>
+                            </select>
+                        </label>
+
+                        <button type="submit">
+                            Search Flights
+                        </button>
                     </div>
-
-                    <b>Available</b>
-                </article>
-
-                <article class="site-service-item">
-                    <span>H</span>
-
-                    <div>
-                        <strong>Hotels</strong>
-                        <small>Not currently part of the active booking flow</small>
-                    </div>
-
-                    <b>Coming Soon</b>
-                </article>
-
-                <article class="site-service-item">
-                    <span>T</span>
-
-                    <div>
-                        <strong>Tours</strong>
-                        <small>Not currently part of the active booking flow</small>
-                    </div>
-
-                    <b>Coming Soon</b>
-                </article>
-
-                <article class="site-service-item">
-                    <span>V</span>
-
-                    <div>
-                        <strong>Visa</strong>
-                        <small>Not currently part of the active booking flow</small>
-                    </div>
-
-                    <b>Coming Soon</b>
-                </article>
+                </form>
 
             </div>
+        </section>
 
+        <section class="ota-trust" aria-label="Booking benefits">
+            <article>
+                <span class="ota-trust-icon" aria-hidden="true">&#10003;</span>
+                <div>
+                    <strong>Secure &amp; Reliable</strong>
+                    <small>Protected account and booking steps</small>
+                </div>
+            </article>
+
+            <article>
+                <span class="ota-trust-icon" aria-hidden="true">&#8635;</span>
+                <div>
+                    <strong>Booking Updates</strong>
+                    <small>Review saved order and payment status</small>
+                </div>
+            </article>
+
+            <article>
+                <span class="ota-trust-icon" aria-hidden="true">&#36;</span>
+                <div>
+                    <strong>Payment Checks</strong>
+                    <small>Status is reconciled before confirmation</small>
+                </div>
+            </article>
+
+            <article>
+                <span class="ota-trust-icon" aria-hidden="true">?</span>
+                <div>
+                    <strong>Account Assistance</strong>
+                    <small>Current options are listed on Support</small>
+                </div>
+            </article>
+        </section>
+
+        <section class="ota-services">
+            <div>
+                <span class="site-eyebrow">
+                    PLAN YOUR JOURNEY
+                </span>
+
+                <h2>
+                    Travel services
+                </h2>
+            </div>
+
+            <div class="ota-service-list">
+                <article class="is-live">
+                    <strong>Flights</strong>
+                    <span>Available</span>
+                </article>
+
+                <article>
+                    <strong>Hotels</strong>
+                    <span>Coming Soon</span>
+                </article>
+
+                <article>
+                    <strong>Tours</strong>
+                    <span>Coming Soon</span>
+                </article>
+
+                <article>
+                    <strong>Visa</strong>
+                    <span>Coming Soon</span>
+                </article>
+            </div>
         </section>
 
     </main>
