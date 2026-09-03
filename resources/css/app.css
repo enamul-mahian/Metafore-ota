@@ -8797,3 +8797,454 @@ body.bookings-body {
         border-bottom: 0;
     }
 }
+
+/* ========================================================================== */
+/* REFERENCE UI SLICE 02 — FLIGHT RESULTS / DETAILS / OFFER SELECTION         */
+/* ========================================================================== */
+
+/*
+ * Presentation-only overrides.
+ * Existing server-authoritative search, offer selection, traveler,
+ * booking, order and payment contracts remain unchanged.
+ */
+
+.flight-results:not([hidden]) {
+    display: block;
+    margin-top: 28px;
+    padding-top: 24px;
+    border-top: 1px solid #dce5f0;
+}
+
+.flight-results-heading {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 20px;
+    margin-bottom: 16px;
+    padding: 0 2px;
+}
+
+.flight-results-heading strong {
+    display: block;
+    color: #0b1f3a;
+    font-size: 22px;
+    font-weight: 750;
+    line-height: 1.2;
+}
+
+.flight-results-heading span {
+    color: #64748b;
+    font-size: 13px;
+    line-height: 1.45;
+}
+
+.flight-offer-cards,
+.flight-offer-list {
+    display: grid;
+    gap: 14px;
+}
+
+.flight-offer-card {
+    overflow: hidden;
+    border: 1px solid #dce5f0;
+    border-radius: 10px;
+    background: #ffffff;
+    box-shadow: 0 8px 24px rgba(15, 35, 70, 0.055);
+    transition:
+        border-color 160ms ease,
+        box-shadow 160ms ease,
+        transform 160ms ease;
+}
+
+.flight-offer-card:hover {
+    border-color: #b9cce5;
+    box-shadow: 0 12px 30px rgba(15, 35, 70, 0.085);
+    transform: translateY(-1px);
+}
+
+.flight-offer-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+    min-height: 66px;
+    padding: 13px 16px;
+    border-bottom: 1px solid #e7edf5;
+    background: #fbfdff;
+}
+
+.flight-offer-identity {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    min-width: 0;
+}
+
+.flight-carrier-mark {
+    display: inline-grid;
+    flex: 0 0 38px;
+    width: 38px;
+    height: 38px;
+    place-items: center;
+    border: 1px solid #cfe0f5;
+    border-radius: 50%;
+    background: #eef6ff;
+    color: #1266d7;
+    font-size: 14px;
+    font-weight: 800;
+}
+
+.flight-carrier-text {
+    display: grid;
+    gap: 2px;
+    min-width: 0;
+}
+
+.flight-carrier-text strong {
+    overflow: hidden;
+    color: #10233f;
+    font-size: 14px;
+    font-weight: 750;
+    line-height: 1.25;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.flight-carrier-text span {
+    color: #7a899d;
+    font-size: 11px;
+    font-weight: 600;
+}
+
+.flight-offer-slices {
+    display: grid;
+}
+
+.flight-offer-slice {
+    padding: 14px 16px 15px;
+}
+
+.flight-offer-slice + .flight-offer-slice {
+    border-top: 1px solid #e7edf5;
+}
+
+.flight-slice-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 11px;
+}
+
+.flight-slice-heading > div {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+}
+
+.flight-slice-label {
+    display: inline-flex;
+    align-items: center;
+    min-height: 23px;
+    padding: 3px 8px;
+    border-radius: 999px;
+    background: #edf5ff;
+    color: #1266d7;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+.flight-slice-route {
+    color: #10233f;
+    font-size: 14px;
+    font-weight: 800;
+}
+
+.flight-slice-duration {
+    color: #607087;
+    font-size: 11px;
+    font-weight: 650;
+    white-space: nowrap;
+}
+
+.flight-offer-segment {
+    display: grid;
+    grid-template-columns:
+        minmax(150px, 1.2fr)
+        minmax(125px, 0.9fr)
+        minmax(100px, 0.75fr)
+        minmax(125px, 0.9fr);
+    align-items: center;
+    gap: 15px;
+    min-height: 74px;
+    padding: 10px 0;
+}
+
+.flight-offer-segment + .flight-offer-segment {
+    border-top: 1px dashed #dfe7f0;
+}
+
+.flight-segment-carrier {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+}
+
+.flight-segment-point {
+    display: grid;
+    gap: 3px;
+}
+
+.flight-segment-point strong {
+    color: #10233f;
+    font-size: 20px;
+    font-weight: 800;
+    line-height: 1;
+}
+
+.flight-segment-point span {
+    color: #6b7a90;
+    font-size: 10px;
+    line-height: 1.35;
+}
+
+.flight-segment-point-arrival {
+    text-align: right;
+}
+
+.flight-segment-journey {
+    display: grid;
+    gap: 5px;
+    text-align: center;
+}
+
+.flight-segment-duration {
+    color: #6b7a90;
+    font-size: 10px;
+    font-weight: 650;
+}
+
+.flight-segment-line {
+    position: relative;
+    display: block;
+    overflow: hidden;
+    height: 18px;
+    color: #1266d7;
+    font-size: 15px;
+    font-weight: 800;
+    line-height: 18px;
+}
+
+.flight-segment-line::before,
+.flight-segment-line::after {
+    position: absolute;
+    top: 50%;
+    width: calc(50% - 16px);
+    height: 1px;
+    background: #c9d8e9;
+    content: "";
+}
+
+.flight-segment-line::before {
+    left: 0;
+}
+
+.flight-segment-line::after {
+    right: 0;
+}
+
+.flight-offer-footer {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 16px;
+    min-height: 68px;
+    padding: 11px 16px;
+    border-top: 1px solid #e7edf5;
+    background: #fbfdff;
+}
+
+.flight-offer-footer > :first-child:not(.flight-offer-price) {
+    margin-right: auto;
+}
+
+.flight-offer-price {
+    display: grid;
+    gap: 2px;
+    min-width: 135px;
+    text-align: right;
+}
+
+.flight-offer-price span {
+    color: #74849a;
+    font-size: 10px;
+    font-weight: 650;
+    text-transform: uppercase;
+}
+
+.flight-offer-price strong {
+    color: #0b2c59;
+    font-size: 21px;
+    font-weight: 850;
+    line-height: 1.05;
+}
+
+.flight-select-button {
+    min-width: 126px;
+    min-height: 40px;
+    padding: 9px 17px;
+    border: 1px solid #1266d7;
+    border-radius: 7px;
+    background: #1266d7;
+    color: #ffffff;
+    font-size: 12px;
+    font-weight: 800;
+    cursor: pointer;
+    transition:
+        background 150ms ease,
+        border-color 150ms ease,
+        box-shadow 150ms ease;
+}
+
+.flight-select-button:hover:not(:disabled) {
+    border-color: #0e56b7;
+    background: #0e56b7;
+    box-shadow: 0 6px 16px rgba(18, 102, 215, 0.20);
+}
+
+.flight-select-button:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+}
+
+.flight-selected-fare {
+    border: 1px solid #b9d3f5;
+    border-radius: 8px;
+    background: #f5f9ff;
+    color: #10233f;
+}
+
+.flight-selected-fare strong {
+    color: #0b2c59;
+}
+
+/* Selected/expanded offer reads visually like the reference's
+   Flight Details / Offer Selection state without inventing new data. */
+
+.flight-offer-card:has(.flight-selected-fare) {
+    border-color: #7eb0ee;
+    box-shadow:
+        0 0 0 2px rgba(18, 102, 215, 0.08),
+        0 12px 28px rgba(15, 35, 70, 0.09);
+}
+
+.flight-offer-card:has(.flight-selected-fare) .flight-offer-header {
+    background: #f5f9ff;
+}
+
+/* Search/results page becomes denser once results are present. */
+
+.flight-search-card:has(.flight-results:not([hidden])) {
+    padding-bottom: 22px;
+}
+
+.flight-search-card:has(.flight-results:not([hidden])) .flight-card-heading {
+    margin-bottom: 18px;
+}
+
+.flight-search-card:has(.flight-results:not([hidden])) .flight-form-actions {
+    margin-bottom: 2px;
+}
+
+/* Responsive result cards */
+
+@media (max-width: 1100px) {
+    .flight-offer-segment {
+        grid-template-columns:
+            minmax(130px, 1fr)
+            minmax(110px, 0.8fr)
+            minmax(90px, 0.7fr)
+            minmax(110px, 0.8fr);
+        gap: 11px;
+    }
+
+    .flight-carrier-mark {
+        flex-basis: 34px;
+        width: 34px;
+        height: 34px;
+    }
+
+    .flight-segment-point strong {
+        font-size: 18px;
+    }
+}
+
+@media (max-width: 760px) {
+    .flight-results-heading,
+    .flight-offer-header,
+    .flight-slice-heading,
+    .flight-offer-footer {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .flight-offer-segment {
+        grid-template-columns: 1fr 1fr;
+        gap: 13px 18px;
+    }
+
+    .flight-segment-carrier {
+        grid-column: 1 / -1;
+    }
+
+    .flight-segment-journey {
+        display: none;
+    }
+
+    .flight-segment-point-arrival {
+        text-align: left;
+    }
+
+    .flight-offer-footer {
+        gap: 11px;
+    }
+
+    .flight-offer-price {
+        width: 100%;
+        min-width: 0;
+        text-align: left;
+    }
+
+    .flight-select-button {
+        width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    .flight-offer-slice {
+        padding: 13px;
+    }
+
+    .flight-offer-header,
+    .flight-offer-footer {
+        padding-right: 13px;
+        padding-left: 13px;
+    }
+
+    .flight-offer-segment {
+        grid-template-columns: 1fr;
+    }
+
+    .flight-segment-point-arrival {
+        padding-top: 6px;
+        border-top: 1px dashed #dfe7f0;
+    }
+}
+
+/* ========================================================================== */
+/* END REFERENCE UI SLICE 02                                                  */
+/* ========================================================================== */
