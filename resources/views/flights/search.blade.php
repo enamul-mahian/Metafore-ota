@@ -31,6 +31,56 @@
             </div>
         </section>
 
+        <section
+            class="flight-flow-guide"
+            aria-label="Flight booking journey"
+        >
+            <div class="flight-flow-intro">
+                <span class="flight-kicker">BOOKING JOURNEY</span>
+                <strong>Search to secure review</strong>
+                <small>
+                    Follow each step with fare and traveler details visible.
+                </small>
+            </div>
+
+            <ol class="flight-flow-steps">
+                <li>
+                    <span>01</span>
+
+                    <div>
+                        <strong>Search</strong>
+                        <small>Route and dates</small>
+                    </div>
+                </li>
+
+                <li>
+                    <span>02</span>
+
+                    <div>
+                        <strong>Compare</strong>
+                        <small>Flights and fares</small>
+                    </div>
+                </li>
+
+                <li>
+                    <span>03</span>
+
+                    <div>
+                        <strong>Travelers</strong>
+                        <small>Passenger details</small>
+                    </div>
+                </li>
+
+                <li>
+                    <span>04</span>
+
+                    <div>
+                        <strong>Review</strong>
+                        <small>Secure fare review</small>
+                    </div>
+                </li>
+            </ol>
+        </section>
         <section class="flight-search-card">
             <div class="flight-card-heading">
                 <div>
@@ -331,36 +381,45 @@
             </form>
         </section>
 
-        <section class="flight-info-grid">
+        <section
+            class="flight-info-grid"
+            aria-label="Flight search guidance"
+        >
             <article>
                 <span>01</span>
+
                 <div>
-                    <strong>Validated Search</strong>
+                    <strong>Clear search details</strong>
+
                     <p>
-                        Airport, passenger and travel-date rules are
-                        validated before supplier search.
+                        Route, travel dates, cabin and passenger counts are
+                        checked before your search continues.
                     </p>
                 </div>
             </article>
 
             <article>
                 <span>02</span>
+
                 <div>
-                    <strong>Secure Access</strong>
+                    <strong>Easy fare comparison</strong>
+
                     <p>
-                        Flight Search is available only to authenticated,
-                        verified and authorized users.
+                        Review carrier, itinerary timing and fare information
+                        before choosing a flight option.
                     </p>
                 </div>
             </article>
 
             <article>
                 <span>03</span>
+
                 <div>
-                    <strong>Graceful Availability</strong>
+                    <strong>Secure traveler review</strong>
+
                     <p>
-                        Supplier outages or missing configuration are shown
-                        as clear customer-friendly messages.
+                        Traveler details and booking review remain inside your
+                        authenticated account and validated server-side.
                     </p>
                 </div>
             </article>
