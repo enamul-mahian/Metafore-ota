@@ -134,7 +134,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const flightPlaceCode = (place) => {
-        return place?.iata_code || place?.name || 'ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â';
+        return place?.iata_code || place?.name || 'N/A';
     };
 
     const flightCarrierName = (segment, offer) => {
@@ -317,7 +317,7 @@ document.addEventListener('DOMContentLoaded', () => {
             createFlightElement(
                 'span',
                 'flight-segment-line',
-                'ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢'
+                '\u2192'
             )
         );
 
@@ -394,7 +394,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 'flight-slice-route',
                 `${flightPlaceCode(
                     slice?.origin
-                )} ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ ${flightPlaceCode(
+                )} \u2192 ${flightPlaceCode(
                     slice?.destination
                 )}`
             )
@@ -3491,7 +3491,7 @@ const validateFlightTravelers = async (
                     'div',
                     'flight-review-demo-warning',
                     (
-                        'DEMO DATA ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â this selection is for development '
+                        'DEMO DATA - this selection is for development '
                         + 'testing only and is not a live booking.'
                     )
                 )
@@ -4006,7 +4006,7 @@ const validateFlightTravelers = async (
                 createFlightElement(
                     'span',
                     'flight-demo-note',
-                    'Development fixture ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â not live availability or a bookable fare.'
+                    'Development fixture - not live availability or a bookable fare.'
                 )
             );
         }

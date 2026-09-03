@@ -1,17 +1,26 @@
 <?php
 
-use App\Http\Controllers\Flight\FlightBookingDraftController;
-use App\Http\Controllers\Flight\FlightBookingDraftReviewController;
 use App\Http\Controllers\Admin\CityController;
 use App\Http\Controllers\Admin\CountryController;
 use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\SettingPageController;
+use App\Http\Controllers\Flight\FlightBookingConfirmationIntentController;
+use App\Http\Controllers\Flight\FlightBookingDraftController;
+use App\Http\Controllers\Flight\FlightBookingDraftReviewController;
 use App\Http\Controllers\Flight\FlightOfferSelectionController;
-use App\Http\Controllers\Flight\FlightTravelerValidationController;
+use App\Http\Controllers\Flight\FlightOrderAttemptStatusController;
+use App\Http\Controllers\Flight\FlightOrderConfirmationController;
+use App\Http\Controllers\Flight\FlightOrderExecutionController;
+use App\Http\Controllers\Flight\FlightOrderPaymentAttemptStatusController;
+use App\Http\Controllers\Flight\FlightOrderPaymentExecutionController;
+use App\Http\Controllers\Flight\FlightOrderPaymentReadinessController;
+use App\Http\Controllers\Flight\FlightOrderPaymentReconciliationController;
+use App\Http\Controllers\Flight\FlightOrderReconciliationController;
 use App\Http\Controllers\Flight\FlightSearchController;
+use App\Http\Controllers\Flight\FlightTravelerValidationController;
 use Illuminate\Support\Facades\Route;
 
-Route::view('/', 'welcome')->name('home');
+Route::view('/', 'home')->name('home');
 
 Route::middleware(['auth', 'verified'])->group(function () {
 
@@ -51,7 +60,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
              * | Authorization Test Routes
              * |--------------------------------------------------------------------------
              */
-
             Route::get('/role-test', function () {
                 return response()->json([
                     'message' => 'Admin role authorized',
@@ -71,7 +79,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
              * | Settings JSON Endpoints
              * |--------------------------------------------------------------------------
              */
-
             Route::prefix('settings')
                 ->name('settings.')
                 ->group(function () {
@@ -208,7 +215,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
  * | Settings Admin UI
  * |--------------------------------------------------------------------------
  */
-
 Route::get(
     '/admin/settings/manage',
     SettingPageController::class
@@ -232,7 +238,7 @@ Route::post('/flights/bookings/drafts/review', [FlightBookingDraftReviewControll
 Route::post(
     '/flights/bookings/confirmation-intents',
     [
-        \App\Http\Controllers\Flight\FlightBookingConfirmationIntentController::class,
+        FlightBookingConfirmationIntentController::class,
         'store',
     ],
 )
@@ -248,7 +254,7 @@ Route::post(
 Route::get(
     '/flights/bookings/orders/attempts/{attemptReference}',
     [
-        \App\Http\Controllers\Flight\FlightOrderAttemptStatusController::class,
+        FlightOrderAttemptStatusController::class,
         'show',
     ],
 )
@@ -263,7 +269,7 @@ Route::get(
 Route::post(
     '/flights/bookings/orders/attempts/{attemptReference}/reconcile',
     [
-        \App\Http\Controllers\Flight\FlightOrderReconciliationController::class,
+        FlightOrderReconciliationController::class,
         'store',
     ],
 )
@@ -278,7 +284,7 @@ Route::post(
 Route::post(
     '/flights/bookings/orders/execute',
     [
-        \App\Http\Controllers\Flight\FlightOrderExecutionController::class,
+        FlightOrderExecutionController::class,
         'store',
     ],
 )
@@ -292,7 +298,7 @@ Route::post(
     );
 Route::get(
     '/flights/bookings/orders/attempts/{attemptReference}/payment-readiness',
-    \App\Http\Controllers\Flight\FlightOrderPaymentReadinessController::class,
+    FlightOrderPaymentReadinessController::class,
 )
     ->middleware([
         'auth',
@@ -302,7 +308,7 @@ Route::get(
     ->name('flights.bookings.orders.attempts.payment-readiness.show');
 Route::post(
     '/flights/bookings/orders/attempts/{attemptReference}/payments',
-    \App\Http\Controllers\Flight\FlightOrderPaymentExecutionController::class,
+    FlightOrderPaymentExecutionController::class,
 )
     ->middleware([
         'auth',
@@ -313,7 +319,7 @@ Route::post(
 
 Route::get(
     '/flights/bookings/orders/payments/attempts/{attemptReference}',
-    \App\Http\Controllers\Flight\FlightOrderPaymentAttemptStatusController::class,
+    FlightOrderPaymentAttemptStatusController::class,
 )
     ->middleware([
         'auth',
@@ -324,7 +330,7 @@ Route::get(
 
 Route::post(
     '/flights/bookings/orders/payments/attempts/{attemptReference}/reconcile',
-    \App\Http\Controllers\Flight\FlightOrderPaymentReconciliationController::class,
+    FlightOrderPaymentReconciliationController::class,
 )
     ->middleware([
         'auth',
@@ -335,7 +341,7 @@ Route::post(
 
 Route::get(
     '/flights/bookings/orders/attempts/{attemptReference}/confirmation',
-    \App\Http\Controllers\Flight\FlightOrderConfirmationController::class,
+    FlightOrderConfirmationController::class,
 )
     ->middleware([
         'auth',

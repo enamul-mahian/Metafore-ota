@@ -1,49 +1,11 @@
-<!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+@extends('layouts.site')
 
-    <title>Search Flights | Eagle Global Hub LTD</title>
+@section('title', 'Search Flights')
+@section('body_class', 'dashboard-body')
 
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
-</head>
+@section('content')
 
-<body class="dashboard-body">
-
-    <header class="dashboard-header">
-        <a href="{{ route('dashboard') }}" class="dashboard-logo">
-            <span class="dashboard-logo-icon">Ã¢Å“Ë†</span>
-            <span>Eagle Global Hub LTD</span>
-        </a>
-
-        <div class="dashboard-user-area">
-            <a href="{{ route('dashboard') }}" class="flight-dashboard-link">
-                Dashboard
-            </a>
-
-            <div class="dashboard-user">
-                <div class="dashboard-avatar">
-                    {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
-                </div>
-
-                <div>
-                    <strong>{{ auth()->user()->name }}</strong>
-                    <span>{{ auth()->user()->email }}</span>
-                </div>
-            </div>
-
-            <form method="POST" action="{{ route('logout') }}">
-                @csrf
-
-                <button type="submit" class="dashboard-logout">
-                    Logout
-                </button>
-            </form>
-        </div>
-    </header>
-
-    <main class="flight-container">
+<main class="flight-container">
 
         <section class="flight-hero">
             <div>
@@ -60,7 +22,7 @@
             </div>
 
             <div class="flight-hero-badge">
-                <span>Ã¢Å“Ë†</span>
+                <span>&#9992;</span>
 
                 <div>
                     <strong>Eagle Global Hub LTD Flights</strong>
@@ -140,7 +102,7 @@
                     </div>
 
                     <div class="flight-route-arrow" aria-hidden="true">
-                        Ã¢â€¡â€ž
+                        &#8645;
                     </div>
 
                     <div class="flight-form-field">
@@ -345,7 +307,7 @@
                     data-flight-payment-execution-url-template="{{ route('flights.bookings.orders.attempts.payments.store', ['attemptReference' => '__ATTEMPT_REFERENCE__']) }}"
                     data-flight-payment-attempt-status-url-template="{{ route('flights.bookings.orders.payments.attempts.show', ['attemptReference' => '__ATTEMPT_REFERENCE__']) }}"
                     data-flight-payment-reconciliation-url-template="{{ route('flights.bookings.orders.payments.attempts.reconcile', ['attemptReference' => '__ATTEMPT_REFERENCE__']) }}"
-                    data-flight-order-confirmation-url-template="{{ route('flights.bookings.orders.attempts.confirmation.show', ['attemptReference' => '__ATTEMPT_REFERENCE__']) }}
+                    data-flight-order-confirmation-url-template="{{ route('flights.bookings.orders.attempts.confirmation.show', ['attemptReference' => '__ATTEMPT_REFERENCE__']) }}"
                     aria-live="polite"
                     hidden
                 ></div>
@@ -405,6 +367,4 @@
         </section>
 
     </main>
-
-</body>
-</html>
+@endsection

@@ -1,46 +1,11 @@
-<!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+@extends('layouts.site')
 
-    <title>Dashboard | Eagle Global Hub LTD</title>
+@section('title', 'Dashboard')
+@section('body_class', 'dashboard-body')
 
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
-</head>
+@section('content')
 
-<body class="dashboard-body">
-
-    <header class="dashboard-header">
-        <a href="{{ route('dashboard') }}" class="dashboard-logo">
-            <span class="dashboard-logo-icon">✈</span>
-
-            <span>Eagle Global Hub LTD</span>
-        </a>
-
-        <div class="dashboard-user-area">
-            <div class="dashboard-user">
-                <div class="dashboard-avatar">
-                    {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
-                </div>
-
-                <div>
-                    <strong>{{ auth()->user()->name }}</strong>
-                    <span>{{ auth()->user()->email }}</span>
-                </div>
-            </div>
-
-            <form method="POST" action="{{ route('logout') }}">
-                @csrf
-
-                <button type="submit" class="dashboard-logout">
-                    Logout
-                </button>
-            </form>
-        </div>
-    </header>
-
-    <main class="dashboard-container">
+<main class="dashboard-container">
 
         <section class="dashboard-welcome">
             <div>
@@ -53,8 +18,8 @@
                 </h1>
 
                 <p>
-                    Your travel dashboard is ready. Booking services and
-                    account features will appear here as development continues.
+                    Manage flight searches, booking progress and account details
+                    from one secure place.
                 </p>
             </div>
 
@@ -185,6 +150,4 @@
         </section>
 
     </main>
-
-</body>
-</html>
+@endsection
