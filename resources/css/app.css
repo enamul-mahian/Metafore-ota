@@ -6294,6 +6294,222 @@ body.account-body {
     background: #fff9eb;
 }
 
+.flight-booking-confirmation-intent-panel,
+.flight-order-execution-panel,
+.flight-order-payment-panel {
+    margin-top: 18px;
+    padding: 18px;
+    display: grid;
+    gap: 12px;
+    border: 1px solid #d8e4f0;
+    border-radius: 14px;
+    background: #f8fbff;
+    box-shadow:
+        inset 4px 0 0
+        rgba(23, 105, 224, 0.18);
+}
+
+.flight-booking-confirmation-intent-panel {
+    background:
+        linear-gradient(
+            180deg,
+            #f8fbff,
+            #ffffff
+        );
+}
+
+.flight-order-execution-panel {
+    background: #f7fafc;
+}
+
+.flight-order-payment-panel {
+    border-color: #d5e7dd;
+    background: #f5fbf7;
+    box-shadow:
+        inset 4px 0 0
+        rgba(24, 126, 76, 0.2);
+}
+
+.flight-booking-confirmation-intent-status,
+.flight-order-execution-status,
+.flight-order-payment-status {
+    margin: 0;
+    padding: 12px 14px;
+    border: 1px solid #cfdeee;
+    border-radius: 11px;
+    color: #405d78;
+    background: #ffffff;
+    font-size: 12px;
+    font-weight: 750;
+    line-height: 1.55;
+}
+
+.flight-booking-confirmation-intent-status[
+    data-flight-booking-confirmation-intent-status="ready"
+],
+.flight-order-execution-status[
+    data-flight-order-execution-status="created"
+],
+.flight-order-payment-status {
+    border-color: #bde2cd;
+    color: #1f6742;
+    background: #effaf4;
+}
+
+.flight-booking-confirmation-intent-status[
+    data-flight-booking-confirmation-intent-status="checking"
+],
+.flight-order-execution-status[
+    data-flight-order-execution-status="executing"
+],
+.flight-order-execution-status[
+    data-flight-order-execution-status="processing"
+] {
+    border-color: #c4d9ef;
+    color: #24588a;
+    background: #f0f7ff;
+}
+
+.flight-booking-confirmation-intent-status[
+    data-flight-booking-confirmation-intent-status="fare-changed"
+],
+.flight-booking-confirmation-intent-status[
+    data-flight-booking-confirmation-intent-status="live-revalidation-required"
+],
+.flight-order-execution-status[
+    data-flight-order-execution-status="execution-disabled"
+] {
+    border-color: #efd8aa;
+    color: #7a590c;
+    background: #fff9e9;
+}
+
+.flight-booking-confirmation-intent-status[
+    data-flight-booking-confirmation-intent-status="error"
+],
+.flight-booking-confirmation-intent-status[
+    data-flight-booking-confirmation-intent-status="expired"
+],
+.flight-order-execution-status[
+    data-flight-order-execution-status="outcome-uncertain"
+],
+.flight-order-execution-status[
+    data-flight-order-execution-status="confirmation-unavailable"
+],
+.flight-order-execution-status[
+    data-flight-order-execution-status="attempt-consumed"
+],
+.flight-order-execution-status[
+    data-flight-order-execution-status="failed"
+] {
+    border-color: #efcaca;
+    color: #923232;
+    background: #fff5f5;
+}
+
+.flight-booking-confirmation-intent-fare,
+.flight-booking-confirmation-intent-disclaimer,
+.flight-order-execution-disclaimer {
+    margin: 0;
+    color: #5d7084;
+    font-size: 12px;
+    line-height: 1.6;
+}
+
+.flight-booking-confirmation-intent-fare {
+    padding: 11px 13px;
+    border: 1px solid #d8e6f1;
+    border-radius: 10px;
+    color: var(--eagle-navy);
+    background: #ffffff;
+    font-weight: 800;
+}
+
+.flight-booking-confirmation-intent-disclaimer,
+.flight-order-execution-disclaimer {
+    color: #68798b;
+}
+
+.flight-booking-confirmation-intent-button,
+.flight-order-execution-button {
+    justify-self: start;
+    min-height: 44px;
+    max-width: 100%;
+    padding: 0 18px;
+    border: 0;
+    border-radius: 10px;
+    color: #ffffff;
+    background: var(--eagle-blue);
+    font-size: 12px;
+    font-weight: 900;
+    cursor: pointer;
+    transition:
+        transform 160ms ease,
+        background 160ms ease,
+        box-shadow 160ms ease,
+        opacity 160ms ease;
+}
+
+.flight-booking-confirmation-intent-button:hover:not(:disabled),
+.flight-order-execution-button:hover:not(:disabled) {
+    transform: translateY(-1px);
+    background: var(--eagle-blue-dark);
+    box-shadow:
+        0 9px 20px
+        rgba(23, 105, 224, 0.18);
+}
+
+.flight-booking-confirmation-intent-button:focus-visible,
+.flight-order-execution-button:focus-visible {
+    outline: 3px solid rgba(23, 105, 224, 0.22);
+    outline-offset: 3px;
+}
+
+.flight-booking-confirmation-intent-button:disabled,
+.flight-order-execution-button:disabled {
+    cursor: not-allowed;
+    opacity: 0.62;
+}
+
+.flight-order-payment-button {
+    background: #187e4c;
+}
+
+.flight-order-payment-button:hover:not(:disabled) {
+    background: #12683e;
+    box-shadow:
+        0 9px 20px
+        rgba(24, 126, 76, 0.18);
+}
+
+.flight-payment-status-button,
+.flight-order-attempt-recovery-button {
+    color: var(--eagle-navy);
+    border: 1px solid #c8d8e8;
+    background: #ffffff;
+}
+
+.flight-payment-status-button:hover:not(:disabled),
+.flight-order-attempt-recovery-button:hover:not(:disabled) {
+    color: var(--eagle-navy);
+    border-color: #aabed3;
+    background: #f4f8fd;
+    box-shadow:
+        0 8px 18px
+        rgba(16, 42, 75, 0.09);
+}
+
+.flight-order-confirmation-button {
+    background: var(--eagle-navy);
+}
+
+.flight-order-confirmation-button:hover:not(:disabled) {
+    background: #143052;
+    box-shadow:
+        0 9px 20px
+        rgba(11, 31, 58, 0.18);
+}
+
 .flight-results:not([hidden]) + .flight-form-actions {
     margin-top: 6px;
 }
@@ -6462,7 +6678,22 @@ body.account-body {
     }
 
     .flight-booking-draft-status,
-    .flight-booking-revalidation-status {
+    .flight-booking-revalidation-status,
+    .flight-booking-confirmation-intent-status,
+    .flight-order-execution-status,
+    .flight-order-payment-status {
         padding: 12px;
+    }
+
+    .flight-booking-confirmation-intent-panel,
+    .flight-order-execution-panel,
+    .flight-order-payment-panel {
+        padding: 14px;
+    }
+
+    .flight-booking-confirmation-intent-button,
+    .flight-order-execution-button {
+        width: 100%;
+        white-space: normal;
     }
 }
