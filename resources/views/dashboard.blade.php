@@ -116,6 +116,28 @@
                     <b aria-hidden="true">&rarr;</b>
                 </a>
 
+                @can('flights.book')
+                    <a
+                        href="{{ route('bookings.index') }}"
+                        class="dashboard-quick-card"
+                    >
+                        <span class="dashboard-quick-icon" aria-hidden="true">
+                            B
+                        </span>
+
+                        <div>
+                            <strong>My Bookings</strong>
+
+                            <small>
+                                Review your flight booking attempts, order
+                                status and payment status.
+                            </small>
+                        </div>
+
+                        <b aria-hidden="true">&rarr;</b>
+                    </a>
+                @endcan
+
             </div>
 
         </section>
@@ -269,7 +291,7 @@
                     <span>Member Since</span>
 
                     <strong>
-                        {{ auth()->user()->created_at?->format('M Y') ?? '—' }}
+                        {{ auth()->user()->created_at?->format('M Y') ?? 'Not available' }}
                     </strong>
                 </div>
 

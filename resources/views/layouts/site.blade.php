@@ -75,6 +75,17 @@
                             Flights
                         </a>
                     @endcan
+
+                    @can('flights.book')
+                        <a
+                            href="{{ route('bookings.index') }}"
+                            @class([
+                                'is-active' => request()->routeIs('bookings.*')
+                            ])
+                        >
+                            My Bookings
+                        </a>
+                    @endcan
                 @endauth
 
             </nav>
@@ -168,6 +179,10 @@
 
                     @can('flights.search')
                         <a href="{{ route('flights.index') }}">Flights</a>
+                    @endcan
+
+                    @can('flights.book')
+                        <a href="{{ route('bookings.index') }}">My Bookings</a>
                     @endcan
                 @else
                     <a href="{{ route('login') }}">Login</a>

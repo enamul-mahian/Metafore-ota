@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 final class FlightOrderAttempt extends Model
 {
@@ -38,11 +39,9 @@ final class FlightOrderAttempt extends Model
     protected function casts(): array
     {
         return [
-            'user_id' =>
-                'integer',
+            'user_id' => 'integer',
 
-            'resolved_at' =>
-                'datetime',
+            'resolved_at' => 'datetime',
         ];
     }
 
@@ -50,6 +49,13 @@ final class FlightOrderAttempt extends Model
     {
         return $this->belongsTo(
             User::class,
+        );
+    }
+
+    public function paymentAttempt(): HasOne
+    {
+        return $this->hasOne(
+            FlightOrderPaymentAttempt::class,
         );
     }
 }

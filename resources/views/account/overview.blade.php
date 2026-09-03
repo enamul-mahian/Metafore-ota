@@ -157,6 +157,15 @@
                     </a>
                 @endcan
 
+                @can('flights.book')
+                    <a
+                        href="{{ route('bookings.index') }}"
+                        class="site-button site-button-secondary"
+                    >
+                        My Bookings
+                    </a>
+                @endcan
+
             </div>
 
         </section>
