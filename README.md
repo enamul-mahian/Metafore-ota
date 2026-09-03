@@ -1,4 +1,4 @@
-# MetaFore OTA Platform
+# Eagle Global Hub LTD Platform
 
 Development follows the approved Laragon Local Development → Staging → Production workflow.
 

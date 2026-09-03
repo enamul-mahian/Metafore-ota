@@ -1,6 +1,6 @@
 @extends('layouts.auth')
 
-@section('title', 'Forgot Password | MetaFore OTA')
+@section('title', 'Forgot Password | Eagle Global Hub LTD')
 
 @section('hero-title', 'Forgot Your Password?')
 
@@ -16,7 +16,7 @@
         <h2>Forgot Password</h2>
 
         <p>
-            Enter the email address associated with your MetaFore OTA account.
+            Enter the email address associated with your Eagle Global Hub LTD account.
         </p>
     </div>
 

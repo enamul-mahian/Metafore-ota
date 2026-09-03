@@ -1,4 +1,4 @@
-# MetaFore OTA — Local Setup Verification Checklist
+# Eagle Global Hub LTD — Local Setup Verification Checklist
 
 Run these checks on the Windows/Laragon workstation before application development:
 

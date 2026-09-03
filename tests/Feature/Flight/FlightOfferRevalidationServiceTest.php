@@ -233,7 +233,7 @@ final class FlightOfferRevalidationServiceTest extends TestCase
             'requires_instant_payment' => false,
             'owner' => [
                 'code' => 'MFD',
-                'name' => 'MetaFore Demo Air',
+                'name' => 'Eagle Global Hub LTD Demo Air',
             ],
             'origin' => 'DAC',
             'destination' => 'CXB',

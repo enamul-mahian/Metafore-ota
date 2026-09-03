@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>Settings | MetaFore OTA</title>
+    <title>Settings | Eagle Global Hub LTD</title>
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
@@ -33,7 +33,7 @@
             </div>
 
             <div class="admin-brand-copy">
-                <strong>MetaFore OTA</strong>
+                <strong>Eagle Global Hub LTD</strong>
                 <span>Smart Travel Booking</span>
             </div>
 
@@ -1275,7 +1275,7 @@
         <footer class="admin-footer">
 
             <span>
-                © {{ date('Y') }} MetaFore OTA. All rights reserved.
+                © {{ date('Y') }} Eagle Global Hub LTD. All rights reserved.
             </span>
 
             <span>

@@ -2,7 +2,6 @@
 
 namespace Tests\Feature\Settings;
 
-use App\Models\Setting;
 use App\Models\User;
 use Database\Seeders\RolePermissionSeeder;
 use Database\Seeders\SettingsSeeder;
@@ -58,7 +57,7 @@ class SettingControllerTest extends TestCase
             ->assertJsonFragment([
                 'group' => 'general',
                 'key' => 'site_name',
-                'value' => 'MetaFore OTA',
+                'value' => 'Eagle Global Hub LTD',
                 'type' => 'string',
                 'is_public' => true,
             ]);
@@ -85,7 +84,7 @@ class SettingControllerTest extends TestCase
         $this->assertDatabaseHas('settings', [
             'group' => 'general',
             'key' => 'site_name',
-            'value' => 'MetaFore OTA',
+            'value' => 'Eagle Global Hub LTD',
         ]);
     }
 
@@ -103,7 +102,7 @@ class SettingControllerTest extends TestCase
             ->assertOk()
             ->assertJsonPath(
                 'data.value',
-                'MetaFore OTA'
+                'Eagle Global Hub LTD'
             )
             ->assertJsonPath(
                 'data.type',

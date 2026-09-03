@@ -1,12 +1,12 @@
 @extends('layouts.auth')
 
-@section('title', 'Reset Password | MetaFore OTA')
+@section('title', 'Reset Password | Eagle Global Hub LTD')
 
 @section('hero-title', 'Create A New Password')
 
 @section(
     'hero-description',
-    'Choose a secure new password to regain access to your MetaFore OTA account.'
+    'Choose a secure new password to regain access to your Eagle Global Hub LTD account.'
 )
 
 @section('content')
