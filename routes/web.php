@@ -27,6 +27,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::view('/dashboard', 'dashboard')
         ->name('dashboard');
 
+    Route::view('/account', 'account.overview')
+        ->name('account.overview');
+
     Route::view('/flights', 'flights.search')
         ->middleware('permission:flights.search')
         ->name('flights.index');

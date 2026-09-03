@@ -57,6 +57,14 @@
                         Dashboard
                     </a>
 
+                    <a
+                        href="{{ route('account.overview') }}"
+                        @class([
+                            'is-active' => request()->routeIs('account.*')
+                        ])
+                    >
+                        Account
+                    </a>
                     @can('flights.search')
                         <a
                             href="{{ route('flights.index') }}"
