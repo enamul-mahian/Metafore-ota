@@ -1,12 +1,12 @@
 @extends('layouts.auth')
 
-@section('title', 'Verify Email | MetaFore OTA')
+@section('title', 'Verify Email | Eagle Global Hub LTD')
 
 @section('hero-title', 'Verify Your Email')
 
 @section(
     'hero-description',
-    'Confirm your email address to secure your account and continue your MetaFore OTA journey.'
+    'Confirm your email address to secure your account and continue your Eagle Global Hub LTD journey.'
 )
 
 @section('content')

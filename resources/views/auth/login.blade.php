@@ -1,6 +1,6 @@
 @extends('layouts.auth')
 
-@section('title', 'Login | MetaFore OTA')
+@section('title', 'Login | Eagle Global Hub LTD')
 @section('hero-title', 'Welcome Back!')
 @section('hero-description', 'Login to continue your travel experience.')
 
@@ -8,7 +8,7 @@
     <div class="auth-heading">
         <span class="auth-kicker">WELCOME BACK</span>
         <h2>Login</h2>
-        <p>Sign in to continue to your MetaFore OTA account.</p>
+        <p>Sign in to continue to your Eagle Global Hub LTD account.</p>
     </div>
 
     <form method="POST" action="{{ route('login.store') }}" class="auth-form">

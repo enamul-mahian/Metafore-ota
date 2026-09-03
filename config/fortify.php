@@ -119,7 +119,7 @@ return [
     | Features
     |--------------------------------------------------------------------------
     |
-    | Initial MetaFore OTA authentication scope:
+    | Initial Eagle Global Hub LTD authentication scope:
     | - Registration
     | - Password reset
     | - Email verification

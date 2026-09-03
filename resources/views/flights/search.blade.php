@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>Search Flights | MetaFore OTA</title>
+    <title>Search Flights | Eagle Global Hub LTD</title>
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
@@ -14,7 +14,7 @@
     <header class="dashboard-header">
         <a href="{{ route('dashboard') }}" class="dashboard-logo">
             <span class="dashboard-logo-icon">Ã¢Å“Ë†</span>
-            <span>MetaFore OTA</span>
+            <span>Eagle Global Hub LTD</span>
         </a>
 
         <div class="dashboard-user-area">

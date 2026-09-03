@@ -1,7 +1,7 @@
 @extends('layouts.auth')
 
-@section('title', 'Create Account | MetaFore OTA')
-@section('hero-title', 'Explore The World With MetaFore OTA')
+@section('title', 'Create Account | Eagle Global Hub LTD')
+@section('hero-title', 'Explore The World With Eagle Global Hub LTD')
 @section('hero-description', 'Create your account and start planning your next journey.')
 
 @section('content')

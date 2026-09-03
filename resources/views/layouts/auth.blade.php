@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>@yield('title', 'MetaFore OTA')</title>
+    <title>@yield('title', 'Eagle Global Hub LTD')</title>
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
@@ -19,7 +19,7 @@
                     ✈
                 </div>
 
-                <span>MetaFore OTA</span>
+                <span>Eagle Global Hub LTD</span>
             </div>
 
             <div class="auth-visual-content">
@@ -30,7 +30,7 @@
                 <h1>
                     @yield(
                         'hero-title',
-                        'Explore The World With MetaFore OTA'
+                        'Explore The World With Eagle Global Hub LTD'
                     )
                 </h1>
 
@@ -51,7 +51,7 @@
                 </span>
 
                 <strong>
-                    MetaFore OTA
+                    Eagle Global Hub LTD
                 </strong>
             </div>
 

@@ -1,6 +1,6 @@
-﻿# MetaFore OTA Project Conventions
+# Eagle Global Hub LTD Project Conventions
 
-These conventions apply to application-owned Laravel code in MetaFore OTA.
+These conventions apply to application-owned Laravel code in Eagle Global Hub LTD.
 Framework/tooling-owned code such as Laravel or Fortify defaults does not establish an application convention unless explicitly adopted.
 
 ## Routing

@@ -18,7 +18,7 @@ class SettingsSeeder extends Seeder
             [
                 'group' => 'general',
                 'key' => 'site_name',
-                'value' => 'MetaFore OTA',
+                'value' => 'Eagle Global Hub LTD',
                 'type' => 'string',
                 'is_public' => true,
                 'created_at' => $now,

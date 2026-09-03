@@ -44,13 +44,13 @@ class SettingServiceTest extends TestCase
         $setting = $this->settings->set(
             'general',
             'site_name',
-            'MetaFore OTA',
+            'Eagle Global Hub LTD',
             'string',
             true
         );
 
         $this->assertSame(
-            'MetaFore OTA',
+            'Eagle Global Hub LTD',
             $this->settings->get(
                 'general',
                 'site_name'
@@ -166,7 +166,7 @@ class SettingServiceTest extends TestCase
         $this->settings->set(
             'general',
             'site_name',
-            'MetaFore OTA'
+            'Eagle Global Hub LTD'
         );
 
         $this->settings->set(
@@ -197,11 +197,11 @@ class SettingServiceTest extends TestCase
         $this->settings->set(
             'general',
             'site_name',
-            'MetaFore OTA'
+            'Eagle Global Hub LTD'
         );
 
         $this->assertSame(
-            'MetaFore OTA',
+            'Eagle Global Hub LTD',
             $this->settings->get(
                 'general',
                 'site_name'
@@ -219,7 +219,7 @@ class SettingServiceTest extends TestCase
          * The old value is still cached here.
          */
         $this->assertSame(
-            'MetaFore OTA',
+            'Eagle Global Hub LTD',
             $this->settings->get(
                 'general',
                 'site_name'
