@@ -101,7 +101,7 @@
 
 .auth-visual h1 {
     margin: 0 0 18px;
-    font-size: clamp(36px, 5vw, 54px);
+    font-size: 52px;
     line-height: 1.05;
 }
 
@@ -2888,7 +2888,7 @@
 
 .flight-hero h1 {
     margin: 0 0 12px;
-    font-size: clamp(30px, 4vw, 40px);
+    font-size: 38px;
 }
 
 .flight-hero p {
@@ -4276,9 +4276,9 @@ body.site-body {
 .site-hero-copy h1 {
     max-width: 700px;
     margin: 0;
-    font-size: clamp(42px, 6vw, 72px);
+    font-size: 64px;
     line-height: 0.98;
-    letter-spacing: -0.055em;
+    letter-spacing: 0;
 }
 
 .site-hero-copy > p {
@@ -4430,9 +4430,9 @@ body.site-body {
 .site-section-heading h2 {
     margin: 0;
     color: var(--eagle-navy);
-    font-size: clamp(30px, 4vw, 46px);
+    font-size: 42px;
     line-height: 1.08;
-    letter-spacing: -0.035em;
+    letter-spacing: 0;
 }
 
 .site-section-heading p {
@@ -4785,7 +4785,7 @@ body.public-page-body {
     }
 
     .site-hero-copy h1 {
-        font-size: clamp(38px, 12vw, 54px);
+        font-size: 38px;
     }
 
     .site-hero-copy > p {
@@ -5044,9 +5044,9 @@ body.auth-body {
     max-width: 520px;
     margin: 0;
     color: #ffffff;
-    font-size: clamp(38px, 5vw, 58px);
+    font-size: 54px;
     line-height: 1;
-    letter-spacing: -0.045em;
+    letter-spacing: 0;
 }
 
 .auth-visual-content > p {
@@ -5132,7 +5132,7 @@ body.auth-body {
     color: var(--eagle-navy);
     font-size: 34px;
     line-height: 1.1;
-    letter-spacing: -0.035em;
+    letter-spacing: 0;
 }
 
 .auth-heading p {
@@ -5407,8 +5407,8 @@ body.account-body {
 
 .account-hero h1 {
     margin: 0;
-    font-size: clamp(32px, 5vw, 46px);
-    letter-spacing: -0.04em;
+    font-size: 42px;
+    letter-spacing: 0;
 }
 
 .account-hero p {
@@ -5485,7 +5485,7 @@ body.account-body {
     margin: 0;
     color: var(--eagle-navy);
     font-size: 22px;
-    letter-spacing: -0.025em;
+    letter-spacing: 0;
 }
 
 .account-detail-list {
@@ -6088,9 +6088,9 @@ body.bookings-body {
 .flight-hero h1 {
     max-width: 650px;
     margin-bottom: 15px;
-    font-size: clamp(36px, 5vw, 54px);
+    font-size: 50px;
     line-height: 1.02;
-    letter-spacing: -0.045em;
+    letter-spacing: 0;
 }
 
 .flight-hero p {
@@ -6248,7 +6248,7 @@ body.bookings-body {
 .flight-card-heading h2 {
     color: var(--eagle-navy);
     font-size: 28px;
-    letter-spacing: -0.025em;
+    letter-spacing: 0;
 }
 
 .flight-card-heading p {
@@ -6425,7 +6425,7 @@ body.bookings-body {
 .flight-results-heading strong {
     color: var(--eagle-navy);
     font-size: 20px;
-    letter-spacing: -0.02em;
+    letter-spacing: 0;
 }
 
 .flight-results-heading span {
@@ -6605,7 +6605,7 @@ body.bookings-body {
 .flight-traveler-review-header h3 {
     color: var(--eagle-navy);
     font-size: 24px;
-    letter-spacing: -0.025em;
+    letter-spacing: 0;
 }
 
 .flight-traveler-review-header p {
