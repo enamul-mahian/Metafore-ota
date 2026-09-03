@@ -9895,3 +9895,311 @@ body.bookings-body {
 /* ========================================================================== */
 /* END REFERENCE UI SLICE 03B                                                 */
 /* ========================================================================== */
+
+/* ========================================================================== */
+/* REFERENCE UI SLICE 04 — ORDER PAYMENT RECONCILIATION CONFIRMATION          */
+/* ========================================================================== */
+
+/*
+ * Presentation-only OTA status treatment.
+ * No supplier execution, fare authority, reconciliation, payment,
+ * confirmation, ticketing or retry behavior is changed.
+ */
+
+/* -------------------------------------------------------------------------- */
+/* ORDER EXECUTION                                                            */
+/* -------------------------------------------------------------------------- */
+
+.flight-order-execution-panel,
+.flight-order-payment-panel {
+    overflow: hidden;
+    margin-top: 14px;
+    border: 1px solid #d7e2ef;
+    border-radius: 9px;
+    background: #ffffff;
+    box-shadow: 0 8px 24px rgba(15, 35, 70, 0.05);
+}
+
+.flight-order-execution-status,
+.flight-order-payment-status {
+    margin: 0;
+    padding: 13px 15px;
+    border-bottom: 1px solid #e5ecf4;
+    background: #f8fbff;
+    color: #425a75;
+    font-size: 10px;
+    font-weight: 650;
+    line-height: 1.55;
+}
+
+.flight-order-execution-disclaimer {
+    margin: 0;
+    padding: 11px 15px;
+    border-bottom: 1px solid #e7edf5;
+    background: #ffffff;
+    color: #6b7b90;
+    font-size: 10px;
+    line-height: 1.55;
+}
+
+/* Server-reported processing / recovery states */
+
+.flight-order-execution-status[
+    data-flight-order-execution-status="processing"
+],
+.flight-order-execution-status[
+    data-flight-order-execution-status="reconciling"
+],
+.flight-order-payment-status[
+    data-flight-order-payment-status="processing"
+],
+.flight-order-payment-status[
+    data-flight-order-payment-status="reconciling"
+] {
+    border-left: 4px solid #4285d4;
+    background: #f5f9ff;
+    color: #315b8b;
+}
+
+/* Completed / ready states */
+
+.flight-order-execution-status[
+    data-flight-order-execution-status="created"
+],
+.flight-order-execution-status[
+    data-flight-order-execution-status="ready"
+],
+.flight-order-payment-status[
+    data-flight-order-payment-status="paid"
+],
+.flight-order-payment-status[
+    data-flight-order-payment-status="completed"
+],
+.flight-order-payment-status[
+    data-flight-order-payment-status="ready"
+] {
+    border-left: 4px solid #2f9960;
+    background: #f4fbf7;
+    color: #267248;
+}
+
+/* Failure / unavailable states */
+
+.flight-order-execution-status[
+    data-flight-order-execution-status="error"
+],
+.flight-order-execution-status[
+    data-flight-order-execution-status="failed"
+],
+.flight-order-payment-status[
+    data-flight-order-payment-status="error"
+],
+.flight-order-payment-status[
+    data-flight-order-payment-status="failed"
+] {
+    border-left: 4px solid #d85a5a;
+    background: #fff7f7;
+    color: #9b3434;
+}
+
+/* -------------------------------------------------------------------------- */
+/* PAYMENT READINESS / PAYMENT STATUS                                          */
+/* -------------------------------------------------------------------------- */
+
+.flight-payment-badge {
+    display: inline-flex;
+    align-items: center;
+    min-height: 23px;
+    padding: 4px 8px;
+    border: 1px solid #c9dff7;
+    border-radius: 999px;
+    background: #eef6ff;
+    color: #155ea9;
+    font-size: 9px;
+    font-weight: 850;
+    line-height: 1;
+    text-transform: uppercase;
+}
+
+.flight-order-payment-panel > p:not(.flight-order-payment-status) {
+    margin: 0;
+    padding: 11px 15px;
+    border-bottom: 1px solid #e8eef5;
+    color: #607087;
+    font-size: 10px;
+    line-height: 1.55;
+}
+
+/* -------------------------------------------------------------------------- */
+/* ACTION BUTTONS                                                             */
+/* -------------------------------------------------------------------------- */
+
+.flight-order-execution-button,
+.flight-booking-confirmation-intent-button,
+.flight-order-payment-button,
+.flight-order-confirmation-button,
+.flight-payment-status-button,
+.flight-order-attempt-recovery-button,
+.flight-payment-attempt-recovery-button,
+.flight-payment-reconciliation-button,
+.flight-order-reconciliation-button {
+    min-height: 40px;
+    margin: 12px 15px 14px;
+    padding: 9px 16px;
+    border: 1px solid #1266d7;
+    border-radius: 7px;
+    background: #1266d7;
+    color: #ffffff;
+    font-size: 11px;
+    font-weight: 800;
+    line-height: 1.25;
+    cursor: pointer;
+    box-shadow: 0 5px 14px rgba(18, 102, 215, 0.14);
+    transition:
+        background 140ms ease,
+        border-color 140ms ease,
+        box-shadow 140ms ease;
+}
+
+.flight-order-execution-button:hover:not(:disabled),
+.flight-booking-confirmation-intent-button:hover:not(:disabled),
+.flight-order-payment-button:hover:not(:disabled),
+.flight-order-confirmation-button:hover:not(:disabled),
+.flight-payment-status-button:hover:not(:disabled),
+.flight-order-attempt-recovery-button:hover:not(:disabled),
+.flight-payment-attempt-recovery-button:hover:not(:disabled),
+.flight-payment-reconciliation-button:hover:not(:disabled),
+.flight-order-reconciliation-button:hover:not(:disabled) {
+    border-color: #0e56b7;
+    background: #0e56b7;
+    box-shadow: 0 7px 18px rgba(18, 102, 215, 0.20);
+}
+
+.flight-order-execution-button:disabled,
+.flight-booking-confirmation-intent-button:disabled,
+.flight-order-payment-button:disabled,
+.flight-order-confirmation-button:disabled,
+.flight-payment-status-button:disabled,
+.flight-order-attempt-recovery-button:disabled,
+.flight-payment-attempt-recovery-button:disabled,
+.flight-payment-reconciliation-button:disabled,
+.flight-order-reconciliation-button:disabled {
+    cursor: not-allowed;
+    opacity: 0.52;
+    box-shadow: none;
+}
+
+/* Recovery / status checks are visually secondary. */
+
+.flight-order-attempt-recovery-button,
+.flight-payment-attempt-recovery-button,
+.flight-payment-status-button,
+.flight-payment-reconciliation-button,
+.flight-order-reconciliation-button {
+    border-color: #bfd2e8;
+    background: #ffffff;
+    color: #174f89;
+    box-shadow: none;
+}
+
+.flight-order-attempt-recovery-button:hover:not(:disabled),
+.flight-payment-attempt-recovery-button:hover:not(:disabled),
+.flight-payment-status-button:hover:not(:disabled),
+.flight-payment-reconciliation-button:hover:not(:disabled),
+.flight-order-reconciliation-button:hover:not(:disabled) {
+    border-color: #8fb5df;
+    background: #f3f8fe;
+    color: #0e4f94;
+    box-shadow: none;
+}
+
+/* -------------------------------------------------------------------------- */
+/* CONFIRMATION INTENT / FINAL STATUS                                          */
+/* -------------------------------------------------------------------------- */
+
+.flight-booking-confirmation-intent-panel {
+    border-color: #d6e2f0;
+}
+
+.flight-booking-confirmation-intent-panel
+.flight-booking-confirmation-intent-fare {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding-top: 12px;
+    padding-bottom: 12px;
+}
+
+.flight-booking-confirmation-intent-panel
+.flight-booking-confirmation-intent-disclaimer {
+    max-width: 920px;
+}
+
+/*
+ * Preserve all actual server text.
+ * No generated labels or fake booking/payment statuses are added.
+ */
+
+/* -------------------------------------------------------------------------- */
+/* DENSE OTA STATUS STACK                                                      */
+/* -------------------------------------------------------------------------- */
+
+.flight-results
+.flight-booking-confirmation-intent-panel
++ .flight-order-execution-panel,
+.flight-results
+.flight-order-execution-panel
++ .flight-order-payment-panel {
+    margin-top: 11px;
+}
+
+.flight-order-execution-panel button + button,
+.flight-order-payment-panel button + button {
+    margin-left: 0;
+}
+
+.flight-order-execution-panel,
+.flight-order-payment-panel,
+.flight-booking-confirmation-intent-panel {
+    max-width: 100%;
+}
+
+/* -------------------------------------------------------------------------- */
+/* RESPONSIVE                                                                 */
+/* -------------------------------------------------------------------------- */
+
+@media (max-width: 760px) {
+    .flight-order-execution-status,
+    .flight-order-payment-status,
+    .flight-order-execution-disclaimer,
+    .flight-order-payment-panel > p:not(.flight-order-payment-status) {
+        padding-right: 13px;
+        padding-left: 13px;
+    }
+
+    .flight-order-execution-button,
+    .flight-booking-confirmation-intent-button,
+    .flight-order-payment-button,
+    .flight-order-confirmation-button,
+    .flight-payment-status-button,
+    .flight-order-attempt-recovery-button,
+    .flight-payment-attempt-recovery-button,
+    .flight-payment-reconciliation-button,
+    .flight-order-reconciliation-button {
+        width: calc(100% - 26px);
+        margin-right: 13px;
+        margin-left: 13px;
+    }
+
+    .flight-booking-confirmation-intent-panel
+    .flight-booking-confirmation-intent-fare {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 5px;
+    }
+}
+
+/* ========================================================================== */
+/* END REFERENCE UI SLICE 04                                                  */
+/* ========================================================================== */
