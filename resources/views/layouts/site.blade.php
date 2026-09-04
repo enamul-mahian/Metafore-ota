@@ -54,6 +54,27 @@
                         </a>
                     @endcan
 
+                    @foreach ($travelServices as $serviceKey => $service)
+                        @if (
+                            $serviceKey !== 'flights' &&
+                            $service['available'] &&
+                            $service['permission']
+                        )
+                            @can($service['permission'])
+                                <a
+                                    href="{{ route($service['route_name']) }}"
+                                    @class([
+                                        'is-active' => request()->routeIs(
+                                            $serviceKey.'.*'
+                                        )
+                                    ])
+                                >
+                                    {{ $service['label'] }}
+                                </a>
+                            @endcan
+                        @endif
+                    @endforeach
+
                     @can('flights.book')
                         <a
                             href="{{ route('bookings.index') }}"
@@ -201,6 +222,20 @@
 
                 @auth
                     <a href="{{ route('dashboard') }}">Dashboard</a>
+
+                    @foreach ($travelServices as $serviceKey => $service)
+                        @if (
+                            $serviceKey !== 'flights' &&
+                            $service['available'] &&
+                            $service['permission']
+                        )
+                            @can($service['permission'])
+                                <a href="{{ route($service['route_name']) }}">
+                                    {{ $service['label'] }}
+                                </a>
+                            @endcan
+                        @endif
+                    @endforeach
 
                     @can('flights.search')
                         <a href="{{ route('flights.index') }}">Flights</a>

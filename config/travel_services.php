@@ -26,6 +26,7 @@ return [
             'enabled' => true,
             'provider_required' => false,
             'route_name' => 'flights.index',
+            'permission' => 'flights.search',
             'unavailable_label' => 'Not Configured',
         ],
 
@@ -35,6 +36,7 @@ return [
             'provider' => env('HOTEL_PROVIDER', 'unavailable'),
             'contract' => HotelSearchProvider::class,
             'route_name' => 'hotels.index',
+            'permission' => 'hotels.search',
             'unavailable_label' => 'Not Configured',
             'providers' => [
                 'unavailable' => UnavailableHotelSearchProvider::class,
@@ -53,6 +55,7 @@ return [
             'provider' => env('TOUR_PROVIDER', 'unavailable'),
             'contract' => TourSearchProvider::class,
             'route_name' => 'tours.index',
+            'permission' => 'tours.search',
             'unavailable_label' => 'Not Configured',
             'providers' => [
                 'unavailable' => UnavailableTourSearchProvider::class,
@@ -71,6 +74,7 @@ return [
             'provider' => env('VISA_PROVIDER', 'unavailable'),
             'contract' => VisaInformationProvider::class,
             'route_name' => 'visa.index',
+            'permission' => 'visa.view',
             'unavailable_label' => 'Not Configured',
             'providers' => [
                 'unavailable' => UnavailableVisaInformationProvider::class,

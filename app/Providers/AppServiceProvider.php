@@ -81,7 +81,7 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         View::composer(
-            'home',
+            ['home', 'layouts.site'],
             function (IlluminateView $view): void {
                 $view->with(
                     'travelServices',

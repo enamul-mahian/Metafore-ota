@@ -19,7 +19,8 @@ class TravelServiceRegistry
      *     label: string,
      *     available: bool,
      *     status: string,
-     *     route_name: string|null
+     *     route_name: string|null,
+     *     permission: string|null
      * }>
      */
     public function all(): array
@@ -52,6 +53,9 @@ class TravelServiceRegistry
                     : (string) ($service['unavailable_label'] ?? 'Not Configured'),
                 'route_name' => $available && is_string($routeName)
                     ? $routeName
+                    : null,
+                'permission' => is_string($service['permission'] ?? null)
+                    ? $service['permission']
                     : null,
             ];
         }

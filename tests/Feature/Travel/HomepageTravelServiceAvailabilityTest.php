@@ -3,6 +3,8 @@
 namespace Tests\Feature\Travel;
 
 use App\Contracts\Hotel\HotelSearchProvider;
+use App\Contracts\Tour\TourSearchProvider;
+use App\Contracts\Visa\VisaInformationProvider;
 use App\Services\Travel\TravelServiceRegistry;
 use Tests\TestCase;
 
@@ -73,23 +75,69 @@ class HomepageTravelServiceAvailabilityTest extends TestCase
             ->assertDontSee('homepage-must-never-render-this-secret');
     }
 
+    public function test_all_configured_services_render_real_links_without_rendering_api_keys(): void
+    {
+        $this->configureHotelProvider('hotel-server-key');
+        $this->configureProvider(
+            'tours',
+            HomepageTourSearchProvider::class,
+            'tour-server-key'
+        );
+        $this->configureProvider(
+            'visa',
+            HomepageVisaInformationProvider::class,
+            'visa-server-key'
+        );
+
+        $response = $this->get(route('home'));
+
+        $response
+            ->assertOk()
+            ->assertSee('href="http://localhost:8000/hotels"', false)
+            ->assertSee('href="http://localhost:8000/tours"', false)
+            ->assertSee('href="http://localhost:8000/visa"', false);
+
+        foreach ([
+            'hotel-server-key',
+            'tour-server-key',
+            'visa-server-key',
+        ] as $secret) {
+            $response->assertDontSee($secret);
+        }
+    }
+
     private function configureHotelProvider(?string $apiKey): void
     {
-        config()->set('travel_services.services.hotels.enabled', true);
+        $this->configureProvider(
+            'hotels',
+            HomepageHotelSearchProvider::class,
+            $apiKey
+        );
+    }
+
+    /**
+     * @param  class-string  $providerClass
+     */
+    private function configureProvider(
+        string $service,
+        string $providerClass,
+        ?string $apiKey,
+    ): void {
+        config()->set("travel_services.services.{$service}.enabled", true);
         config()->set(
-            'travel_services.services.hotels.provider',
+            "travel_services.services.{$service}.provider",
             'test-provider'
         );
         config()->set(
-            'travel_services.services.hotels.providers.test-provider',
-            HomepageHotelSearchProvider::class
+            "travel_services.services.{$service}.providers.test-provider",
+            $providerClass
         );
         config()->set(
-            'travel_services.services.hotels.provider_requirements.test-provider',
+            "travel_services.services.{$service}.provider_requirements.test-provider",
             ['credentials.api_key']
         );
         config()->set(
-            'travel_services.services.hotels.credentials.api_key',
+            "travel_services.services.{$service}.credentials.api_key",
             $apiKey
         );
     }
@@ -102,6 +150,22 @@ class HomepageHotelSearchProvider implements HotelSearchProvider
      * @return array<int, array<string, mixed>>
      */
     public function search(array $criteria): array
+    {
+        return [];
+    }
+}
+
+class HomepageTourSearchProvider implements TourSearchProvider
+{
+    public function search(array $criteria): array
+    {
+        return [];
+    }
+}
+
+class HomepageVisaInformationProvider implements VisaInformationProvider
+{
+    public function requirements(array $criteria): array
     {
         return [];
     }
