@@ -21,6 +21,8 @@ use App\Http\Controllers\Flight\FlightTravelerValidationController;
 use App\Http\Controllers\FlightBookingController;
 use App\Http\Controllers\Hotel\HotelController;
 use App\Http\Controllers\Hotel\HotelSearchController;
+use App\Http\Controllers\Tour\TourController;
+use App\Http\Controllers\Tour\TourSearchController;
 use Illuminate\Support\Facades\Route;
 
 Route::view('/', 'home')->name('home');
@@ -53,6 +55,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/hotels/search', HotelSearchController::class)
         ->middleware('permission:hotels.search')
         ->name('hotels.search');
+
+    Route::get('/tours', TourController::class)
+        ->middleware('permission:tours.search')
+        ->name('tours.index');
+
+    Route::post('/tours/search', TourSearchController::class)
+        ->middleware('permission:tours.search')
+        ->name('tours.search');
 
     Route::get('/bookings', [FlightBookingController::class, 'index'])
         ->middleware('permission:flights.book')

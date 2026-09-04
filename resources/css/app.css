@@ -11983,6 +11983,10 @@ body.bookings-body {
     border-right: 0;
 }
 
+.travel-module-steps-eight {
+    grid-template-columns: repeat(8, minmax(0, 1fr));
+}
+
 .travel-unavailable,
 .travel-empty-state,
 .travel-search-panel {
@@ -12033,6 +12037,10 @@ body.bookings-body {
     grid-template-columns: minmax(190px, 1.5fr) repeat(4, minmax(120px, 1fr)) auto;
     gap: 10px;
     align-items: end;
+}
+
+.travel-search-panel .travel-search-form-compact {
+    grid-template-columns: minmax(220px, 1.5fr) repeat(2, minmax(150px, 1fr)) auto;
 }
 
 .travel-field {
