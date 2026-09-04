@@ -11890,3 +11890,23 @@ body.bookings-body {
 /* ========================================================================== */
 /* END REFERENCE UI MOBILE HOMEPAGE CORRECTION                                */
 /* ========================================================================== */
+
+.ota-service-list article > a,
+.ota-service-list article > div {
+    min-height: inherit;
+    display: grid;
+    align-content: center;
+    gap: 7px;
+    color: inherit;
+    text-decoration: none;
+}
+
+.ota-service-list article > a {
+    margin: -7px -14px;
+    padding: 7px 14px;
+    transition: background 160ms ease;
+}
+
+.ota-service-list article > a:hover {
+    background: #edf5ff;
+}

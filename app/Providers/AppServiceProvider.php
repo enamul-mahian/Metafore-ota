@@ -9,9 +9,12 @@ use App\Contracts\Visa\VisaInformationProvider;
 use App\Services\Flight\UnavailableFlightSearchProvider;
 use App\Services\Hotel\UnavailableHotelSearchProvider;
 use App\Services\Tour\UnavailableTourSearchProvider;
+use App\Services\Travel\TravelServiceRegistry;
 use App\Services\Visa\UnavailableVisaInformationProvider;
 use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\View\View as IlluminateView;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -77,7 +80,15 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        View::composer(
+            'home',
+            function (IlluminateView $view): void {
+                $view->with(
+                    'travelServices',
+                    app(TravelServiceRegistry::class)->all()
+                );
+            }
+        );
     }
 
     /**

@@ -242,25 +242,21 @@
             </div>
 
             <div class="ota-service-list">
-                <article class="is-live">
-                    <strong>Flights</strong>
-                    <span>Available</span>
-                </article>
-
-                <article>
-                    <strong>Hotels</strong>
-                    <span>Coming Soon</span>
-                </article>
-
-                <article>
-                    <strong>Tours</strong>
-                    <span>Coming Soon</span>
-                </article>
-
-                <article>
-                    <strong>Visa</strong>
-                    <span>Coming Soon</span>
-                </article>
+                @foreach ($travelServices as $service)
+                    <article @class(['is-live' => $service['available']])>
+                        @if ($service['available'])
+                            <a href="{{ route($service['route_name']) }}">
+                                <strong>{{ $service['label'] }}</strong>
+                                <span>{{ $service['status'] }}</span>
+                            </a>
+                        @else
+                            <div>
+                                <strong>{{ $service['label'] }}</strong>
+                                <span>{{ $service['status'] }}</span>
+                            </div>
+                        @endif
+                    </article>
+                @endforeach
             </div>
         </section>
 
