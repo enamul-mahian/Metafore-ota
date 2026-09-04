@@ -25,21 +25,25 @@
 
                 <div class="dashboard-welcome-actions">
 
-                    @can('flights.search')
-                        <a
-                            href="{{ route('flights.index') }}"
-                            class="site-button site-button-primary"
-                        >
-                            Search Flights
-                        </a>
-                    @endcan
+                    @feature('flights')
+                        @can('flights.search')
+                            <a
+                                href="{{ route('flights.index') }}"
+                                class="site-button site-button-primary"
+                            >
+                                Search Flights
+                            </a>
+                        @endcan
+                    @endfeature
 
-                    <a
-                        href="{{ route('account.overview') }}"
-                        class="site-button site-button-secondary"
-                    >
-                        View Account
-                    </a>
+                    @feature('account')
+                        <a
+                            href="{{ route('account.overview') }}"
+                            class="site-button site-button-secondary"
+                        >
+                            View Account
+                        </a>
+                    @endfeature
 
                 </div>
             </div>
@@ -74,11 +78,12 @@
 
             <div class="dashboard-quick-grid">
 
-                @can('flights.search')
-                    <a
-                        href="{{ route('flights.index') }}"
-                        class="dashboard-quick-card"
-                    >
+                @feature('flights')
+                    @can('flights.search')
+                        <a
+                            href="{{ route('flights.index') }}"
+                            class="dashboard-quick-card"
+                        >
                         <span class="dashboard-quick-icon" aria-hidden="true">
                             &#9992;
                         </span>
@@ -93,13 +98,15 @@
                         </div>
 
                         <b aria-hidden="true">&rarr;</b>
-                    </a>
-                @endcan
+                        </a>
+                    @endcan
+                @endfeature
 
-                <a
-                    href="{{ route('account.overview') }}"
-                    class="dashboard-quick-card"
-                >
+                @feature('account')
+                    <a
+                        href="{{ route('account.overview') }}"
+                        class="dashboard-quick-card"
+                    >
                     <span class="dashboard-quick-icon" aria-hidden="true">
                         A
                     </span>
@@ -114,13 +121,15 @@
                     </div>
 
                     <b aria-hidden="true">&rarr;</b>
-                </a>
+                    </a>
+                @endfeature
 
-                @can('flights.book')
-                    <a
-                        href="{{ route('bookings.index') }}"
-                        class="dashboard-quick-card"
-                    >
+                @feature('bookings')
+                    @can('flights.book')
+                        <a
+                            href="{{ route('bookings.index') }}"
+                            class="dashboard-quick-card"
+                        >
                         <span class="dashboard-quick-icon" aria-hidden="true">
                             B
                         </span>
@@ -135,8 +144,9 @@
                         </div>
 
                         <b aria-hidden="true">&rarr;</b>
-                    </a>
-                @endcan
+                        </a>
+                    @endcan
+                @endfeature
 
             </div>
 
@@ -158,11 +168,12 @@
 
             <div class="dashboard-service-grid">
 
-                @can('flights.search')
-                    <a
-                        href="{{ route('flights.index') }}"
-                        class="dashboard-service-card dashboard-service-card-link"
-                    >
+                @feature('flights')
+                    @can('flights.search')
+                        <a
+                            href="{{ route('flights.index') }}"
+                            class="dashboard-service-card dashboard-service-card-link"
+                        >
                         <div class="service-icon" aria-hidden="true">
                             &#9992;
                         </div>
@@ -176,9 +187,9 @@
                         <span class="service-status service-status-live">
                             Available
                         </span>
-                    </a>
-                @else
-                    <article class="dashboard-service-card">
+                        </a>
+                    @else
+                        <article class="dashboard-service-card">
                         <div class="service-icon" aria-hidden="true">
                             &#9992;
                         </div>
@@ -192,10 +203,12 @@
                         <span class="service-status">
                             Unavailable
                         </span>
-                    </article>
-                @endcan
+                        </article>
+                    @endcan
+                @endfeature
 
-                <article class="dashboard-service-card">
+                @feature('hotels')
+                    <article class="dashboard-service-card">
                     <div class="service-icon" aria-hidden="true">
                         H
                     </div>
@@ -209,9 +222,11 @@
                     <span class="service-status">
                         Coming Soon
                     </span>
-                </article>
+                    </article>
+                @endfeature
 
-                <article class="dashboard-service-card">
+                @feature('tours')
+                    <article class="dashboard-service-card">
                     <div class="service-icon" aria-hidden="true">
                         T
                     </div>
@@ -225,9 +240,11 @@
                     <span class="service-status">
                         Coming Soon
                     </span>
-                </article>
+                    </article>
+                @endfeature
 
-                <article class="dashboard-service-card">
+                @feature('visa')
+                    <article class="dashboard-service-card">
                     <div class="service-icon" aria-hidden="true">
                         V
                     </div>
@@ -241,7 +258,8 @@
                     <span class="service-status">
                         Coming Soon
                     </span>
-                </article>
+                    </article>
+                @endfeature
 
             </div>
 
@@ -260,12 +278,14 @@
                     </h2>
                 </div>
 
-                <a
-                    href="{{ route('account.overview') }}"
-                    class="dashboard-account-link"
-                >
-                    Open Account
-                </a>
+                @feature('account')
+                    <a
+                        href="{{ route('account.overview') }}"
+                        class="dashboard-account-link"
+                    >
+                        Open Account
+                    </a>
+                @endfeature
             </div>
 
             <div class="dashboard-account-grid">

@@ -17,9 +17,8 @@
             </h1>
 
             <p>
-                The page you requested is not available. You can return home,
-                open your dashboard, or continue to flight search if your
-                account has access.
+                The page you requested is not available. You can return home
+                or continue through the currently available account services.
             </p>
 
             <div class="public-page-actions">
@@ -31,12 +30,14 @@
                 </a>
 
                 @auth
-                    <a
-                        href="{{ route('dashboard') }}"
-                        class="site-button site-button-secondary"
-                    >
-                        Dashboard
-                    </a>
+                    @feature('dashboard')
+                        <a
+                            href="{{ route('dashboard') }}"
+                            class="site-button site-button-secondary"
+                        >
+                            Dashboard
+                        </a>
+                    @endfeature
                 @else
                     <a
                         href="{{ route('login') }}"

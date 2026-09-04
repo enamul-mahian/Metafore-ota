@@ -39,94 +39,127 @@
             <nav class="site-nav" aria-label="Primary navigation">
 
                 @auth
-                    @can('flights.search')
-                        <a
-                            href="{{ route('flights.index') }}"
-                            @class([
-                                'is-active' => request()->routeIs('flights.*')
-                            ])
-                        >
-                            Flights
-                        </a>
-                    @else
-                        <a href="{{ route('dashboard') }}">
-                            Flights
-                        </a>
-                    @endcan
+                    @feature('flights')
+                        @can('flights.search')
+                            <a
+                                href="{{ route('flights.index') }}"
+                                @class([
+                                    'is-active' => request()->routeIs('flights.*')
+                                ])
+                            >
+                                Flights
+                            </a>
+                        @else
+                            @feature('dashboard')
+                                <a href="{{ route('dashboard') }}">
+                                    Flights
+                                </a>
+                            @endfeature
+                        @endcan
+                    @endfeature
 
                     @foreach ($travelServices as $serviceKey => $service)
-                        @if (
-                            $serviceKey !== 'flights' &&
-                            $service['available'] &&
-                            $service['permission']
-                        )
-                            @can($service['permission'])
-                                <a
-                                    href="{{ route($service['route_name']) }}"
-                                    @class([
-                                        'is-active' => request()->routeIs(
-                                            $serviceKey.'.*'
-                                        )
-                                    ])
-                                >
-                                    {{ $service['label'] }}
-                                </a>
-                            @endcan
-                        @endif
+                        @feature($serviceKey)
+                            @if (
+                                $serviceKey !== 'flights' &&
+                                $service['available'] &&
+                                $service['permission']
+                            )
+                                @can($service['permission'])
+                                    <a
+                                        href="{{ route($service['route_name']) }}"
+                                        @class([
+                                            'is-active' => request()->routeIs(
+                                                $serviceKey.'.*'
+                                            )
+                                        ])
+                                    >
+                                        {{ $service['label'] }}
+                                    </a>
+                                @endcan
+                            @endif
+                        @endfeature
                     @endforeach
 
-                    @can('flights.book')
-                        <a
-                            href="{{ route('bookings.index') }}"
-                            @class([
-                                'is-active' => request()->routeIs('bookings.*')
-                            ])
-                        >
-                            My Bookings
-                        </a>
-                    @else
-                        <a href="{{ route('dashboard') }}">
-                            My Bookings
-                        </a>
-                    @endcan
+                    @feature('bookings')
+                        @can('flights.book')
+                            <a
+                                href="{{ route('bookings.index') }}"
+                                @class([
+                                    'is-active' => request()->routeIs('bookings.*')
+                                ])
+                            >
+                                My Bookings
+                            </a>
+                        @else
+                            @feature('dashboard')
+                                <a href="{{ route('dashboard') }}">
+                                    My Bookings
+                                </a>
+                            @endfeature
+                        @endcan
+                    @endfeature
 
                 @else
-                    <a href="{{ route('login') }}">
-                        Flights
-                    </a>
+                    @feature('flights')
+                        <a href="{{ route('login') }}">
+                            Flights
+                        </a>
+                    @endfeature
 
-                    <a href="{{ route('login') }}">
-                        My Bookings
-                    </a>
+                    @feature('bookings')
+                        <a href="{{ route('login') }}">
+                            My Bookings
+                        </a>
+                    @endfeature
 
                 @endauth
 
                 @auth
-                    <a
-                        href="{{ route('account.overview') }}"
-                        @class([
-                            'is-active' => request()->routeIs([
-                                'dashboard',
-                                'account.*'
+                    @feature('account')
+                        <a
+                            href="{{ route('account.overview') }}"
+                            @class([
+                                'is-active' => request()->routeIs([
+                                    'dashboard',
+                                    'account.*'
+                                ])
                             ])
-                        ])
-                    >
-                        Manage
-                    </a>
+                        >
+                            Manage
+                        </a>
+                    @endfeature
                 @else
-                    <a href="{{ route('login') }}">
-                        Manage
-                    </a>
+                    @feature('account')
+                        <a href="{{ route('login') }}">
+                            Manage
+                        </a>
+                    @endfeature
                 @endauth
 
-                <a
-                    href="{{ route('support') }}"
-                    @class([
-                        'is-active' => request()->routeIs('support')
-                    ])
-                >
-                    Support
-                </a>
+                @auth
+                    @role('super-admin')
+                        <a
+                            href="{{ route('admin.features.index') }}"
+                            @class([
+                                'is-active' => request()->routeIs('admin.features.*')
+                            ])
+                        >
+                            Feature Control
+                        </a>
+                    @endrole
+                @endauth
+
+                @feature('support')
+                    <a
+                        href="{{ route('support') }}"
+                        @class([
+                            'is-active' => request()->routeIs('support')
+                        ])
+                    >
+                        Support
+                    </a>
+                @endfeature
 
             </nav>
 
@@ -216,34 +249,46 @@
 
             <div class="site-footer-links">
                 <a href="{{ route('home') }}">Home</a>
-                <a href="{{ route('about') }}">About</a>
-                <a href="{{ route('support') }}">Support</a>
+                @feature('about')
+                    <a href="{{ route('about') }}">About</a>
+                @endfeature
+                @feature('support')
+                    <a href="{{ route('support') }}">Support</a>
+                @endfeature
                 <a href="{{ route('terms') }}">Terms</a>
 
                 @auth
-                    <a href="{{ route('dashboard') }}">Dashboard</a>
+                    @feature('dashboard')
+                        <a href="{{ route('dashboard') }}">Dashboard</a>
+                    @endfeature
 
                     @foreach ($travelServices as $serviceKey => $service)
-                        @if (
-                            $serviceKey !== 'flights' &&
-                            $service['available'] &&
-                            $service['permission']
-                        )
-                            @can($service['permission'])
-                                <a href="{{ route($service['route_name']) }}">
-                                    {{ $service['label'] }}
-                                </a>
-                            @endcan
-                        @endif
+                        @feature($serviceKey)
+                            @if (
+                                $serviceKey !== 'flights' &&
+                                $service['available'] &&
+                                $service['permission']
+                            )
+                                @can($service['permission'])
+                                    <a href="{{ route($service['route_name']) }}">
+                                        {{ $service['label'] }}
+                                    </a>
+                                @endcan
+                            @endif
+                        @endfeature
                     @endforeach
 
-                    @can('flights.search')
-                        <a href="{{ route('flights.index') }}">Flights</a>
-                    @endcan
+                    @feature('flights')
+                        @can('flights.search')
+                            <a href="{{ route('flights.index') }}">Flights</a>
+                        @endcan
+                    @endfeature
 
-                    @can('flights.book')
-                        <a href="{{ route('bookings.index') }}">My Bookings</a>
-                    @endcan
+                    @feature('bookings')
+                        @can('flights.book')
+                            <a href="{{ route('bookings.index') }}">My Bookings</a>
+                        @endcan
+                    @endfeature
                 @else
                     <a href="{{ route('login') }}">Login</a>
                     <a href="{{ route('register') }}">Register</a>

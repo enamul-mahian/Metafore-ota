@@ -141,30 +141,36 @@
 
             <div class="account-action-buttons">
 
-                <a
-                    href="{{ route('dashboard') }}"
-                    class="site-button site-button-secondary"
-                >
-                    Dashboard
-                </a>
-
-                @can('flights.search')
+                @feature('dashboard')
                     <a
-                        href="{{ route('flights.index') }}"
-                        class="site-button site-button-primary"
-                    >
-                        Search Flights
-                    </a>
-                @endcan
-
-                @can('flights.book')
-                    <a
-                        href="{{ route('bookings.index') }}"
+                        href="{{ route('dashboard') }}"
                         class="site-button site-button-secondary"
                     >
-                        My Bookings
+                        Dashboard
                     </a>
-                @endcan
+                @endfeature
+
+                @feature('flights')
+                    @can('flights.search')
+                        <a
+                            href="{{ route('flights.index') }}"
+                            class="site-button site-button-primary"
+                        >
+                            Search Flights
+                        </a>
+                    @endcan
+                @endfeature
+
+                @feature('bookings')
+                    @can('flights.book')
+                        <a
+                            href="{{ route('bookings.index') }}"
+                            class="site-button site-button-secondary"
+                        >
+                            My Bookings
+                        </a>
+                    @endcan
+                @endfeature
 
             </div>
 

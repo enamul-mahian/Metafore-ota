@@ -7,6 +7,159 @@
     --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
         'Segoe UI Symbol', 'Noto Color Emoji';
 }
+
+/* CENTRAL FEATURE CONTROL */
+
+.settings-page.feature-control-page {
+    max-width: 1700px;
+}
+
+.feature-control-alert,
+.feature-control-notice {
+    margin-bottom: 18px;
+    padding: 16px 18px;
+    border: 1px solid #cfe1ff;
+    border-radius: 12px;
+    color: #17386d;
+    background: #eef5ff;
+}
+
+.feature-control-alert.is-error {
+    border-color: #f6c4c4;
+    color: #8b1f1f;
+    background: #fff1f1;
+}
+
+.feature-control-notice strong,
+.feature-control-notice p {
+    display: block;
+    margin: 0;
+}
+
+.feature-control-notice p {
+    margin-top: 5px;
+    color: #536986;
+}
+
+.feature-control-list {
+    overflow: hidden;
+    border: 1px solid #e4eaf3;
+    border-radius: 14px;
+    background: #fff;
+    box-shadow: 0 7px 28px rgba(21, 45, 82, .04);
+}
+
+.feature-control-header,
+.feature-control-row {
+    display: grid;
+    grid-template-columns: minmax(210px, 1.45fr) 120px 105px 130px 105px minmax(210px, 1fr) 84px;
+    gap: 14px;
+    align-items: center;
+}
+
+.feature-control-header {
+    padding: 13px 18px;
+    color: #71819a;
+    background: #f7f9fc;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+}
+
+.feature-control-row {
+    padding: 16px 18px;
+    border-top: 1px solid #edf1f6;
+}
+
+.feature-control-name {
+    display: grid;
+    gap: 4px;
+}
+
+.feature-control-name strong {
+    color: #172944;
+    font-size: 15px;
+}
+
+.feature-control-name code {
+    width: fit-content;
+    padding: 2px 6px;
+    border-radius: 5px;
+    color: #3158bd;
+    background: #eef3ff;
+    font-size: 11px;
+}
+
+.feature-control-name small {
+    color: #71819a;
+    line-height: 1.4;
+}
+
+.feature-control-toggle,
+.feature-control-check {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    color: #6f7f98;
+    font-size: 12px;
+}
+
+.feature-control-toggle input,
+.feature-control-check input {
+    width: 17px;
+    height: 17px;
+    accent-color: #315ff4;
+}
+
+.feature-control-toggle span {
+    color: #a13d3d;
+    font-weight: 700;
+}
+
+.feature-control-toggle span.is-enabled {
+    color: #19824a;
+}
+
+.feature-control-message input {
+    width: 100%;
+    min-height: 40px;
+    padding: 8px 10px;
+    border: 1px solid #dce4f0;
+    border-radius: 8px;
+    color: #273852;
+    background: #fff;
+}
+
+.feature-control-row .site-button {
+    justify-content: center;
+}
+
+@media (max-width: 1180px) {
+    .feature-control-header {
+        display: none;
+    }
+
+    .feature-control-row {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .feature-control-name,
+    .feature-control-message {
+        grid-column: 1 / -1;
+    }
+}
+
+@media (max-width: 720px) {
+    .feature-control-row {
+        grid-template-columns: 1fr;
+    }
+
+    .feature-control-name,
+    .feature-control-message {
+        grid-column: auto;
+    }
+}
 .auth-body {
     margin: 0;
     min-height: 100vh;

@@ -11,12 +11,12 @@ class SettingPageController extends Controller
 {
     public function __construct(
         private readonly SettingService $settings
-    ) {
-    }
+    ) {}
 
     public function __invoke(): View
     {
         $items = Setting::query()
+            ->where('group', '!=', 'features')
             ->orderBy('group')
             ->orderBy('key')
             ->get()
