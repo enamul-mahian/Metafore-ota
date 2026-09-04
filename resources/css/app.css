@@ -11987,6 +11987,10 @@ body.bookings-body {
     grid-template-columns: repeat(8, minmax(0, 1fr));
 }
 
+.travel-module-steps-seven {
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+}
+
 .travel-unavailable,
 .travel-empty-state,
 .travel-search-panel {
@@ -12099,6 +12103,37 @@ body.bookings-body {
     font-size: 11px;
 }
 
+.travel-information-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+}
+
+.travel-information-grid article {
+    padding: 20px;
+    border: 1px solid #dce5f0;
+    border-radius: 6px;
+    background: #ffffff;
+}
+
+.travel-information-grid h2 {
+    margin: 0 0 10px;
+    color: var(--eagle-navy);
+    font-size: 17px;
+}
+
+.travel-information-grid p,
+.travel-information-grid li {
+    color: #5a687b;
+    font-size: 12px;
+    line-height: 1.6;
+}
+
+.travel-information-grid ul {
+    margin: 0;
+    padding-left: 18px;
+}
+
 @media (max-width: 980px) {
     .travel-module-steps {
         grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -12141,5 +12176,9 @@ body.bookings-body {
     .travel-result-list article {
         align-items: flex-start;
         flex-direction: column;
+    }
+
+    .travel-information-grid {
+        grid-template-columns: 1fr;
     }
 }
