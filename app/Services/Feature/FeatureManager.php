@@ -76,7 +76,15 @@ final class FeatureManager
     {
         $state = $this->state($key);
 
-        if ($state === null || $state['enabled'] !== true) {
+        if ($state === null) {
+            return false;
+        }
+
+        if ($user?->hasRole('super-admin')) {
+            return true;
+        }
+
+        if ($state['enabled'] !== true) {
             return false;
         }
 
@@ -84,11 +92,20 @@ final class FeatureManager
             return $state['public_visible'];
         }
 
-        if ($user->hasAnyRole(['admin', 'super-admin'])) {
+        if ($user->hasRole('admin')) {
             return $state['admin_visible'];
         }
 
         return $state['authenticated_visible'];
+    }
+
+    public function isSuperAdminPreview(string $key, ?User $user): bool
+    {
+        $state = $this->state($key);
+
+        return $state !== null
+            && $user?->hasRole('super-admin') === true
+            && ($state['enabled'] !== true || $state['admin_visible'] !== true);
     }
 
     public function unavailableMessage(string $key): string
