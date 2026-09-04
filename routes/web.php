@@ -4,6 +4,8 @@ use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\CategoryPageController;
 use App\Http\Controllers\Admin\CityController;
 use App\Http\Controllers\Admin\CountryController;
+use App\Http\Controllers\Admin\CurrencyController;
+use App\Http\Controllers\Admin\CurrencyPageController;
 use App\Http\Controllers\Admin\FeatureControlController;
 use App\Http\Controllers\Admin\MasterDataPageController;
 use App\Http\Controllers\Admin\SettingController;
@@ -285,6 +287,50 @@ Route::middleware(['auth', 'verified'])->group(function () {
                 });
 
             /**
+             * Master Data - Currencies
+             */
+            Route::prefix('master-data/currencies')
+                ->name('master-data.currencies.')
+                ->group(function () {
+
+                    Route::get(
+                        '/',
+                        [CurrencyController::class, 'index']
+                    )
+                        ->middleware('permission:master-data.view')
+                        ->name('index');
+
+                    Route::post(
+                        '/',
+                        [CurrencyController::class, 'store']
+                    )
+                        ->middleware('permission:master-data.manage')
+                        ->name('store');
+
+                    Route::get(
+                        '/{currency}',
+                        [CurrencyController::class, 'show']
+                    )
+                        ->middleware('permission:master-data.view')
+                        ->name('show');
+
+                    Route::match(
+                        ['put', 'patch'],
+                        '/{currency}',
+                        [CurrencyController::class, 'update']
+                    )
+                        ->middleware('permission:master-data.manage')
+                        ->name('update');
+
+                    Route::delete(
+                        '/{currency}',
+                        [CurrencyController::class, 'destroy']
+                    )
+                        ->middleware('permission:master-data.manage')
+                        ->name('destroy');
+                });
+
+            /**
              * Master Data - Cities
              */
             Route::prefix('master-data/cities')
@@ -491,6 +537,18 @@ Route::get(
         'permission:master-data.view',
     ])
     ->name('admin.categories.manage');
+
+Route::get(
+    '/admin/currencies',
+    CurrencyPageController::class
+)
+    ->middleware([
+        'auth',
+        'verified',
+        'role:admin|super-admin',
+        'permission:master-data.view',
+    ])
+    ->name('admin.currencies.manage');
 
 Route::get(
     '/admin/master-data',
