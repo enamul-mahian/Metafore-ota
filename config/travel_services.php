@@ -2,9 +2,12 @@
 
 use App\Contracts\Hotel\HotelSearchProvider;
 use App\Contracts\Tour\TourSearchProvider;
+use App\Contracts\Travel\DestinationResolver;
 use App\Contracts\Visa\VisaInformationProvider;
+use App\Services\Hotel\DuffelStaysHotelSearchProvider;
 use App\Services\Hotel\UnavailableHotelSearchProvider;
 use App\Services\Tour\UnavailableTourSearchProvider;
+use App\Services\Travel\DuffelDestinationResolver;
 use App\Services\Visa\UnavailableVisaInformationProvider;
 
 return [
@@ -40,12 +43,50 @@ return [
             'unavailable_label' => 'Not Configured',
             'providers' => [
                 'unavailable' => UnavailableHotelSearchProvider::class,
+                'duffel' => DuffelStaysHotelSearchProvider::class,
+            ],
+            'provider_dependencies' => [
+                'duffel' => [
+                    DestinationResolver::class => DuffelDestinationResolver::class,
+                ],
             ],
             'provider_requirements' => [
                 'unavailable' => [],
+                'duffel' => [
+                    'duffel.base_url',
+                    'duffel.access_token',
+                    'duffel.api_version',
+                    'duffel.connect_timeout',
+                    'duffel.http_timeout',
+                    'duffel.search_radius_km',
+                ],
+            ],
+            'provider_rules' => [
+                'duffel' => [
+                    'duffel.base_url' => ['required', 'url', 'starts_with:https://'],
+                    'duffel.access_token' => ['required', 'string'],
+                    'duffel.api_version' => ['required', 'in:v2'],
+                    'duffel.connect_timeout' => ['required', 'integer', 'between:1,10'],
+                    'duffel.http_timeout' => ['required', 'integer', 'between:1,60'],
+                    'duffel.search_radius_km' => ['required', 'integer', 'between:1,100'],
+                ],
             ],
             'credentials' => [
                 'api_key' => env('HOTEL_API_KEY'),
+            ],
+            'duffel' => [
+                'base_url' => env(
+                    'DUFFEL_API_BASE_URL',
+                    'https://api.duffel.com'
+                ),
+                'access_token' => env('DUFFEL_ACCESS_TOKEN'),
+                'api_version' => env('DUFFEL_API_VERSION', 'v2'),
+                'connect_timeout' => env('DUFFEL_CONNECT_TIMEOUT', '5'),
+                'http_timeout' => env('DUFFEL_HTTP_TIMEOUT', '30'),
+                'search_radius_km' => env(
+                    'DUFFEL_STAYS_SEARCH_RADIUS_KM',
+                    '5'
+                ),
             ],
         ],
 

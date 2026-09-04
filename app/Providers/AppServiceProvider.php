@@ -5,11 +5,13 @@ namespace App\Providers;
 use App\Contracts\Flight\FlightSearchProvider;
 use App\Contracts\Hotel\HotelSearchProvider;
 use App\Contracts\Tour\TourSearchProvider;
+use App\Contracts\Travel\DestinationResolver;
 use App\Contracts\Visa\VisaInformationProvider;
 use App\Services\Flight\UnavailableFlightSearchProvider;
 use App\Services\Hotel\UnavailableHotelSearchProvider;
 use App\Services\Tour\UnavailableTourSearchProvider;
 use App\Services\Travel\TravelServiceRegistry;
+use App\Services\Travel\UnavailableDestinationResolver;
 use App\Services\Visa\UnavailableVisaInformationProvider;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Support\Facades\View;
@@ -60,6 +62,12 @@ class AppServiceProvider extends ServiceProvider
             HotelSearchProvider::class,
             'travel_services.services.hotels',
             UnavailableHotelSearchProvider::class,
+        );
+
+        $this->bindConfiguredDependency(
+            DestinationResolver::class,
+            'travel_services.services.hotels',
+            UnavailableDestinationResolver::class,
         );
 
         $this->bindConfiguredProvider(
@@ -129,6 +137,46 @@ class AppServiceProvider extends ServiceProvider
                 }
 
                 return $app->make($providerClass);
+            }
+        );
+    }
+
+    /**
+     * @param  class-string  $contract
+     * @param  class-string  $fallback
+     */
+    private function bindConfiguredDependency(
+        string $contract,
+        string $configKey,
+        string $fallback,
+    ): void {
+        $this->app->bind(
+            $contract,
+            function (Application $app) use (
+                $contract,
+                $configKey,
+                $fallback,
+            ): object {
+                $providerName = (string) config(
+                    $configKey.'.provider',
+                    'unavailable'
+                );
+                $dependencies = config(
+                    $configKey.'.provider_dependencies.'.$providerName,
+                    []
+                );
+                $dependencyClass = is_array($dependencies)
+                    ? ($dependencies[$contract] ?? null)
+                    : null;
+
+                if (
+                    ! is_string($dependencyClass)
+                    || ! is_a($dependencyClass, $contract, true)
+                ) {
+                    $dependencyClass = $fallback;
+                }
+
+                return $app->make($dependencyClass);
             }
         );
     }
