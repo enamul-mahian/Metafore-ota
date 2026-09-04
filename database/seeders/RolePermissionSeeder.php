@@ -40,6 +40,9 @@ class RolePermissionSeeder extends Seeder
             'master-data.view',
             'master-data.manage',
 
+            'agents.view',
+            'agents.manage',
+
             'flights.search',
             'flights.book',
 
@@ -107,6 +110,9 @@ class RolePermissionSeeder extends Seeder
 
             'master-data.view',
             'master-data.manage',
+
+            'agents.view',
+            'agents.manage',
 
             'flights.search',
             'flights.book',
