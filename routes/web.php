@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\Admin\CategoryController;
+use App\Http\Controllers\Admin\CategoryPageController;
 use App\Http\Controllers\Admin\CityController;
 use App\Http\Controllers\Admin\CountryController;
 use App\Http\Controllers\Admin\FeatureControlController;
@@ -239,6 +241,50 @@ Route::middleware(['auth', 'verified'])->group(function () {
                 });
 
             /**
+             * Master Data - Categories
+             */
+            Route::prefix('master-data/categories')
+                ->name('master-data.categories.')
+                ->group(function () {
+
+                    Route::get(
+                        '/',
+                        [CategoryController::class, 'index']
+                    )
+                        ->middleware('permission:master-data.view')
+                        ->name('index');
+
+                    Route::post(
+                        '/',
+                        [CategoryController::class, 'store']
+                    )
+                        ->middleware('permission:master-data.manage')
+                        ->name('store');
+
+                    Route::get(
+                        '/{category}',
+                        [CategoryController::class, 'show']
+                    )
+                        ->middleware('permission:master-data.view')
+                        ->name('show');
+
+                    Route::match(
+                        ['put', 'patch'],
+                        '/{category}',
+                        [CategoryController::class, 'update']
+                    )
+                        ->middleware('permission:master-data.manage')
+                        ->name('update');
+
+                    Route::delete(
+                        '/{category}',
+                        [CategoryController::class, 'destroy']
+                    )
+                        ->middleware('permission:master-data.manage')
+                        ->name('destroy');
+                });
+
+            /**
              * Master Data - Cities
              */
             Route::prefix('master-data/cities')
@@ -434,6 +480,18 @@ Route::get(
     ->name('flights.bookings.orders.attempts.confirmation.show');
 
 require __DIR__.'/admin-users-roles.php';
+Route::get(
+    '/admin/categories',
+    CategoryPageController::class
+)
+    ->middleware([
+        'auth',
+        'verified',
+        'role:admin|super-admin',
+        'permission:master-data.view',
+    ])
+    ->name('admin.categories.manage');
+
 Route::get(
     '/admin/master-data',
     MasterDataPageController::class
