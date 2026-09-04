@@ -2,10 +2,12 @@
 
 Development follows the approved Laragon Local Development → Staging → Production workflow.
 
-## Current bootstrap status
-- Source repository: pending connection/provisioning
-- Target local path: `C:\laragon\www\metafore-ota`
-- Framework baseline: Laravel 13 (pending Composer install and full application scaffold verification)
-- Development branch: `develop`
+## Current delivery baseline
+
+- Framework: Laravel 13 on PHP 8.3
+- Integration branch: `develop`
+- Health endpoint: `/up`
+- Production configuration check: `php artisan app:production-readiness`
+- Deployment procedure: [`docs/PRODUCTION_DEPLOYMENT_CHECKLIST.md`](docs/PRODUCTION_DEPLOYMENT_CHECKLIST.md)
 
 Do not commit `.env` or production credentials.
