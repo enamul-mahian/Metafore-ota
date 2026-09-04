@@ -7,6 +7,8 @@ use App\Http\Controllers\Admin\CountryController;
 use App\Http\Controllers\Admin\CurrencyController;
 use App\Http\Controllers\Admin\CurrencyPageController;
 use App\Http\Controllers\Admin\FeatureControlController;
+use App\Http\Controllers\Admin\LanguageController;
+use App\Http\Controllers\Admin\LanguagePageController;
 use App\Http\Controllers\Admin\MasterDataPageController;
 use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\SettingPageController;
@@ -331,6 +333,38 @@ Route::middleware(['auth', 'verified'])->group(function () {
                 });
 
             /**
+             * Master Data - Languages
+             */
+            Route::prefix('master-data/languages')
+                ->name('master-data.languages.')
+                ->group(function () {
+
+                    Route::get('/', [LanguageController::class, 'index'])
+                        ->middleware('permission:master-data.view')
+                        ->name('index');
+
+                    Route::post('/', [LanguageController::class, 'store'])
+                        ->middleware('permission:master-data.manage')
+                        ->name('store');
+
+                    Route::get('/{language}', [LanguageController::class, 'show'])
+                        ->middleware('permission:master-data.view')
+                        ->name('show');
+
+                    Route::match(
+                        ['put', 'patch'],
+                        '/{language}',
+                        [LanguageController::class, 'update']
+                    )
+                        ->middleware('permission:master-data.manage')
+                        ->name('update');
+
+                    Route::delete('/{language}', [LanguageController::class, 'destroy'])
+                        ->middleware('permission:master-data.manage')
+                        ->name('destroy');
+                });
+
+            /**
              * Master Data - Cities
              */
             Route::prefix('master-data/cities')
@@ -549,6 +583,18 @@ Route::get(
         'permission:master-data.view',
     ])
     ->name('admin.currencies.manage');
+
+Route::get(
+    '/admin/languages',
+    LanguagePageController::class
+)
+    ->middleware([
+        'auth',
+        'verified',
+        'role:admin|super-admin',
+        'permission:master-data.view',
+    ])
+    ->name('admin.languages.manage');
 
 Route::get(
     '/admin/master-data',
