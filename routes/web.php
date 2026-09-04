@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\AffiliateController;
 use App\Http\Controllers\Admin\AgentController;
 use App\Http\Controllers\Admin\BookingPageController;
 use App\Http\Controllers\Admin\CategoryController;
@@ -562,6 +563,23 @@ Route::get(
     ->name('flights.bookings.orders.attempts.confirmation.show');
 
 require __DIR__.'/admin-users-roles.php';
+
+Route::middleware(['auth', 'verified', 'role:admin|super-admin'])
+    ->prefix('admin/affiliates')
+    ->name('admin.affiliates.')
+    ->group(function () {
+        Route::middleware('can:affiliates.view')->group(function () {
+            Route::get('/', [AffiliateController::class, 'index'])->name('index');
+            Route::get('/{affiliate}', [AffiliateController::class, 'show'])->whereNumber('affiliate')->name('show');
+        });
+        Route::middleware('can:affiliates.manage')->group(function () {
+            Route::get('/create', [AffiliateController::class, 'create'])->name('create');
+            Route::post('/', [AffiliateController::class, 'store'])->name('store');
+            Route::get('/{affiliate}/edit', [AffiliateController::class, 'edit'])->whereNumber('affiliate')->name('edit');
+            Route::patch('/{affiliate}', [AffiliateController::class, 'update'])->whereNumber('affiliate')->name('update');
+            Route::delete('/{affiliate}', [AffiliateController::class, 'destroy'])->whereNumber('affiliate')->name('destroy');
+        });
+    });
 
 Route::middleware(['auth', 'verified', 'role:admin|super-admin'])
     ->prefix('admin/agents')

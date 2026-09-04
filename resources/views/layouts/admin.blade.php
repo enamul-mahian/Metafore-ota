@@ -20,6 +20,9 @@
             @can('agents.view')
                 <a href="{{ route('admin.agents.index') }}" class="{{ request()->routeIs('admin.agents.*') ? 'active' : '' }}">Agents</a>
             @endcan
+            @can('affiliates.view')
+                <a href="{{ route('admin.affiliates.index') }}" class="{{ request()->routeIs('admin.affiliates.*') ? 'active' : '' }}">Affiliates</a>
+            @endcan
             @can('users.view')
                 <a href="{{ route('admin.users.index') }}" class="{{ request()->routeIs('admin.users.*') ? 'active' : '' }}">Users</a>
             @endcan

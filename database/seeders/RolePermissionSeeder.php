@@ -43,6 +43,9 @@ class RolePermissionSeeder extends Seeder
             'agents.view',
             'agents.manage',
 
+            'affiliates.view',
+            'affiliates.manage',
+
             'flights.search',
             'flights.book',
 
@@ -113,6 +116,9 @@ class RolePermissionSeeder extends Seeder
 
             'agents.view',
             'agents.manage',
+
+            'affiliates.view',
+            'affiliates.manage',
 
             'flights.search',
             'flights.book',
