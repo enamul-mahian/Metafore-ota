@@ -3,6 +3,7 @@
 namespace Tests\Feature\Travel;
 
 use App\Contracts\Visa\VisaInformationProvider;
+use App\Models\Country;
 use App\Models\User;
 use Database\Seeders\RolePermissionSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -17,6 +18,30 @@ class VisaFoundationTest extends TestCase
         parent::setUp();
 
         $this->seed(RolePermissionSeeder::class);
+
+        Country::query()->create([
+            'name' => 'Bangladesh',
+            'iso2' => 'BD',
+            'iso3' => 'BGD',
+            'phone_code' => '+880',
+            'is_active' => true,
+        ]);
+
+        Country::query()->create([
+            'name' => 'United Arab Emirates',
+            'iso2' => 'AE',
+            'iso3' => 'ARE',
+            'phone_code' => '+971',
+            'is_active' => true,
+        ]);
+
+        Country::query()->create([
+            'name' => 'India',
+            'iso2' => 'IN',
+            'iso3' => 'IND',
+            'phone_code' => '+91',
+            'is_active' => true,
+        ]);
     }
 
     public function test_guest_is_redirected_from_visa_service(): void
@@ -30,9 +55,13 @@ class VisaFoundationTest extends TestCase
         $this->actingAs($this->customer())
             ->get(route('visa.index'))
             ->assertOk()
-            ->assertSee('Visa information service is not configured')
+            ->assertSee(
+                'Visa information service is not configured'
+            )
             ->assertSee('Not Configured')
-            ->assertSee('Approval is never guaranteed')
+            ->assertSee(
+                'Approval and entry are never guaranteed'
+            )
             ->assertDontSee('Check Requirements');
     }
 
@@ -50,7 +79,10 @@ class VisaFoundationTest extends TestCase
     public function test_unconfigured_requirement_lookup_fails_safely(): void
     {
         $this->actingAs($this->customer())
-            ->post(route('visa.requirements'), $this->validRequest())
+            ->post(
+                route('visa.requirements'),
+                $this->validRequest()
+            )
             ->assertServiceUnavailable()
             ->assertDontSee('eligible')
             ->assertDontSee('approved');
@@ -58,45 +90,110 @@ class VisaFoundationTest extends TestCase
 
     public function test_configured_source_can_return_an_honest_no_data_state(): void
     {
-        config()->set('travel_services.services.visa.enabled', true);
+        config()->set(
+            'travel_services.services.visa.enabled',
+            true
+        );
+
         config()->set(
             'travel_services.services.visa.provider',
             'test-provider'
         );
+
         config()->set(
             'travel_services.services.visa.providers.test-provider',
             EmptyVisaInformationProvider::class
         );
+
         config()->set(
             'travel_services.services.visa.provider_requirements.test-provider',
             ['credentials.api_key']
         );
+
         config()->set(
             'travel_services.services.visa.credentials.api_key',
             'server-only-test-key'
         );
 
-        $this->app->forgetInstance(VisaInformationProvider::class);
+        $this->app->forgetInstance(
+            VisaInformationProvider::class
+        );
 
         $this->actingAs($this->customer())
-            ->post(route('visa.requirements'), $this->validRequest())
+            ->post(
+                route('visa.requirements'),
+                $this->validRequest()
+            )
             ->assertOk()
-            ->assertSee('No visa information was returned')
-            ->assertSeeText('Eligibility, documents and approval have not been assumed')
+            ->assertSee(
+                'No visa information was returned'
+            )
+            ->assertSeeText(
+                'Eligibility, documents and approval have not been assumed'
+            )
+            ->assertDontSee(
+                'server-only-test-key'
+            );
+    }
+
+    public function test_configured_service_shows_real_trip_context_fields(): void
+    {
+        config()->set(
+            'travel_services.services.visa.enabled',
+            true
+        );
+
+        config()->set(
+            'travel_services.services.visa.provider',
+            'test-provider'
+        );
+
+        config()->set(
+            'travel_services.services.visa.providers.test-provider',
+            EmptyVisaInformationProvider::class
+        );
+
+        config()->set(
+            'travel_services.services.visa.provider_requirements.test-provider',
+            ['credentials.api_key']
+        );
+
+        config()->set(
+            'travel_services.services.visa.credentials.api_key',
+            'server-only-test-key'
+        );
+
+        $this->actingAs($this->customer())
+            ->get(route('visa.index'))
+            ->assertOk()
+            ->assertSee('Passport nationality')
+            ->assertSee('Origin country')
+            ->assertSee('Destination country')
+            ->assertSee('Departure date')
+            ->assertSee('Arrival date')
+            ->assertSee('Check Requirements')
+            ->assertDontSee('Visa type')
             ->assertDontSee('server-only-test-key');
     }
 
-    public function test_visa_requirement_input_is_validated_before_provider_use(): void
+    public function test_visa_trip_input_is_validated_before_provider_use(): void
     {
         $this->actingAs($this->customer())
-            ->post(route('visa.requirements'), [
-                'nationality' => 'Bangladesh',
-                'destination_country' => 'Bangladesh',
-                'visa_type' => '',
-            ])
+            ->post(
+                route('visa.requirements'),
+                [
+                    'nationality' => 'BGD',
+                    'origin_country' => 'ARE',
+                    'destination_country' => 'ARE',
+                    'departure_date' => now()->addMonth()->toDateString(),
+                    'departure_time' => '',
+                    'arrival_date' => now()->addMonth()->toDateString(),
+                    'arrival_time' => '14:45',
+                ]
+            )
             ->assertSessionHasErrors([
                 'destination_country',
-                'visa_type',
+                'departure_time',
             ]);
     }
 
@@ -105,6 +202,7 @@ class VisaFoundationTest extends TestCase
         $user = User::factory()->create([
             'email_verified_at' => now(),
         ]);
+
         $user->assignRole('customer');
 
         return $user;
@@ -115,10 +213,17 @@ class VisaFoundationTest extends TestCase
      */
     private function validRequest(): array
     {
+        $travelDate =
+            now()->addMonth()->toDateString();
+
         return [
-            'nationality' => 'Bangladesh',
-            'destination_country' => 'United Arab Emirates',
-            'visa_type' => 'Tourist',
+            'nationality' => 'BGD',
+            'origin_country' => 'BGD',
+            'destination_country' => 'ARE',
+            'departure_date' => $travelDate,
+            'departure_time' => '10:30',
+            'arrival_date' => $travelDate,
+            'arrival_time' => '14:45',
         ];
     }
 }

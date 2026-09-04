@@ -2,9 +2,14 @@
 
 use App\Contracts\Hotel\HotelSearchProvider;
 use App\Contracts\Tour\TourSearchProvider;
+use App\Contracts\Travel\DestinationResolver;
 use App\Contracts\Visa\VisaInformationProvider;
+use App\Services\Hotel\DuffelStaysHotelSearchProvider;
 use App\Services\Hotel\UnavailableHotelSearchProvider;
 use App\Services\Tour\UnavailableTourSearchProvider;
+use App\Services\Tour\ViatorTourSearchProvider;
+use App\Services\Travel\DuffelDestinationResolver;
+use App\Services\Visa\SherpaVisaInformationProvider;
 use App\Services\Visa\UnavailableVisaInformationProvider;
 
 return [
@@ -40,12 +45,50 @@ return [
             'unavailable_label' => 'Not Configured',
             'providers' => [
                 'unavailable' => UnavailableHotelSearchProvider::class,
+                'duffel' => DuffelStaysHotelSearchProvider::class,
+            ],
+            'provider_dependencies' => [
+                'duffel' => [
+                    DestinationResolver::class => DuffelDestinationResolver::class,
+                ],
             ],
             'provider_requirements' => [
                 'unavailable' => [],
+                'duffel' => [
+                    'duffel.base_url',
+                    'duffel.access_token',
+                    'duffel.api_version',
+                    'duffel.connect_timeout',
+                    'duffel.http_timeout',
+                    'duffel.search_radius_km',
+                ],
+            ],
+            'provider_rules' => [
+                'duffel' => [
+                    'duffel.base_url' => ['required', 'url', 'starts_with:https://'],
+                    'duffel.access_token' => ['required', 'string'],
+                    'duffel.api_version' => ['required', 'in:v2'],
+                    'duffel.connect_timeout' => ['required', 'integer', 'between:1,10'],
+                    'duffel.http_timeout' => ['required', 'integer', 'between:1,60'],
+                    'duffel.search_radius_km' => ['required', 'integer', 'between:1,100'],
+                ],
             ],
             'credentials' => [
                 'api_key' => env('HOTEL_API_KEY'),
+            ],
+            'duffel' => [
+                'base_url' => env(
+                    'DUFFEL_API_BASE_URL',
+                    'https://api.duffel.com'
+                ),
+                'access_token' => env('DUFFEL_ACCESS_TOKEN'),
+                'api_version' => env('DUFFEL_API_VERSION', 'v2'),
+                'connect_timeout' => env('DUFFEL_CONNECT_TIMEOUT', '5'),
+                'http_timeout' => env('DUFFEL_HTTP_TIMEOUT', '30'),
+                'search_radius_km' => env(
+                    'DUFFEL_STAYS_SEARCH_RADIUS_KM',
+                    '5'
+                ),
             ],
         ],
 
@@ -59,12 +102,80 @@ return [
             'unavailable_label' => 'Not Configured',
             'providers' => [
                 'unavailable' => UnavailableTourSearchProvider::class,
+                'viator' => ViatorTourSearchProvider::class,
             ],
             'provider_requirements' => [
                 'unavailable' => [],
+                'viator' => [
+                    'viator.base_url',
+                    'viator.api_key',
+                    'viator.api_version',
+                    'viator.locale',
+                    'viator.currency',
+                    'viator.connect_timeout',
+                    'viator.http_timeout',
+                    'viator.search_count',
+                ],
+            ],
+            'provider_rules' => [
+                'viator' => [
+                    'viator.base_url' => [
+                        'required',
+                        'url',
+                        'starts_with:https://',
+                    ],
+                    'viator.api_key' => ['required', 'string'],
+                    'viator.api_version' => ['required', 'in:2.0'],
+                    'viator.locale' => [
+                        'required',
+                        'regex:/^[a-z]{2}-[A-Z]{2}$/',
+                    ],
+                    'viator.currency' => [
+                        'required',
+                        'regex:/^[A-Z]{3}$/',
+                    ],
+                    'viator.connect_timeout' => [
+                        'required',
+                        'integer',
+                        'between:1,10',
+                    ],
+                    'viator.http_timeout' => [
+                        'required',
+                        'integer',
+                        'between:1,60',
+                    ],
+                    'viator.search_count' => [
+                        'required',
+                        'integer',
+                        'between:1,50',
+                    ],
+                ],
             ],
             'credentials' => [
                 'api_key' => env('TOUR_API_KEY'),
+            ],
+            'viator' => [
+                'base_url' => env(
+                    'VIATOR_API_BASE_URL',
+                    'https://api.viator.com/partner'
+                ),
+                'api_key' => env('TOUR_API_KEY'),
+                'api_version' => env('VIATOR_API_VERSION', '2.0'),
+                'locale' => env('VIATOR_LOCALE', 'en-US'),
+                'currency' => env('VIATOR_CURRENCY', 'USD'),
+                'connect_timeout' => env(
+                    'VIATOR_CONNECT_TIMEOUT',
+                    '5'
+                ),
+                'http_timeout' => env(
+                    'VIATOR_HTTP_TIMEOUT',
+                    '20'
+                ),
+                'search_count' => env(
+                    'VIATOR_SEARCH_COUNT',
+                    '20'
+                ),
+                'booking_access' => false,
             ],
         ],
 
@@ -78,12 +189,67 @@ return [
             'unavailable_label' => 'Not Configured',
             'providers' => [
                 'unavailable' => UnavailableVisaInformationProvider::class,
+                'sherpa' => SherpaVisaInformationProvider::class,
             ],
             'provider_requirements' => [
                 'unavailable' => [],
+                'sherpa' => [
+                    'sherpa.base_url',
+                    'sherpa.api_key',
+                    'sherpa.locale',
+                    'sherpa.currency',
+                    'sherpa.connect_timeout',
+                    'sherpa.http_timeout',
+                ],
+            ],
+            'provider_rules' => [
+                'sherpa' => [
+                    'sherpa.base_url' => [
+                        'required',
+                        'url',
+                        'starts_with:https://',
+                    ],
+                    'sherpa.api_key' => [
+                        'required',
+                        'string',
+                    ],
+                    'sherpa.locale' => [
+                        'required',
+                        'regex:/^[a-z]{2}-[A-Z]{2}$/',
+                    ],
+                    'sherpa.currency' => [
+                        'required',
+                        'in:USD,CAD,GBP,EUR',
+                    ],
+                    'sherpa.connect_timeout' => [
+                        'required',
+                        'integer',
+                        'between:1,10',
+                    ],
+                    'sherpa.http_timeout' => [
+                        'required',
+                        'integer',
+                        'between:1,60',
+                    ],
+                ],
             ],
             'credentials' => [
                 'api_key' => env('VISA_API_KEY'),
+            ],
+            'sherpa' => [
+                'base_url' => env('SHERPA_API_BASE_URL'),
+                'api_key' => env('VISA_API_KEY'),
+                'locale' => env('SHERPA_LOCALE', 'en-US'),
+                'currency' => env('SHERPA_CURRENCY', 'USD'),
+                'connect_timeout' => env(
+                    'SHERPA_CONNECT_TIMEOUT',
+                    '5'
+                ),
+                'http_timeout' => env(
+                    'SHERPA_HTTP_TIMEOUT',
+                    '20'
+                ),
+                'application_access' => false,
             ],
         ],
     ],

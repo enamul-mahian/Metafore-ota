@@ -4,6 +4,7 @@ namespace App\Services\Travel;
 
 use Illuminate\Contracts\Config\Repository;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Validator;
 
 class TravelServiceRegistry
 {
@@ -105,6 +106,23 @@ class TravelServiceRegistry
             return false;
         }
 
+        $dependencies = $service['provider_dependencies'][$providerName]
+            ?? [];
+
+        if (! is_array($dependencies)) {
+            return false;
+        }
+
+        foreach ($dependencies as $dependencyContract => $dependencyClass) {
+            if (
+                ! is_string($dependencyContract)
+                || ! is_string($dependencyClass)
+                || ! is_a($dependencyClass, $dependencyContract, true)
+            ) {
+                return false;
+            }
+        }
+
         $requirements = $service['provider_requirements'][$providerName]
             ?? [];
 
@@ -122,6 +140,12 @@ class TravelServiceRegistry
             if (! is_string($value) || trim($value) === '') {
                 return false;
             }
+        }
+
+        $rules = $service['provider_rules'][$providerName] ?? [];
+
+        if (! is_array($rules) || Validator::make($service, $rules)->fails()) {
+            return false;
         }
 
         return true;
