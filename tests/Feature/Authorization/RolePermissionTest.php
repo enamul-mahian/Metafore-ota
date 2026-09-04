@@ -5,6 +5,7 @@ namespace Tests\Feature\Authorization;
 use App\Models\User;
 use Database\Seeders\RolePermissionSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Spatie\Permission\PermissionRegistrar;
 use Tests\TestCase;
 
 class RolePermissionTest extends TestCase
@@ -133,13 +134,13 @@ class RolePermissionTest extends TestCase
 
     public function test_flight_booking_permission_is_assigned_to_customer_admin_and_super_admin(): void
     {
-        $this->seed(\Database\Seeders\RolePermissionSeeder::class);
+        $this->seed(RolePermissionSeeder::class);
 
-        app(\Spatie\Permission\PermissionRegistrar::class)
+        app(PermissionRegistrar::class)
             ->forgetCachedPermissions();
 
         foreach (['customer', 'admin', 'super-admin'] as $roleName) {
-            $user = \App\Models\User::factory()->create([
+            $user = User::factory()->create([
                 'email_verified_at' => now(),
             ]);
 
@@ -151,6 +152,42 @@ class RolePermissionTest extends TestCase
                     'Role [%s] must receive flights.book permission.',
                     $roleName,
                 ),
+            );
+        }
+    }
+
+    public function test_travel_service_permissions_are_assigned_without_changing_role_boundaries(): void
+    {
+        $permissions = [
+            'hotels.search',
+            'hotels.book',
+            'tours.search',
+            'tours.book',
+            'visa.apply',
+            'visa.view',
+        ];
+
+        foreach (['customer', 'admin', 'super-admin'] as $roleName) {
+            $user = User::factory()->create([
+                'email_verified_at' => now(),
+            ]);
+
+            $user->assignRole($roleName);
+
+            foreach ($permissions as $permission) {
+                $this->assertTrue(
+                    $user->fresh()->can($permission),
+                    sprintf(
+                        'Role [%s] must receive [%s].',
+                        $roleName,
+                        $permission,
+                    ),
+                );
+            }
+
+            $this->assertSame(
+                $roleName !== 'customer',
+                $user->fresh()->can('users.manage')
             );
         }
     }
