@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\AgentController;
 use App\Http\Controllers\Admin\BookingPageController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\CategoryPageController;
@@ -561,6 +562,32 @@ Route::get(
     ->name('flights.bookings.orders.attempts.confirmation.show');
 
 require __DIR__.'/admin-users-roles.php';
+
+Route::middleware(['auth', 'verified', 'role:admin|super-admin'])
+    ->prefix('admin/agents')
+    ->name('admin.agents.')
+    ->group(function () {
+        Route::middleware('can:agents.view')->group(function () {
+            Route::get('/', [AgentController::class, 'index'])->name('index');
+            Route::get('/{agent}', [AgentController::class, 'show'])
+                ->whereNumber('agent')
+                ->name('show');
+        });
+
+        Route::middleware('can:agents.manage')->group(function () {
+            Route::get('/create', [AgentController::class, 'create'])->name('create');
+            Route::post('/', [AgentController::class, 'store'])->name('store');
+            Route::get('/{agent}/edit', [AgentController::class, 'edit'])
+                ->whereNumber('agent')
+                ->name('edit');
+            Route::patch('/{agent}', [AgentController::class, 'update'])
+                ->whereNumber('agent')
+                ->name('update');
+            Route::delete('/{agent}', [AgentController::class, 'destroy'])
+                ->whereNumber('agent')
+                ->name('destroy');
+        });
+    });
 
 Route::get(
     '/admin/bookings',

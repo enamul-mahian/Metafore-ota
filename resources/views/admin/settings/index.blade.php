@@ -151,13 +151,15 @@
                     <span>Bookings</span>
                 </a>
 
-                <a href="#" class="admin-nav-link">
+                @can('agents.view')
+                <a href="{{ route('admin.agents.index') }}" class="admin-nav-link">
                     <svg viewBox="0 0 24 24" aria-hidden="true">
                         <circle cx="12" cy="7" r="4"/>
                         <path d="M4 21c.7-4.7 3.4-7 8-7s7.3 2.3 8 7"/>
                     </svg>
                     <span>Agents</span>
                 </a>
+                @endcan
 
                 <a href="#" class="admin-nav-link">
                     <svg viewBox="0 0 24 24" aria-hidden="true">
