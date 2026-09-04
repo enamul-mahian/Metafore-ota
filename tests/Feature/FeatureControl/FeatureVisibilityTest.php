@@ -96,6 +96,40 @@ final class FeatureVisibilityTest extends TestCase
             ->assertNotFound();
     }
 
+    public function test_every_registered_client_surface_is_wired_to_feature_enforcement(): void
+    {
+        $customer = $this->userWithRole('customer');
+        $features = app(FeatureManager::class);
+        $routes = [
+            'flights' => ['get', route('flights.index')],
+            'hotels' => ['get', route('hotels.index')],
+            'tours' => ['get', route('tours.index')],
+            'visa' => ['get', route('visa.index')],
+            'bookings' => ['get', route('bookings.index')],
+            'payments' => [
+                'postJson',
+                route(
+                    'flights.bookings.orders.attempts.payments.store',
+                    ['attemptReference' => 'audit-attempt'],
+                ),
+            ],
+            'support' => ['get', route('support')],
+            'about' => ['get', route('about')],
+            'account' => ['get', route('account.overview')],
+            'dashboard' => ['get', route('dashboard')],
+        ];
+
+        foreach ($routes as $feature => [$method, $url]) {
+            $features->update($feature, $this->state(enabled: false));
+
+            $this->actingAs($customer)
+                ->{$method}($url)
+                ->assertNotFound();
+
+            $features->update($feature, $this->state());
+        }
+    }
+
     public function test_enabled_feature_receives_existing_normal_access(): void
     {
         $customer = $this->userWithRole('customer');

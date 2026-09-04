@@ -41,6 +41,42 @@ final class FeatureControlManagementTest extends TestCase
             ->assertSee('Visibility is separate from provider activation.');
     }
 
+    public function test_super_admin_sees_feature_management_in_admin_navigation(): void
+    {
+        $superAdmin = $this->userWithRole('super-admin');
+
+        $this->actingAs($superAdmin)
+            ->get(route('dashboard'))
+            ->assertOk()
+            ->assertSee(
+                'href="'.route('admin.features.index').'"',
+                false,
+            );
+    }
+
+    public function test_regular_admin_dashboard_and_settings_access_remain_available(): void
+    {
+        $admin = $this->userWithRole('admin');
+
+        $this->actingAs($admin)
+            ->get(route('dashboard'))
+            ->assertOk()
+            ->assertDontSee(
+                'href="'.route('admin.features.index').'"',
+                false,
+            );
+
+        $this->actingAs($admin)
+            ->get(route('admin.settings.manage'))
+            ->assertOk()
+            ->assertSee('Settings')
+            ->assertSee('Read only mode')
+            ->assertDontSee(
+                'href="'.route('admin.features.index').'"',
+                false,
+            );
+    }
+
     public function test_normal_admin_cannot_access_or_modify_feature_controls(): void
     {
         $admin = $this->userWithRole('admin');
@@ -64,6 +100,10 @@ final class FeatureControlManagementTest extends TestCase
         $customer = $this->userWithRole('customer');
 
         $this->actingAs($customer)
+            ->get(route('admin.features.index'))
+            ->assertForbidden();
+
+        $this->actingAs($customer)
             ->patch(route('admin.features.update', 'flights'), $this->state(false))
             ->assertForbidden();
 
@@ -71,6 +111,33 @@ final class FeatureControlManagementTest extends TestCase
             'group' => 'features',
             'key' => 'flights',
         ]);
+    }
+
+    public function test_disabling_client_feature_preserves_unrelated_admin_access(): void
+    {
+        $superAdmin = $this->userWithRole('super-admin');
+        $admin = $this->userWithRole('admin');
+
+        $this->actingAs($superAdmin)
+            ->patch(
+                route('admin.features.update', 'flights'),
+                $this->state(false),
+            )
+            ->assertRedirect(route('admin.features.index'));
+
+        $this->actingAs($admin)
+            ->get(route('dashboard'))
+            ->assertOk();
+
+        $this->actingAs($admin)
+            ->get(route('admin.settings.manage'))
+            ->assertOk();
+
+        $this->actingAs($admin)
+            ->getJson(route('admin.master-data.countries.index'))
+            ->assertOk();
+
+        $this->assertFalse(app(FeatureManager::class)->isEnabled('flights'));
     }
 
     public function test_super_admin_can_toggle_registered_feature(): void
