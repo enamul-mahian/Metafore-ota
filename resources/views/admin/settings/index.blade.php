@@ -104,7 +104,7 @@
                     <span>Settings</span>
                 </a>
 
-                <a href="#" class="admin-nav-link">
+                <a href="{{ route('admin.categories.manage') }}" class="admin-nav-link">
                     <svg viewBox="0 0 24 24" aria-hidden="true">
                         <rect x="3" y="4" width="18" height="16" rx="2"/>
                         <path d="M8 4v16M3 10h18"/>
@@ -120,7 +120,7 @@
                     <span>Currencies</span>
                 </a>
 
-                <a href="#" class="admin-nav-link">
+                <a href="{{ route('admin.master-data.manage') }}" class="admin-nav-link">
                     <svg viewBox="0 0 24 24" aria-hidden="true">
                         <circle cx="12" cy="12" r="9"/>
                         <path d="M3 12h18M12 3c2.8 2.7 4 5.7 4 9s-1.2 6.3-4 9c-2.8-2.7-4-5.7-4-9s1.2-6.3 4-9z"/>
