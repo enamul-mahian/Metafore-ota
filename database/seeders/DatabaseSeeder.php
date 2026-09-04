@@ -26,7 +26,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'name' => 'Test User',
-                'password' => Hash::make('Password123!'),
+                'password' => Hash::make((string) env('LOCAL_TEST_USER_PASSWORD', bin2hex(random_bytes(16)))),
                 'email_verified_at' => now(),
             ]
         );
