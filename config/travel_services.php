@@ -7,6 +7,7 @@ use App\Contracts\Visa\VisaInformationProvider;
 use App\Services\Hotel\DuffelStaysHotelSearchProvider;
 use App\Services\Hotel\UnavailableHotelSearchProvider;
 use App\Services\Tour\UnavailableTourSearchProvider;
+use App\Services\Tour\ViatorTourSearchProvider;
 use App\Services\Travel\DuffelDestinationResolver;
 use App\Services\Visa\UnavailableVisaInformationProvider;
 
@@ -100,12 +101,80 @@ return [
             'unavailable_label' => 'Not Configured',
             'providers' => [
                 'unavailable' => UnavailableTourSearchProvider::class,
+                'viator' => ViatorTourSearchProvider::class,
             ],
             'provider_requirements' => [
                 'unavailable' => [],
+                'viator' => [
+                    'viator.base_url',
+                    'viator.api_key',
+                    'viator.api_version',
+                    'viator.locale',
+                    'viator.currency',
+                    'viator.connect_timeout',
+                    'viator.http_timeout',
+                    'viator.search_count',
+                ],
+            ],
+            'provider_rules' => [
+                'viator' => [
+                    'viator.base_url' => [
+                        'required',
+                        'url',
+                        'starts_with:https://',
+                    ],
+                    'viator.api_key' => ['required', 'string'],
+                    'viator.api_version' => ['required', 'in:2.0'],
+                    'viator.locale' => [
+                        'required',
+                        'regex:/^[a-z]{2}-[A-Z]{2}$/',
+                    ],
+                    'viator.currency' => [
+                        'required',
+                        'regex:/^[A-Z]{3}$/',
+                    ],
+                    'viator.connect_timeout' => [
+                        'required',
+                        'integer',
+                        'between:1,10',
+                    ],
+                    'viator.http_timeout' => [
+                        'required',
+                        'integer',
+                        'between:1,60',
+                    ],
+                    'viator.search_count' => [
+                        'required',
+                        'integer',
+                        'between:1,50',
+                    ],
+                ],
             ],
             'credentials' => [
                 'api_key' => env('TOUR_API_KEY'),
+            ],
+            'viator' => [
+                'base_url' => env(
+                    'VIATOR_API_BASE_URL',
+                    'https://api.viator.com/partner'
+                ),
+                'api_key' => env('TOUR_API_KEY'),
+                'api_version' => env('VIATOR_API_VERSION', '2.0'),
+                'locale' => env('VIATOR_LOCALE', 'en-US'),
+                'currency' => env('VIATOR_CURRENCY', 'USD'),
+                'connect_timeout' => env(
+                    'VIATOR_CONNECT_TIMEOUT',
+                    '5'
+                ),
+                'http_timeout' => env(
+                    'VIATOR_HTTP_TIMEOUT',
+                    '20'
+                ),
+                'search_count' => env(
+                    'VIATOR_SEARCH_COUNT',
+                    '20'
+                ),
+                'booking_access' => false,
             ],
         ],
 
