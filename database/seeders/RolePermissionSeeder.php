@@ -42,6 +42,15 @@ class RolePermissionSeeder extends Seeder
 
             'flights.search',
             'flights.book',
+
+            'hotels.search',
+            'hotels.book',
+
+            'tours.search',
+            'tours.book',
+
+            'visa.apply',
+            'visa.view',
         ];
 
         foreach ($permissions as $permission) {
@@ -101,6 +110,15 @@ class RolePermissionSeeder extends Seeder
 
             'flights.search',
             'flights.book',
+
+            'hotels.search',
+            'hotels.book',
+
+            'tours.search',
+            'tours.book',
+
+            'visa.apply',
+            'visa.view',
         ]);
 
         /*
@@ -113,6 +131,12 @@ class RolePermissionSeeder extends Seeder
             'dashboard.view',
             'flights.search',
             'flights.book',
+            'hotels.search',
+            'hotels.book',
+            'tours.search',
+            'tours.book',
+            'visa.apply',
+            'visa.view',
         ]);
 
         app(PermissionRegistrar::class)

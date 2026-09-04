@@ -19,6 +19,12 @@ use App\Http\Controllers\Flight\FlightOrderReconciliationController;
 use App\Http\Controllers\Flight\FlightSearchController;
 use App\Http\Controllers\Flight\FlightTravelerValidationController;
 use App\Http\Controllers\FlightBookingController;
+use App\Http\Controllers\Hotel\HotelController;
+use App\Http\Controllers\Hotel\HotelSearchController;
+use App\Http\Controllers\Tour\TourController;
+use App\Http\Controllers\Tour\TourSearchController;
+use App\Http\Controllers\Visa\VisaController;
+use App\Http\Controllers\Visa\VisaRequirementController;
 use Illuminate\Support\Facades\Route;
 
 Route::view('/', 'home')->name('home');
@@ -43,6 +49,30 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::view('/flights', 'flights.search')
         ->middleware('permission:flights.search')
         ->name('flights.index');
+
+    Route::get('/hotels', HotelController::class)
+        ->middleware('permission:hotels.search')
+        ->name('hotels.index');
+
+    Route::post('/hotels/search', HotelSearchController::class)
+        ->middleware('permission:hotels.search')
+        ->name('hotels.search');
+
+    Route::get('/tours', TourController::class)
+        ->middleware('permission:tours.search')
+        ->name('tours.index');
+
+    Route::post('/tours/search', TourSearchController::class)
+        ->middleware('permission:tours.search')
+        ->name('tours.search');
+
+    Route::get('/visa', VisaController::class)
+        ->middleware('permission:visa.view')
+        ->name('visa.index');
+
+    Route::post('/visa/requirements', VisaRequirementController::class)
+        ->middleware('permission:visa.view')
+        ->name('visa.requirements');
 
     Route::get('/bookings', [FlightBookingController::class, 'index'])
         ->middleware('permission:flights.book')
