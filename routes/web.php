@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\CityController;
 use App\Http\Controllers\Admin\CountryController;
+use App\Http\Controllers\Admin\FeatureControlController;
 use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\SettingPageController;
 use App\Http\Controllers\Flight\FlightBookingConfirmationIntentController;
@@ -30,9 +31,11 @@ use Illuminate\Support\Facades\Route;
 Route::view('/', 'home')->name('home');
 
 Route::view('/about', 'public.about')
+    ->middleware('feature:about')
     ->name('about');
 
 Route::view('/support', 'public.support')
+    ->middleware('feature:support')
     ->name('support');
 
 Route::view('/terms', 'public.terms')
@@ -41,64 +44,66 @@ Route::view('/terms', 'public.terms')
 Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::view('/dashboard', 'dashboard')
+        ->middleware('feature:dashboard')
         ->name('dashboard');
 
     Route::view('/account', 'account.overview')
+        ->middleware('feature:account')
         ->name('account.overview');
 
     Route::view('/flights', 'flights.search')
-        ->middleware('permission:flights.search')
+        ->middleware(['feature:flights', 'permission:flights.search'])
         ->name('flights.index');
 
     Route::get('/hotels', HotelController::class)
-        ->middleware('permission:hotels.search')
+        ->middleware(['feature:hotels', 'permission:hotels.search'])
         ->name('hotels.index');
 
     Route::post('/hotels/search', HotelSearchController::class)
-        ->middleware('permission:hotels.search')
+        ->middleware(['feature:hotels', 'permission:hotels.search'])
         ->name('hotels.search');
 
     Route::get('/tours', TourController::class)
-        ->middleware('permission:tours.search')
+        ->middleware(['feature:tours', 'permission:tours.search'])
         ->name('tours.index');
 
     Route::post('/tours/search', TourSearchController::class)
-        ->middleware('permission:tours.search')
+        ->middleware(['feature:tours', 'permission:tours.search'])
         ->name('tours.search');
 
     Route::get('/visa', VisaController::class)
-        ->middleware('permission:visa.view')
+        ->middleware(['feature:visa', 'permission:visa.view'])
         ->name('visa.index');
 
     Route::post('/visa/requirements', VisaRequirementController::class)
-        ->middleware('permission:visa.view')
+        ->middleware(['feature:visa', 'permission:visa.view'])
         ->name('visa.requirements');
 
     Route::get('/bookings', [FlightBookingController::class, 'index'])
-        ->middleware('permission:flights.book')
+        ->middleware(['feature:bookings', 'permission:flights.book'])
         ->name('bookings.index');
 
     Route::get('/bookings/{booking}', [FlightBookingController::class, 'show'])
-        ->middleware('permission:flights.book')
+        ->middleware(['feature:bookings', 'permission:flights.book'])
         ->name('bookings.show');
 
     Route::post(
         '/flights/search',
         FlightSearchController::class
     )
-        ->middleware('permission:flights.search')
+        ->middleware(['feature:flights', 'permission:flights.search'])
         ->name('flights.search');
     Route::post(
         '/flights/offers/select',
         FlightOfferSelectionController::class
     )
-        ->middleware('permission:flights.search')
+        ->middleware(['feature:flights', 'permission:flights.search'])
         ->name('flights.offers.select');
     Route::post(
         '/flights/travelers/validate',
         FlightTravelerValidationController::class
     )
-        ->middleware('permission:flights.search')
+        ->middleware(['feature:flights', 'permission:flights.search'])
         ->name('flights.travelers.validate');
 
     Route::prefix('admin')
@@ -169,6 +174,23 @@ Route::middleware(['auth', 'verified'])->group(function () {
                     )
                         ->middleware('permission:settings.manage')
                         ->name('destroy');
+                });
+
+            Route::prefix('features')
+                ->name('features.')
+                ->middleware('role:super-admin')
+                ->group(function () {
+                    Route::get(
+                        '/',
+                        [FeatureControlController::class, 'index']
+                    )->name('index');
+
+                    Route::patch(
+                        '/{feature}',
+                        [FeatureControlController::class, 'update']
+                    )
+                        ->where('feature', '[a-z][a-z0-9-]*')
+                        ->name('update');
                 });
 
             /**
@@ -279,11 +301,11 @@ Route::get(
     ->name('admin.settings.manage');
 
 Route::post('/flights/bookings/drafts', [FlightBookingDraftController::class, 'store'])
-    ->middleware(['auth', 'verified', 'permission:flights.book'])
+    ->middleware(['auth', 'verified', 'feature:flights,bookings', 'permission:flights.book'])
     ->name('flights.bookings.drafts.store');
 
 Route::post('/flights/bookings/drafts/review', [FlightBookingDraftReviewController::class, 'store'])
-    ->middleware(['auth', 'verified', 'permission:flights.book'])
+    ->middleware(['auth', 'verified', 'feature:flights,bookings', 'permission:flights.book'])
     ->name('flights.bookings.drafts.review');
 
 Route::post(
@@ -296,6 +318,7 @@ Route::post(
     ->middleware([
         'auth',
         'verified',
+        'feature:flights,bookings',
         'permission:flights.book',
     ])
     ->name(
@@ -312,6 +335,7 @@ Route::get(
     ->middleware([
         'auth',
         'verified',
+        'feature:flights,bookings',
         'permission:flights.book',
     ])
     ->name(
@@ -327,6 +351,7 @@ Route::post(
     ->middleware([
         'auth',
         'verified',
+        'feature:flights,bookings',
         'permission:flights.book',
     ])
     ->name(
@@ -342,6 +367,7 @@ Route::post(
     ->middleware([
         'auth',
         'verified',
+        'feature:flights,bookings',
         'permission:flights.book',
     ])
     ->name(
@@ -354,6 +380,7 @@ Route::get(
     ->middleware([
         'auth',
         'verified',
+        'feature:flights,bookings,payments',
         'permission:flights.book',
     ])
     ->name('flights.bookings.orders.attempts.payment-readiness.show');
@@ -364,6 +391,7 @@ Route::post(
     ->middleware([
         'auth',
         'verified',
+        'feature:flights,bookings,payments',
         'permission:flights.book',
     ])
     ->name('flights.bookings.orders.attempts.payments.store');
@@ -375,6 +403,7 @@ Route::get(
     ->middleware([
         'auth',
         'verified',
+        'feature:flights,bookings,payments',
         'permission:flights.book',
     ])
     ->name('flights.bookings.orders.payments.attempts.show');
@@ -386,6 +415,7 @@ Route::post(
     ->middleware([
         'auth',
         'verified',
+        'feature:flights,bookings,payments',
         'permission:flights.book',
     ])
     ->name('flights.bookings.orders.payments.attempts.reconcile');
@@ -397,6 +427,7 @@ Route::get(
     ->middleware([
         'auth',
         'verified',
+        'feature:flights,bookings',
         'permission:flights.book',
     ])
     ->name('flights.bookings.orders.attempts.confirmation.show');

@@ -46,12 +46,14 @@
 
                 <span class="admin-nav-title">MAIN</span>
 
-                <a href="{{ url('/dashboard') }}" class="admin-nav-link">
-                    <svg viewBox="0 0 24 24" aria-hidden="true">
-                        <path d="M3 10.8 12 3l9 7.8V21h-6v-6H9v6H3z"/>
-                    </svg>
-                    <span>Dashboard</span>
-                </a>
+                @feature('dashboard')
+                    <a href="{{ route('dashboard') }}" class="admin-nav-link">
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M3 10.8 12 3l9 7.8V21h-6v-6H9v6H3z"/>
+                        </svg>
+                        <span>Dashboard</span>
+                    </a>
+                @endfeature
 
                 <a href="#" class="admin-nav-link">
                     <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -75,6 +77,21 @@
             <div class="admin-nav-section">
 
                 <span class="admin-nav-title">SYSTEM</span>
+
+                @if ($user?->hasRole('super-admin'))
+                    <a
+                        href="{{ route('admin.features.index') }}"
+                        class="admin-nav-link"
+                    >
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M4 7h16M4 12h16M4 17h16"/>
+                            <circle cx="9" cy="7" r="2"/>
+                            <circle cx="15" cy="12" r="2"/>
+                            <circle cx="8" cy="17" r="2"/>
+                        </svg>
+                        <span>Feature Control</span>
+                    </a>
+                @endif
 
                 <a
                     href="{{ route('admin.settings.manage') }}"
@@ -325,7 +342,11 @@
                 </div>
 
                 <div class="settings-breadcrumb">
-                    <a href="{{ url('/dashboard') }}">Dashboard</a>
+                    @feature('dashboard')
+                        <a href="{{ route('dashboard') }}">Dashboard</a>
+                    @else
+                        <a href="{{ route('home') }}">Website</a>
+                    @endfeature
                     <span>›</span>
                     <strong>Settings</strong>
                 </div>

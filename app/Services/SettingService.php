@@ -85,6 +85,18 @@ class SettingService
         return $setting->refresh();
     }
 
+    public function exists(string $group, string $key): bool
+    {
+        return Cache::remember(
+            $this->existsCacheKey($group, $key),
+            self::CACHE_TTL_SECONDS,
+            fn (): bool => Setting::query()
+                ->where('group', $group)
+                ->where('key', $key)
+                ->exists(),
+        );
+    }
+
     /**
      * Remove one cached setting.
      */
@@ -94,6 +106,10 @@ class SettingService
     ): void {
         Cache::forget(
             $this->cacheKey($group, $key)
+        );
+
+        Cache::forget(
+            $this->existsCacheKey($group, $key)
         );
     }
 
@@ -122,6 +138,11 @@ class SettingService
         string $key
     ): string {
         return self::CACHE_PREFIX.$group.'.'.$key;
+    }
+
+    private function existsCacheKey(string $group, string $key): string
+    {
+        return self::CACHE_PREFIX.'exists.'.$group.'.'.$key;
     }
 
     /**

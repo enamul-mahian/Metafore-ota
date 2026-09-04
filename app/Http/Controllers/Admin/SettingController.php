@@ -13,10 +13,11 @@ use JsonException;
 
 class SettingController extends Controller
 {
+    private const RESERVED_GROUPS = ['features'];
+
     public function __construct(
         private readonly SettingService $settings
-    ) {
-    }
+    ) {}
 
     /**
      * List all application settings.
@@ -24,6 +25,7 @@ class SettingController extends Controller
     public function index(): JsonResponse
     {
         $settings = Setting::query()
+            ->whereNotIn('group', self::RESERVED_GROUPS)
             ->orderBy('group')
             ->orderBy('key')
             ->get()
@@ -53,6 +55,8 @@ class SettingController extends Controller
         string $group,
         string $key
     ): JsonResponse {
+        $this->ensureGroupIsManageable($group);
+
         $alreadyExists = Setting::query()
             ->where('group', $group)
             ->where('key', $key)
@@ -102,6 +106,8 @@ class SettingController extends Controller
         string $group,
         string $key
     ): JsonResponse {
+        $this->ensureGroupIsManageable($group);
+
         $setting = Setting::query()
             ->where('group', $group)
             ->where('key', $key)
@@ -129,6 +135,8 @@ class SettingController extends Controller
         string $group,
         string $key
     ): JsonResponse {
+        $this->ensureGroupIsManageable($group);
+
         $validated = $request->validated();
 
         try {
@@ -167,6 +175,8 @@ class SettingController extends Controller
         string $group,
         string $key
     ): JsonResponse {
+        $this->ensureGroupIsManageable($group);
+
         $deleted = $this->settings->delete(
             $group,
             $key
@@ -177,5 +187,10 @@ class SettingController extends Controller
         return response()->json([
             'message' => 'Setting deleted successfully.',
         ]);
+    }
+
+    private function ensureGroupIsManageable(string $group): void
+    {
+        abort_if(in_array($group, self::RESERVED_GROUPS, true), 404);
     }
 }

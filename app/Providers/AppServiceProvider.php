@@ -7,6 +7,9 @@ use App\Contracts\Hotel\HotelSearchProvider;
 use App\Contracts\Tour\TourSearchProvider;
 use App\Contracts\Travel\DestinationResolver;
 use App\Contracts\Visa\VisaInformationProvider;
+use App\Models\User;
+use App\Services\Feature\FeatureManager;
+use App\Services\Feature\FeatureRegistry;
 use App\Services\Flight\UnavailableFlightSearchProvider;
 use App\Services\Hotel\UnavailableHotelSearchProvider;
 use App\Services\Tour\UnavailableTourSearchProvider;
@@ -14,6 +17,8 @@ use App\Services\Travel\TravelServiceRegistry;
 use App\Services\Travel\UnavailableDestinationResolver;
 use App\Services\Visa\UnavailableVisaInformationProvider;
 use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\View\View as IlluminateView;
@@ -25,6 +30,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
+        $this->app->scoped(FeatureRegistry::class);
+        $this->app->scoped(FeatureManager::class);
+
         $this->app->bind(
             FlightSearchProvider::class,
             function (Application $app): FlightSearchProvider {
@@ -88,6 +96,18 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        Blade::if(
+            'feature',
+            static function (string $key): bool {
+                $user = Auth::user();
+
+                return app(FeatureManager::class)->isVisibleTo(
+                    $key,
+                    $user instanceof User ? $user : null,
+                );
+            },
+        );
+
         View::composer(
             ['home', 'layouts.site'],
             function (IlluminateView $view): void {

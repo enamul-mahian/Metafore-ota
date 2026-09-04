@@ -29,22 +29,29 @@
             <div class="ota-hero-inner">
 
                 <div class="ota-hero-copy">
-                    <span class="site-eyebrow">
-                        FLIGHTS FROM EAGLE GLOBAL HUB LTD
-                    </span>
+                    @feature('flights')
+                        <span class="site-eyebrow">
+                            FLIGHTS FROM EAGLE GLOBAL HUB LTD
+                        </span>
 
-                    <h1>
-                        Discover the World<br>
-                        Your Journey Starts Here
-                    </h1>
+                        <h1>
+                            Discover the World<br>
+                            Your Journey Starts Here
+                        </h1>
 
-                    <p>
-                        Search available journeys, compare fare details and
-                        manage your booking from one secure account.
-                    </p>
+                        <p>
+                            Search available journeys, compare fare details and
+                            manage your booking from one secure account.
+                        </p>
+                    @else
+                        <span class="site-eyebrow">EAGLE GLOBAL HUB LTD</span>
+                        <h1>Travel services<br>under one secure account</h1>
+                        <p>Use the currently available services listed below.</p>
+                    @endfeature
                 </div>
 
-                <form
+                @feature('flights')
+                    <form
                     method="{{ $flightSearchMethod }}"
                     action="{{ $flightSearchAction }}"
                     class="ota-search-card"
@@ -182,16 +189,19 @@
                             data-flight-order-execution-url="{{ route('flights.bookings.orders.execute') }}"
                             data-flight-order-attempt-status-url-template="{{ route('flights.bookings.orders.attempts.show', ['attemptReference' => '__ATTEMPT_REFERENCE__']) }}"
                             data-flight-order-reconciliation-url-template="{{ route('flights.bookings.orders.attempts.reconcile', ['attemptReference' => '__ATTEMPT_REFERENCE__']) }}"
-                            data-flight-payment-readiness-url-template="{{ route('flights.bookings.orders.attempts.payment-readiness.show', ['attemptReference' => '__ATTEMPT_REFERENCE__']) }}"
-                            data-flight-payment-execution-url-template="{{ route('flights.bookings.orders.attempts.payments.store', ['attemptReference' => '__ATTEMPT_REFERENCE__']) }}"
-                            data-flight-payment-attempt-status-url-template="{{ route('flights.bookings.orders.payments.attempts.show', ['attemptReference' => '__ATTEMPT_REFERENCE__']) }}"
-                            data-flight-payment-reconciliation-url-template="{{ route('flights.bookings.orders.payments.attempts.reconcile', ['attemptReference' => '__ATTEMPT_REFERENCE__']) }}"
+                            @feature('payments')
+                                data-flight-payment-readiness-url-template="{{ route('flights.bookings.orders.attempts.payment-readiness.show', ['attemptReference' => '__ATTEMPT_REFERENCE__']) }}"
+                                data-flight-payment-execution-url-template="{{ route('flights.bookings.orders.attempts.payments.store', ['attemptReference' => '__ATTEMPT_REFERENCE__']) }}"
+                                data-flight-payment-attempt-status-url-template="{{ route('flights.bookings.orders.payments.attempts.show', ['attemptReference' => '__ATTEMPT_REFERENCE__']) }}"
+                                data-flight-payment-reconciliation-url-template="{{ route('flights.bookings.orders.payments.attempts.reconcile', ['attemptReference' => '__ATTEMPT_REFERENCE__']) }}"
+                            @endfeature
                             data-flight-order-confirmation-url-template="{{ route('flights.bookings.orders.attempts.confirmation.show', ['attemptReference' => '__ATTEMPT_REFERENCE__']) }}"
                             aria-live="polite"
                             hidden
                         ></div>
                     @endif
-                </form>
+                    </form>
+                @endfeature
 
             </div>
         </section>
@@ -205,29 +215,35 @@
                 </div>
             </article>
 
-            <article>
-                <span class="ota-trust-icon" aria-hidden="true">&#8635;</span>
-                <div>
-                    <strong>Booking Updates</strong>
-                    <small>Review saved order and payment status</small>
-                </div>
-            </article>
+            @feature('bookings')
+                <article>
+                    <span class="ota-trust-icon" aria-hidden="true">&#8635;</span>
+                    <div>
+                        <strong>Booking Updates</strong>
+                        <small>Review saved order and payment status</small>
+                    </div>
+                </article>
+            @endfeature
 
-            <article>
-                <span class="ota-trust-icon" aria-hidden="true">&#36;</span>
-                <div>
-                    <strong>Payment Checks</strong>
-                    <small>Status is reconciled before confirmation</small>
-                </div>
-            </article>
+            @feature('payments')
+                <article>
+                    <span class="ota-trust-icon" aria-hidden="true">&#36;</span>
+                    <div>
+                        <strong>Payment Checks</strong>
+                        <small>Status is reconciled before confirmation</small>
+                    </div>
+                </article>
+            @endfeature
 
-            <article>
-                <span class="ota-trust-icon" aria-hidden="true">?</span>
-                <div>
-                    <strong>Account Assistance</strong>
-                    <small>Current options are listed on Support</small>
-                </div>
-            </article>
+            @feature('support')
+                <article>
+                    <span class="ota-trust-icon" aria-hidden="true">?</span>
+                    <div>
+                        <strong>Account Assistance</strong>
+                        <small>Current options are listed on Support</small>
+                    </div>
+                </article>
+            @endfeature
         </section>
 
         <section class="ota-services">
@@ -243,19 +259,21 @@
 
             <div class="ota-service-list">
                 @foreach ($travelServices as $service)
-                    <article @class(['is-live' => $service['available']])>
-                        @if ($service['available'])
-                            <a href="{{ route($service['route_name']) }}">
-                                <strong>{{ $service['label'] }}</strong>
-                                <span>{{ $service['status'] }}</span>
-                            </a>
-                        @else
-                            <div>
-                                <strong>{{ $service['label'] }}</strong>
-                                <span>{{ $service['status'] }}</span>
-                            </div>
-                        @endif
-                    </article>
+                    @feature($service['key'])
+                        <article @class(['is-live' => $service['available']])>
+                            @if ($service['available'])
+                                <a href="{{ route($service['route_name']) }}">
+                                    <strong>{{ $service['label'] }}</strong>
+                                    <span>{{ $service['status'] }}</span>
+                                </a>
+                            @else
+                                <div>
+                                    <strong>{{ $service['label'] }}</strong>
+                                    <span>{{ $service['status'] }}</span>
+                                </div>
+                            @endif
+                        </article>
+                    @endfeature
                 @endforeach
             </div>
         </section>
