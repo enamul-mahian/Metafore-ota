@@ -25,6 +25,7 @@
             @can('master-data.view')
                 <a href="{{ route('admin.master-data.manage') }}" class="{{ request()->routeIs('admin.master-data.*') ? 'active' : '' }}">Master Data</a>
                 <a href="{{ route('admin.categories.manage') }}" class="{{ request()->routeIs('admin.categories.*') ? 'active' : '' }}">Categories</a>
+                <a href="{{ route('admin.currencies.manage') }}" class="{{ request()->routeIs('admin.currencies.*') ? 'active' : '' }}">Currencies</a>
             @endcan
             @role('super-admin')
                 <a href="{{ route('admin.features.index') }}">Feature Control</a>
