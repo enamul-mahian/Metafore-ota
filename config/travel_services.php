@@ -9,6 +9,7 @@ use App\Services\Hotel\UnavailableHotelSearchProvider;
 use App\Services\Tour\UnavailableTourSearchProvider;
 use App\Services\Tour\ViatorTourSearchProvider;
 use App\Services\Travel\DuffelDestinationResolver;
+use App\Services\Visa\SherpaVisaInformationProvider;
 use App\Services\Visa\UnavailableVisaInformationProvider;
 
 return [
@@ -188,12 +189,67 @@ return [
             'unavailable_label' => 'Not Configured',
             'providers' => [
                 'unavailable' => UnavailableVisaInformationProvider::class,
+                'sherpa' => SherpaVisaInformationProvider::class,
             ],
             'provider_requirements' => [
                 'unavailable' => [],
+                'sherpa' => [
+                    'sherpa.base_url',
+                    'sherpa.api_key',
+                    'sherpa.locale',
+                    'sherpa.currency',
+                    'sherpa.connect_timeout',
+                    'sherpa.http_timeout',
+                ],
+            ],
+            'provider_rules' => [
+                'sherpa' => [
+                    'sherpa.base_url' => [
+                        'required',
+                        'url',
+                        'starts_with:https://',
+                    ],
+                    'sherpa.api_key' => [
+                        'required',
+                        'string',
+                    ],
+                    'sherpa.locale' => [
+                        'required',
+                        'regex:/^[a-z]{2}-[A-Z]{2}$/',
+                    ],
+                    'sherpa.currency' => [
+                        'required',
+                        'in:USD,CAD,GBP,EUR',
+                    ],
+                    'sherpa.connect_timeout' => [
+                        'required',
+                        'integer',
+                        'between:1,10',
+                    ],
+                    'sherpa.http_timeout' => [
+                        'required',
+                        'integer',
+                        'between:1,60',
+                    ],
+                ],
             ],
             'credentials' => [
                 'api_key' => env('VISA_API_KEY'),
+            ],
+            'sherpa' => [
+                'base_url' => env('SHERPA_API_BASE_URL'),
+                'api_key' => env('VISA_API_KEY'),
+                'locale' => env('SHERPA_LOCALE', 'en-US'),
+                'currency' => env('SHERPA_CURRENCY', 'USD'),
+                'connect_timeout' => env(
+                    'SHERPA_CONNECT_TIMEOUT',
+                    '5'
+                ),
+                'http_timeout' => env(
+                    'SHERPA_HTTP_TIMEOUT',
+                    '20'
+                ),
+                'application_access' => false,
             ],
         ],
     ],
