@@ -161,7 +161,8 @@
                 </a>
                 @endcan
 
-                <a href="#" class="admin-nav-link">
+                @can('affiliates.view')
+                <a href="{{ route('admin.affiliates.index') }}" class="admin-nav-link">
                     <svg viewBox="0 0 24 24" aria-hidden="true">
                         <circle cx="6" cy="12" r="3"/>
                         <circle cx="18" cy="6" r="3"/>
@@ -170,6 +171,7 @@
                     </svg>
                     <span>Affiliates</span>
                 </a>
+                @endcan
 
                 <a href="#" class="admin-nav-link">
                     <svg viewBox="0 0 24 24" aria-hidden="true">
