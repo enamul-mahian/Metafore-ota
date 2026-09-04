@@ -11684,3 +11684,209 @@ body.bookings-body {
 /* ========================================================================== */
 /* END REFERENCE UI SLICE 06                                                  */
 /* ========================================================================== */
+
+/* ========================================================================== */
+/* REFERENCE UI MOBILE HOMEPAGE CORRECTION                                    */
+/* ========================================================================== */
+
+@media (max-width: 760px) {
+
+    .site-ota-home {
+        overflow-x: clip;
+    }
+
+    .site-ota-home .ota-hero {
+        width: calc(100% - 20px);
+        min-height: 0;
+        margin: 12px auto 0;
+        padding: 0;
+    }
+
+    .site-ota-home .ota-hero-inner {
+        display: flex;
+        width: 100%;
+        min-width: 0;
+        min-height: 0;
+        flex-direction: column;
+        gap: 18px;
+        padding: 28px 18px 20px;
+        box-sizing: border-box;
+    }
+
+    .site-ota-home .ota-hero-copy {
+        position: relative;
+        z-index: 2;
+        width: 100%;
+        max-width: 100%;
+        min-width: 0;
+        padding: 0;
+    }
+
+    .site-ota-home .ota-hero-copy h1 {
+        max-width: 13ch;
+        margin: 0;
+        font-size: clamp(32px, 8vw, 42px);
+        line-height: 1.06;
+    }
+
+    .site-ota-home .ota-hero-copy p {
+        max-width: 100%;
+        margin-top: 12px;
+        line-height: 1.55;
+    }
+
+    .site-ota-home .ota-search-card {
+        position: relative !important;
+        inset: auto !important;
+        top: auto !important;
+        right: auto !important;
+        bottom: auto !important;
+        left: auto !important;
+        z-index: 3;
+        width: 100% !important;
+        max-width: 100% !important;
+        min-width: 0;
+        margin: 0 !important;
+        padding: 16px;
+        box-sizing: border-box;
+        transform: none !important;
+    }
+
+    .site-ota-home .ota-trip-tabs {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        width: 100%;
+        min-width: 0;
+    }
+
+    .site-ota-home .ota-search-grid {
+        display: grid !important;
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        gap: 12px !important;
+        width: 100%;
+        min-width: 0;
+    }
+
+    .site-ota-home .ota-search-grid label {
+        width: 100%;
+        min-width: 0;
+    }
+
+    .site-ota-home .ota-search-grid input,
+    .site-ota-home .ota-search-grid select,
+    .site-ota-home .ota-search-grid button {
+        width: 100%;
+        max-width: 100%;
+        min-width: 0;
+        box-sizing: border-box;
+    }
+
+    .site-ota-home .ota-search-grid button {
+        grid-column: 1 / -1 !important;
+    }
+
+    .site-ota-home .ota-trust {
+        display: grid !important;
+        width: calc(100% - 20px);
+        max-width: 100%;
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        gap: 0;
+        margin: 12px auto 0;
+        box-sizing: border-box;
+    }
+
+    .site-ota-home .ota-trust article,
+    .site-ota-home .ota-trust article:nth-child(2),
+    .site-ota-home .ota-trust article:nth-child(-n + 2) {
+        min-width: 0;
+        min-height: 82px;
+        padding: 13px 11px;
+        box-sizing: border-box;
+    }
+
+    .site-ota-home .ota-trust strong {
+        font-size: 10px;
+        line-height: 1.25;
+    }
+
+    .site-ota-home .ota-trust small {
+        font-size: 8px;
+        line-height: 1.4;
+    }
+
+    .site-header-inner {
+        min-width: 0;
+    }
+
+    .site-nav {
+        max-width: 100%;
+        overflow-x: auto;
+        overflow-y: hidden;
+        scrollbar-width: none;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .site-nav::-webkit-scrollbar {
+        display: none;
+    }
+
+    .site-nav a {
+        flex: 0 0 auto;
+        white-space: nowrap;
+    }
+}
+
+@media (max-width: 560px) {
+
+    .site-ota-home .ota-hero {
+        width: calc(100% - 16px);
+        margin-top: 8px;
+    }
+
+    .site-ota-home .ota-hero-inner {
+        gap: 16px;
+        padding: 23px 13px 15px;
+    }
+
+    .site-ota-home .ota-hero-copy h1 {
+        max-width: 12ch;
+        font-size: clamp(31px, 9.3vw, 38px);
+    }
+
+    .site-ota-home .ota-search-card {
+        padding: 14px 12px;
+        border-radius: 9px;
+    }
+
+    .site-ota-home .ota-search-grid {
+        grid-template-columns: 1fr !important;
+        gap: 10px !important;
+    }
+
+    .site-ota-home .ota-search-grid button {
+        grid-column: auto !important;
+        min-height: 44px;
+    }
+
+    .site-ota-home .ota-trust {
+        width: calc(100% - 16px);
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    }
+
+    .site-ota-home .ota-trust article,
+    .site-ota-home .ota-trust article:nth-child(2),
+    .site-ota-home .ota-trust article:nth-child(-n + 2),
+    .site-ota-home .ota-trust article:last-child {
+        min-height: 88px;
+        padding: 13px 10px;
+    }
+
+    .site-ota-home .ota-trust-icon {
+        flex: 0 0 auto;
+    }
+}
+
+/* ========================================================================== */
+/* END REFERENCE UI MOBILE HOMEPAGE CORRECTION                                */
+/* ========================================================================== */

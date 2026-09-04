@@ -48,6 +48,9 @@
                     method="{{ $flightSearchMethod }}"
                     action="{{ $flightSearchAction }}"
                     class="ota-search-card"
+                    @if ($flightSearchMethod === 'POST')
+                        data-flight-search-form
+                    @endif
                     aria-label="Flight search"
                 >
                     @if ($flightSearchMethod === 'POST')
@@ -92,7 +95,7 @@
                                 placeholder="Airport code"
                                 autocomplete="off"
                                 required
-                            >
+                             data-airport-code>
                         </label>
 
                         <label>
@@ -106,7 +109,7 @@
                                 placeholder="Airport code"
                                 autocomplete="off"
                                 required
-                            >
+                             data-airport-code>
                         </label>
 
                         <label>
@@ -115,6 +118,7 @@
                                 type="date"
                                 name="departure_date"
                                 min="{{ now()->toDateString() }}"
+                                data-departure-date
                                 required
                             >
                         </label>
@@ -125,6 +129,7 @@
                                 type="date"
                                 name="return_date"
                                 min="{{ now()->addDay()->toDateString() }}"
+                                data-return-date
                                 required
                             >
                         </label>
@@ -153,10 +158,39 @@
                             </select>
                         </label>
 
-                        <button type="submit">
+                        <button data-flight-submit type="submit">
                             Search Flights
                         </button>
                     </div>
+                    @if ($flightSearchMethod === 'POST')
+                        <div
+                            class="flight-status"
+                            data-flight-status
+                            role="status"
+                            aria-live="polite"
+                            hidden
+                        ></div>
+
+                        <div
+                            class="flight-results"
+                            data-flight-results
+                            data-flight-select-url="{{ route('flights.offers.select') }}"
+                            data-flight-traveler-validation-url="{{ route('flights.travelers.validate') }}"
+                            data-flight-booking-draft-url="{{ route('flights.bookings.drafts.store') }}"
+                            data-flight-booking-draft-review-url="{{ route('flights.bookings.drafts.review') }}"
+                            data-flight-booking-confirmation-intent-url="{{ route('flights.bookings.confirmation-intents.store') }}"
+                            data-flight-order-execution-url="{{ route('flights.bookings.orders.execute') }}"
+                            data-flight-order-attempt-status-url-template="{{ route('flights.bookings.orders.attempts.show', ['attemptReference' => '__ATTEMPT_REFERENCE__']) }}"
+                            data-flight-order-reconciliation-url-template="{{ route('flights.bookings.orders.attempts.reconcile', ['attemptReference' => '__ATTEMPT_REFERENCE__']) }}"
+                            data-flight-payment-readiness-url-template="{{ route('flights.bookings.orders.attempts.payment-readiness.show', ['attemptReference' => '__ATTEMPT_REFERENCE__']) }}"
+                            data-flight-payment-execution-url-template="{{ route('flights.bookings.orders.attempts.payments.store', ['attemptReference' => '__ATTEMPT_REFERENCE__']) }}"
+                            data-flight-payment-attempt-status-url-template="{{ route('flights.bookings.orders.payments.attempts.show', ['attemptReference' => '__ATTEMPT_REFERENCE__']) }}"
+                            data-flight-payment-reconciliation-url-template="{{ route('flights.bookings.orders.payments.attempts.reconcile', ['attemptReference' => '__ATTEMPT_REFERENCE__']) }}"
+                            data-flight-order-confirmation-url-template="{{ route('flights.bookings.orders.attempts.confirmation.show', ['attemptReference' => '__ATTEMPT_REFERENCE__']) }}"
+                            aria-live="polite"
+                            hidden
+                        ></div>
+                    @endif
                 </form>
 
             </div>
