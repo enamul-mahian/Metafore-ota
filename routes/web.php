@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\CityController;
 use App\Http\Controllers\Admin\CountryController;
 use App\Http\Controllers\Admin\FeatureControlController;
+use App\Http\Controllers\Admin\MasterDataPageController;
 use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\SettingPageController;
 use App\Http\Controllers\Flight\FlightBookingConfirmationIntentController;
@@ -433,3 +434,14 @@ Route::get(
     ->name('flights.bookings.orders.attempts.confirmation.show');
 
 require __DIR__.'/admin-users-roles.php';
+Route::get(
+    '/admin/master-data',
+    MasterDataPageController::class
+)
+    ->middleware([
+        'auth',
+        'verified',
+        'role:admin|super-admin',
+        'permission:master-data.view',
+    ])
+    ->name('admin.master-data.manage');
