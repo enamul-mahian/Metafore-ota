@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\BookingPageController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\CategoryPageController;
 use App\Http\Controllers\Admin\CityController;
@@ -560,6 +561,29 @@ Route::get(
     ->name('flights.bookings.orders.attempts.confirmation.show');
 
 require __DIR__.'/admin-users-roles.php';
+
+Route::get(
+    '/admin/bookings',
+    [BookingPageController::class, 'index']
+)
+    ->middleware([
+        'auth',
+        'verified',
+        'role:admin|super-admin',
+    ])
+    ->name('admin.bookings.index');
+
+Route::get(
+    '/admin/bookings/{booking}',
+    [BookingPageController::class, 'show']
+)
+    ->middleware([
+        'auth',
+        'verified',
+        'role:admin|super-admin',
+    ])
+    ->name('admin.bookings.show');
+
 Route::get(
     '/admin/categories',
     CategoryPageController::class
