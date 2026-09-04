@@ -16,6 +16,7 @@
         <div class="egh-brand">Eagle Global Hub LTD</div>
         <nav class="egh-nav">
             <a href="{{ route('dashboard') }}">Dashboard</a>
+            <a href="{{ route('admin.bookings.index') }}" class="{{ request()->routeIs('admin.bookings.*') ? 'active' : '' }}">Bookings</a>
             @can('users.view')
                 <a href="{{ route('admin.users.index') }}" class="{{ request()->routeIs('admin.users.*') ? 'active' : '' }}">Users</a>
             @endcan
