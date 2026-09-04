@@ -4,7 +4,6 @@ namespace Tests\Feature\Travel;
 
 use App\Contracts\Hotel\HotelSearchProvider;
 use App\Services\Travel\TravelServiceRegistry;
-use Illuminate\Support\Facades\Route;
 use Tests\TestCase;
 
 class HomepageTravelServiceAvailabilityTest extends TestCase
@@ -24,24 +23,21 @@ class HomepageTravelServiceAvailabilityTest extends TestCase
 
     public function test_enabled_service_stays_unavailable_without_required_configuration(): void
     {
-        $this->registerHotelRoute();
         $this->configureHotelProvider(apiKey: null);
 
         $this->get(route('home'))
             ->assertOk()
             ->assertSee('Hotels')
             ->assertSee('Not Configured')
-            ->assertDontSee('/provider-ready-hotels', false);
+            ->assertDontSee('href="http://localhost:8000/hotels"', false);
     }
 
     public function test_safely_configured_service_becomes_an_available_link_without_exposing_secrets(): void
     {
-        $this->registerHotelRoute();
         $this->configureHotelProvider(
             apiKey: 'homepage-must-never-render-this-secret'
         );
 
-        $this->assertTrue(Route::has('hotels.index'));
         $this->assertTrue(
             config('travel_services.services.hotels.enabled')
         );
@@ -73,16 +69,8 @@ class HomepageTravelServiceAvailabilityTest extends TestCase
             ->assertOk()
             ->assertSee('Hotels')
             ->assertSee('Available')
-            ->assertSee('/provider-ready-hotels', false)
+            ->assertSee('href="http://localhost:8000/hotels"', false)
             ->assertDontSee('homepage-must-never-render-this-secret');
-    }
-
-    private function registerHotelRoute(): void
-    {
-        Route::get('/provider-ready-hotels', fn () => 'Hotels')
-            ->name('hotels.index');
-
-        Route::getRoutes()->refreshNameLookups();
     }
 
     private function configureHotelProvider(?string $apiKey): void

@@ -19,6 +19,8 @@ use App\Http\Controllers\Flight\FlightOrderReconciliationController;
 use App\Http\Controllers\Flight\FlightSearchController;
 use App\Http\Controllers\Flight\FlightTravelerValidationController;
 use App\Http\Controllers\FlightBookingController;
+use App\Http\Controllers\Hotel\HotelController;
+use App\Http\Controllers\Hotel\HotelSearchController;
 use Illuminate\Support\Facades\Route;
 
 Route::view('/', 'home')->name('home');
@@ -43,6 +45,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::view('/flights', 'flights.search')
         ->middleware('permission:flights.search')
         ->name('flights.index');
+
+    Route::get('/hotels', HotelController::class)
+        ->middleware('permission:hotels.search')
+        ->name('hotels.index');
+
+    Route::post('/hotels/search', HotelSearchController::class)
+        ->middleware('permission:hotels.search')
+        ->name('hotels.search');
 
     Route::get('/bookings', [FlightBookingController::class, 'index'])
         ->middleware('permission:flights.book')
