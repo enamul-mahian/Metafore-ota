@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
     <meta charset="utf-8">
@@ -21,6 +21,9 @@
             @endcan
             @can('roles.view')
                 <a href="{{ route('admin.roles.index') }}" class="{{ request()->routeIs('admin.roles.*') ? 'active' : '' }}">Roles &amp; Permissions</a>
+            @endcan
+            @can('master-data.view')
+                <a href="{{ route('admin.master-data.manage') }}" class="{{ request()->routeIs('admin.master-data.*') ? 'active' : '' }}">Master Data</a>
             @endcan
             @role('super-admin')
                 <a href="{{ route('admin.features.index') }}">Feature Control</a>
