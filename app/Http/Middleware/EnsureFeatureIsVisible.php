@@ -30,25 +30,31 @@ class EnsureFeatureIsVisible
 
         $user = $request->user();
         $viewer = $user instanceof User ? $user : null;
+        $isSuperAdminPreview = false;
 
         foreach ($featureKeys as $featureKey) {
-            if ($this->features->isVisibleTo($featureKey, $viewer)) {
-                continue;
+            if (! $this->features->isVisibleTo($featureKey, $viewer)) {
+                $message = $this->features->unavailableMessage($featureKey);
+
+                if ($request->expectsJson()) {
+                    return response()->json([
+                        'message' => $message,
+                    ], Response::HTTP_NOT_FOUND);
+                }
+
+                return response()->view(
+                    'errors.feature-unavailable',
+                    ['message' => $message],
+                    Response::HTTP_NOT_FOUND,
+                );
             }
 
-            $message = $this->features->unavailableMessage($featureKey);
+            $isSuperAdminPreview = $isSuperAdminPreview
+                || $this->features->isSuperAdminPreview($featureKey, $viewer);
+        }
 
-            if ($request->expectsJson()) {
-                return response()->json([
-                    'message' => $message,
-                ], Response::HTTP_NOT_FOUND);
-            }
-
-            return response()->view(
-                'errors.feature-unavailable',
-                ['message' => $message],
-                Response::HTTP_NOT_FOUND,
-            );
+        if ($isSuperAdminPreview) {
+            $request->attributes->set('super_admin_feature_preview', true);
         }
 
         return $next($request);

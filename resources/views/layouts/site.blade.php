@@ -226,6 +226,13 @@
         </div>
     @endif
 
+    @if (request()->attributes->get('super_admin_feature_preview') === true)
+        <div class="site-environment-banner" role="status">
+            <strong>Super Admin Preview:</strong>
+            this feature is currently disabled or hidden for other users.
+        </div>
+    @endif
+
     <div id="main-content">
         @yield('content')
     </div>

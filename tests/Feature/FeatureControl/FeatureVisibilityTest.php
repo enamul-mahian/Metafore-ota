@@ -4,6 +4,7 @@ namespace Tests\Feature\FeatureControl;
 
 use App\Models\User;
 use App\Services\Feature\FeatureManager;
+use App\Services\Travel\TravelServiceRegistry;
 use Database\Seeders\RolePermissionSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Route;
@@ -77,6 +78,37 @@ final class FeatureVisibilityTest extends TestCase
             );
     }
 
+    public function test_disabled_registered_feature_blocks_everyone_except_super_admin_preview(): void
+    {
+        $customer = $this->userWithRole('customer');
+        $admin = $this->userWithRole('admin');
+        $superAdmin = $this->userWithRole('super-admin');
+
+        app(FeatureManager::class)->update(
+            'support',
+            $this->state(enabled: false),
+        );
+
+        $this->get(route('support'))
+            ->assertNotFound();
+
+        $this->actingAs($customer)
+            ->get(route('support'))
+            ->assertNotFound();
+
+        $this->actingAs($admin)
+            ->get(route('support'))
+            ->assertNotFound();
+
+        $this->actingAs($superAdmin)
+            ->get(route('support'))
+            ->assertOk()
+            ->assertSee('Super Admin Preview:')
+            ->assertSee('disabled or hidden for other users');
+
+        $this->assertFalse(app(FeatureManager::class)->isEnabled('support'));
+    }
+
     public function test_disabled_payments_block_payment_endpoints_independently(): void
     {
         $customer = $this->userWithRole('customer');
@@ -144,6 +176,7 @@ final class FeatureVisibilityTest extends TestCase
     {
         $admin = $this->userWithRole('admin');
         $customer = $this->userWithRole('customer');
+        $superAdmin = $this->userWithRole('super-admin');
 
         app(FeatureManager::class)->update(
             'flights',
@@ -157,15 +190,76 @@ final class FeatureVisibilityTest extends TestCase
         $this->actingAs($customer)
             ->get(route('flights.index'))
             ->assertOk();
+
+        $this->actingAs($superAdmin)
+            ->get(route('flights.index'))
+            ->assertOk()
+            ->assertSee('Super Admin Preview:');
+    }
+
+    public function test_super_admin_preview_does_not_activate_providers_or_live_execution(): void
+    {
+        $superAdmin = $this->userWithRole('super-admin');
+        $capabilitiesBefore = app(TravelServiceRegistry::class)->all();
+
+        app(FeatureManager::class)->update(
+            'hotels',
+            $this->state(enabled: false),
+        );
+
+        $this->actingAs($superAdmin)
+            ->get(route('hotels.index'))
+            ->assertOk()
+            ->assertSee('Super Admin Preview:')
+            ->assertSee('Hotel service is not configured');
+
+        $this->actingAs($superAdmin)
+            ->postJson(route('hotels.search'), [])
+            ->assertUnprocessable()
+            ->assertJsonValidationErrors([
+                'destination',
+                'check_in',
+                'check_out',
+                'adults',
+                'rooms',
+            ]);
+
+        $this->actingAs($superAdmin)
+            ->postJson(route('hotels.search'), [
+                'destination' => 'Dhaka',
+                'check_in' => now()->addDay()->toDateString(),
+                'check_out' => now()->addDays(2)->toDateString(),
+                'adults' => 1,
+                'rooms' => 1,
+            ])
+            ->assertServiceUnavailable();
+
+        $this->assertFalse(app(FeatureManager::class)->isEnabled('hotels'));
+        $this->assertSame(
+            $capabilitiesBefore,
+            app(TravelServiceRegistry::class)->all(),
+        );
+        $this->assertFalse(config('travel_services.services.hotels.enabled'));
+        $this->assertFalse(config('travel_services.services.tours.enabled'));
+        $this->assertFalse(config('travel_services.services.visa.enabled'));
+        $this->assertFalse(config('flight_orders.http_execution_enabled'));
+        $this->assertFalse(config('flight_orders.duffel.live_order_creation_enabled'));
     }
 
     public function test_unknown_middleware_feature_key_fails_closed(): void
     {
+        $superAdmin = $this->userWithRole('super-admin');
+
         Route::get('/feature-control/unknown-check', function (): string {
             return 'must not render';
         })->middleware('feature:not-registered');
 
         $this->get('/feature-control/unknown-check')
+            ->assertNotFound()
+            ->assertDontSee('must not render');
+
+        $this->actingAs($superAdmin)
+            ->get('/feature-control/unknown-check')
             ->assertNotFound()
             ->assertDontSee('must not render');
     }
