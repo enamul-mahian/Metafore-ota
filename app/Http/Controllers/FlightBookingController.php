@@ -47,4 +47,24 @@ final class FlightBookingController extends Controller
             ],
         );
     }
+
+    public function invoice(
+        Request $request,
+        FlightOrderAttempt $booking,
+    ): View {
+        abort_unless(
+            (int) $booking->user_id ===
+                (int) $request->user()->getAuthIdentifier(),
+            404,
+        );
+
+        $booking->load('paymentAttempt');
+
+        return view(
+            'bookings.invoice',
+            [
+                'booking' => $booking,
+            ],
+        );
+    }
 }
