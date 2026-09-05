@@ -11262,6 +11262,71 @@ body.bookings-body {
     color: #23784a !important;
 }
 
+.account-body .account-profile-form {
+    display: grid;
+    gap: 13px;
+    padding: 17px;
+}
+
+.account-body .account-form-field {
+    display: grid;
+    gap: 6px;
+}
+
+.account-body .account-form-field label {
+    color: #53667c;
+    font-size: 9px;
+    font-weight: 800;
+}
+
+.account-body .account-form-field input {
+    width: 100%;
+    min-height: 42px;
+    padding: 9px 11px;
+    border: 1px solid #cbd9e7;
+    border-radius: 7px;
+    background: #ffffff;
+    color: #17304f;
+    font: inherit;
+    font-size: 11px;
+}
+
+.account-body .account-form-field input:focus {
+    border-color: #2479df;
+    outline: 3px solid rgba(36, 121, 223, 0.13);
+}
+
+.account-body .account-form-field input[aria-invalid="true"] {
+    border-color: #b84747;
+}
+
+.account-body .account-form-error {
+    color: #a43b3b;
+    font-size: 9px;
+    line-height: 1.45;
+}
+
+.account-body .account-form-note {
+    margin: 0;
+    color: #6b7b8f;
+    font-size: 9px;
+    line-height: 1.55;
+}
+
+.account-body .account-form-success {
+    padding: 10px 11px;
+    border: 1px solid #b9dfc8;
+    border-radius: 7px;
+    background: #edf9f1;
+    color: #23784a;
+    font-size: 10px;
+    font-weight: 750;
+}
+
+.account-body .account-profile-form .site-button {
+    justify-self: start;
+}
+
 .account-body .account-actions {
     display: flex;
     align-items: center;
