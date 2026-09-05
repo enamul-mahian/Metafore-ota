@@ -128,6 +128,7 @@ class FlightBookingPagesTest extends TestCase
             ->assertSee('Customer booking confirmation')
             ->assertSee('GBP 499.00')
             ->assertSee('airline-issued e-ticket')
+            ->assertSee(route('bookings.invoice', $booking), false)
             ->assertDontSee('ord_hidden_from_customer')
             ->assertDontSee('pay_hidden_from_customer')
             ->assertDontSee($booking->reference_hash)
@@ -151,6 +152,116 @@ class FlightBookingPagesTest extends TestCase
 
         $this->actingAs($user)
             ->get(route('bookings.show', $otherBooking))
+            ->assertNotFound();
+    }
+
+    public function test_guest_is_redirected_from_booking_invoice(): void
+    {
+        $booking =
+            $this->createBookingForUser(
+                User::factory()->create(),
+            );
+
+        $this->get(route('bookings.invoice', $booking))
+            ->assertRedirect(route('login'));
+    }
+
+    public function test_verified_user_without_booking_permission_cannot_view_invoice(): void
+    {
+        $owner =
+            User::factory()->create([
+                'email_verified_at' => now(),
+            ]);
+
+        $booking =
+            $this->createBookingForUser($owner);
+
+        $this->actingAs($owner)
+            ->get(route('bookings.invoice', $booking))
+            ->assertForbidden();
+    }
+
+    public function test_customer_can_view_owned_payment_record_without_supplier_identifiers(): void
+    {
+        $user =
+            $this->bookingUser();
+
+        $booking =
+            $this->createBookingForUser(
+                $user,
+                [
+                    'status' => FlightOrderAttempt::STATUS_CREATED,
+                    'supplier_order_id' => 'ord_never_render_invoice',
+                    'resolved_at' => now(),
+                ],
+            );
+
+        $payment =
+            $this->createPaymentForBooking(
+                $user,
+                $booking,
+                [
+                    'status' => FlightOrderPaymentAttempt::STATUS_SUCCEEDED,
+                    'amount' => '725.40',
+                    'currency' => 'EUR',
+                    'supplier_payment_id' => 'pay_never_render_invoice',
+                    'resolved_at' => now(),
+                ],
+            );
+
+        $this->actingAs($user)
+            ->get(route('bookings.invoice', $booking))
+            ->assertOk()
+            ->assertSee('Booking invoice / payment record')
+            ->assertSee('Internal booking #'.$booking->id)
+            ->assertSee('Payment Record')
+            ->assertSee('#'.$payment->id)
+            ->assertSee('Payment Succeeded')
+            ->assertSee('Total Paid')
+            ->assertSee('EUR 725.40')
+            ->assertSee('not an airline-issued e-ticket')
+            ->assertDontSee('ord_never_render_invoice')
+            ->assertDontSee('pay_never_render_invoice')
+            ->assertDontSee($booking->reference_hash)
+            ->assertDontSee($booking->attempt_identity_hash)
+            ->assertDontSee($payment->reference_hash)
+            ->assertDontSee($payment->payment_identity_hash)
+            ->assertDontSee('Booking Reference')
+            ->assertDontSee('Ticket Number');
+    }
+
+    public function test_booking_invoice_reports_when_no_payment_is_stored(): void
+    {
+        $user =
+            $this->bookingUser();
+
+        $booking =
+            $this->createBookingForUser($user);
+
+        $this->actingAs($user)
+            ->get(route('bookings.invoice', $booking))
+            ->assertOk()
+            ->assertSee('Payment Not Started')
+            ->assertSee('No payment attempt is stored for this booking')
+            ->assertSee('invoice amount is available')
+            ->assertDontSee('Total Paid');
+    }
+
+    public function test_customer_cannot_view_another_users_booking_invoice(): void
+    {
+        $user =
+            $this->bookingUser();
+
+        $otherUser =
+            $this->bookingUser([
+                'email' => 'invoice-owner@example.com',
+            ]);
+
+        $otherBooking =
+            $this->createBookingForUser($otherUser);
+
+        $this->actingAs($user)
+            ->get(route('bookings.invoice', $otherBooking))
             ->assertNotFound();
     }
 

@@ -48,6 +48,13 @@
                     Back to Bookings
                 </a>
 
+                <a
+                    href="{{ route('bookings.invoice', $booking) }}"
+                    class="site-button site-button-secondary"
+                >
+                    Invoice / Payment Record
+                </a>
+
                 <button
                     type="button"
                     class="site-button site-button-primary"

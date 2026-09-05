@@ -97,6 +97,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->middleware(['feature:bookings', 'permission:flights.book'])
         ->name('bookings.index');
 
+    Route::get('/bookings/{booking}/invoice', [FlightBookingController::class, 'invoice'])
+        ->middleware(['feature:bookings', 'permission:flights.book'])
+        ->name('bookings.invoice');
+
     Route::get('/bookings/{booking}', [FlightBookingController::class, 'show'])
         ->middleware(['feature:bookings', 'permission:flights.book'])
         ->name('bookings.show');
