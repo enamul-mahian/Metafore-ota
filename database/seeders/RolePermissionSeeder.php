@@ -54,6 +54,8 @@ class RolePermissionSeeder extends Seeder
 
             'reports.view',
 
+            'system-logs.view',
+
             'flights.search',
             'flights.book',
 

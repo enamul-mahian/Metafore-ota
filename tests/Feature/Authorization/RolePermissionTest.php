@@ -206,4 +206,19 @@ class RolePermissionTest extends TestCase
 
         $this->assertFalse($customer->fresh()->can('reports.view'));
     }
+
+    public function test_system_logs_view_permission_is_limited_to_super_admin(): void
+    {
+        foreach (['customer', 'admin'] as $roleName) {
+            $user = User::factory()->create();
+            $user->assignRole($roleName);
+
+            $this->assertFalse($user->fresh()->can('system-logs.view'));
+        }
+
+        $superAdmin = User::factory()->create();
+        $superAdmin->assignRole('super-admin');
+
+        $this->assertTrue($superAdmin->fresh()->can('system-logs.view'));
+    }
 }

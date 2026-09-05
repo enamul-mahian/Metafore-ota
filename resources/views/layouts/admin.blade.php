@@ -50,6 +50,9 @@
             @can('settings.view')
                 <a href="{{ route('admin.settings.manage') }}">Settings</a>
             @endcan
+            @can('system-logs.view')
+                <a href="{{ route('admin.system-logs.index') }}" class="{{ request()->routeIs('admin.system-logs.*') ? 'active' : '' }}">System Logs</a>
+            @endcan
         </nav>
     </aside>
     <div class="egh-main">
