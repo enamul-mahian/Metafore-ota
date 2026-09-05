@@ -149,6 +149,40 @@
                     </article>
                 @endforeach
             </section>
+
+            @if ($bookings->hasPages())
+                <nav
+                    class="booking-pagination"
+                    aria-label="Booking list pagination"
+                >
+                    <p>
+                        Showing {{ $bookings->firstItem() }}&ndash;{{ $bookings->lastItem() }}
+                        of {{ $bookings->total() }} bookings
+                    </p>
+
+                    <div>
+                        @if ($bookings->onFirstPage())
+                            <span aria-disabled="true">Previous</span>
+                        @else
+                            <a href="{{ $bookings->previousPageUrl() }}" rel="prev">
+                                Previous
+                            </a>
+                        @endif
+
+                        <strong aria-current="page">
+                            Page {{ $bookings->currentPage() }} of {{ $bookings->lastPage() }}
+                        </strong>
+
+                        @if ($bookings->hasMorePages())
+                            <a href="{{ $bookings->nextPageUrl() }}" rel="next">
+                                Next
+                            </a>
+                        @else
+                            <span aria-disabled="true">Next</span>
+                        @endif
+                    </div>
+                </nav>
+            @endif
         @endif
 
     </main>
