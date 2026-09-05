@@ -209,13 +209,15 @@
 
                 <span class="admin-nav-title">SYSTEM INFO</span>
 
-                <a href="#" class="admin-nav-link">
+                @can('system-logs.view')
+                <a href="{{ route('admin.system-logs.index') }}" class="admin-nav-link">
                     <svg viewBox="0 0 24 24" aria-hidden="true">
                         <rect x="4" y="3" width="16" height="18" rx="2"/>
                         <path d="M8 8h8M8 12h8M8 16h5"/>
                     </svg>
                     <span>System Logs</span>
                 </a>
+                @endcan
 
             </div>
 

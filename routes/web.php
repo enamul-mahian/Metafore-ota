@@ -18,6 +18,7 @@ use App\Http\Controllers\Admin\ReportPageController;
 use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\SettingPageController;
 use App\Http\Controllers\Admin\StudentController;
+use App\Http\Controllers\Admin\SystemLogPageController;
 use App\Http\Controllers\Flight\FlightBookingConfirmationIntentController;
 use App\Http\Controllers\Flight\FlightBookingDraftController;
 use App\Http\Controllers\Flight\FlightBookingDraftReviewController;
@@ -675,6 +676,18 @@ Route::get(
         'permission:reports.view',
     ])
     ->name('admin.reports.index');
+
+Route::get(
+    '/admin/system-logs',
+    [SystemLogPageController::class, 'index']
+)
+    ->middleware([
+        'auth',
+        'verified',
+        'role:super-admin',
+        'permission:system-logs.view',
+    ])
+    ->name('admin.system-logs.index');
 
 Route::get(
     '/admin/categories',
