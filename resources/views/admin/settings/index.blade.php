@@ -246,46 +246,9 @@
                     <span></span>
                 </button>
 
-                <div class="admin-search">
-
-                    <svg viewBox="0 0 24 24" aria-hidden="true">
-                        <circle cx="11" cy="11" r="7"/>
-                        <path d="m20 20-4-4"/>
-                    </svg>
-
-                    <input
-                        type="search"
-                        placeholder="Search anything..."
-                        aria-label="Search"
-                    >
-
-                </div>
-
             </div>
 
             <div class="admin-topbar-actions">
-
-                <button
-                    class="admin-icon-button"
-                    type="button"
-                    aria-label="Theme"
-                >
-                    <svg viewBox="0 0 24 24" aria-hidden="true">
-                        <path d="M20 15.5A8 8 0 0 1 8.5 4 8.5 8.5 0 1 0 20 15.5z"/>
-                    </svg>
-                </button>
-
-                <button
-                    class="admin-icon-button notification-button"
-                    type="button"
-                    aria-label="Notifications"
-                >
-                    <svg viewBox="0 0 24 24" aria-hidden="true">
-                        <path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"/>
-                    </svg>
-
-                    <span class="notification-count">3</span>
-                </button>
 
                 <div class="admin-user">
 
@@ -304,14 +267,6 @@
                         </span>
 
                     </div>
-
-                    <svg
-                        class="admin-user-chevron"
-                        viewBox="0 0 24 24"
-                        aria-hidden="true"
-                    >
-                        <path d="m7 10 5 5 5-5"/>
-                    </svg>
 
                 </div>
 
@@ -359,7 +314,7 @@
                     @else
                         <a href="{{ route('home') }}">Website</a>
                     @endfeature
-                    <span>â€º</span>
+                    <span>&rsaquo;</span>
                     <strong>Settings</strong>
                 </div>
 
@@ -565,14 +520,6 @@
                     @if($canManageSettings)
 
                         {{-- Action wiring will be added later --}}
-                        <button
-                            type="button"
-                            class="settings-add-group"
-                        >
-                            <span>ï¼‹</span>
-                            Add New Group
-                        </button>
-
                     @endif
 
                 </aside>
@@ -606,7 +553,7 @@
                                 data-setting-add
                                 data-setting-group="{{ $activeGroup }}"
                             >
-                                <span>ï¼‹</span>
+                                <span>+</span>
                                 Add New Setting
                             </button>
 
@@ -672,7 +619,7 @@
                                         @elseif($setting['value'] === null || $setting['value'] === '')
 
                                             <span class="settings-muted">
-                                                â€”
+                                                &mdash;
                                             </span>
 
                                         @else
@@ -700,13 +647,13 @@
                                         @if($setting['is_public'])
 
                                             <span class="settings-visibility-badge public">
-                                                â—‰ Public
+                                                Public
                                             </span>
 
                                         @else
 
                                             <span class="settings-visibility-badge private">
-                                                â—‰ Private
+                                                Private
                                             </span>
 
                                         @endif
@@ -716,7 +663,7 @@
                                     {{-- UPDATED --}}
                                     <td class="settings-muted">
 
-                                        {{ $setting['updated_at']?->diffForHumans() ?? 'â€”' }}
+                                        {{ $setting['updated_at']?->diffForHumans() ?? 'Not available' }}
 
                                     </td>
 
@@ -728,7 +675,7 @@
                                             <div class="settings-actions">
 
                                                 {{-- =================================================
-                                                    EDIT â€” MODAL UI ONLY
+                                                    EDIT - MODAL UI ONLY
                                                     No database write in Step 5C.1A
                                                 ================================================== --}}
                                                 <button
@@ -760,7 +707,7 @@
                                                 </button>
 
                                                 {{-- =================================================
-                                                    DELETE â€” LIVE ENDPOINT WIRING
+                                                    DELETE - LIVE ENDPOINT WIRING
                                                     Step 5C.2B
                                                 ================================================== --}}
                                                 <button
@@ -828,31 +775,6 @@
                             of {{ $activeSettings->count() }} settings
                         </span>
 
-                        <div class="settings-pagination">
-
-                            <button
-                                type="button"
-                                disabled
-                            >
-                                â€¹
-                            </button>
-
-                            <button
-                                type="button"
-                                class="active"
-                            >
-                                1
-                            </button>
-
-                            <button
-                                type="button"
-                                disabled
-                            >
-                                â€º
-                            </button>
-
-                        </div>
-
                     </div>
 
                 </div>
@@ -860,7 +782,7 @@
             </section>
 
             {{-- =====================================================
-                ADD SETTING MODAL â€” STEP 5C.3C
+                ADD SETTING MODAL - STEP 5C.3C
                 LIVE POST CREATE ENDPOINT WIRING
             ====================================================== --}}
             @if($canManageSettings)
@@ -904,7 +826,7 @@
                                 data-settings-add-modal-close
                                 aria-label="Close add setting modal"
                             >
-                                Ã—
+                                &times;
                             </button>
 
                         </div>
@@ -1032,7 +954,7 @@
             @endif
 
             {{-- =====================================================
-                EDIT SETTING MODAL â€” STEP 5C.1B
+                EDIT SETTING MODAL - STEP 5C.1B
                 EXISTING PATCH ENDPOINT WIRING
             ====================================================== --}}
             @if($canManageSettings)
@@ -1076,7 +998,7 @@
                                 data-settings-modal-close
                                 aria-label="Close edit setting modal"
                             >
-                                Ã—
+                                &times;
                             </button>
 
                         </div>
@@ -1199,7 +1121,7 @@
             @endif
 
             {{-- =====================================================
-                DELETE SETTING MODAL â€” STEP 5C.2B
+                DELETE SETTING MODAL - STEP 5C.2B
                 LIVE DELETE ENDPOINT WIRING
             ====================================================== --}}
             @if($canManageSettings)
@@ -1243,7 +1165,7 @@
                                 data-settings-delete-modal-close
                                 aria-label="Close delete setting modal"
                             >
-                                Ã—
+                                &times;
                             </button>
 
                         </div>
@@ -1308,7 +1230,7 @@
         <footer class="admin-footer">
 
             <span>
-                Â© {{ date('Y') }} Eagle Global Hub LTD. All rights reserved.
+                &copy; {{ date('Y') }} Eagle Global Hub LTD. All rights reserved.
             </span>
 
             <span>
@@ -1352,7 +1274,7 @@
 
     /*
     |--------------------------------------------------------------------------
-    | Settings Add Modal â€” Step 5C.3C live create wiring
+    | Settings Add Modal - Step 5C.3C live create wiring
     |--------------------------------------------------------------------------
     */
 
@@ -1380,7 +1302,7 @@
 
     /*
     |--------------------------------------------------------------------------
-    | Settings Delete Modal â€” live delete wiring
+    | Settings Delete Modal - live delete wiring
     |--------------------------------------------------------------------------
     */
 
@@ -1556,7 +1478,7 @@
 
     /*
     |--------------------------------------------------------------------------
-    | Open Add Modal â€” Step 5C.3C
+    | Open Add Modal - Step 5C.3C
     |--------------------------------------------------------------------------
     */
 
@@ -1754,7 +1676,7 @@
 
     /*
     |--------------------------------------------------------------------------
-    | Add button â€” Step 5C.3C
+    | Add button - Step 5C.3C
     |--------------------------------------------------------------------------
     */
 
@@ -1880,7 +1802,7 @@
 
     /*
     |--------------------------------------------------------------------------
-    | Add Setting â€” Step 5C.3C live POST create
+    | Add Setting - Step 5C.3C live POST create
     |--------------------------------------------------------------------------
     */
 

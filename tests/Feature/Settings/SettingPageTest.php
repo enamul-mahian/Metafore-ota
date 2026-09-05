@@ -55,8 +55,30 @@ class SettingPageTest extends TestCase
             ->assertOk()
             ->assertSee('Settings')
             ->assertSee('Add New Setting')
-            ->assertSee('Add New Group')
+            ->assertDontSee('Add New Group')
             ->assertDontSee('Read only mode');
+    }
+
+    public function test_settings_page_does_not_render_mojibake_characters(): void
+    {
+        $user = $this->verifiedUserWithRole('super-admin');
+
+        $this->actingAs($user)
+            ->get(route('admin.settings.manage'))
+            ->assertOk()
+            ->assertSee('&rsaquo;', false)
+            ->assertSee('&times;', false)
+            ->assertSee('&copy; '.date('Y'), false)
+            ->assertDontSee('Search anything...')
+            ->assertDontSee('aria-label="Theme"', false)
+            ->assertDontSee('aria-label="Notifications"', false)
+            ->assertDontSee('notification-count', false)
+            ->assertDontSee('Add New Group')
+            ->assertDontSee('settings-pagination', false)
+            ->assertDontSee("\u{00E2}\u{20AC}", false)
+            ->assertDontSee("\u{00EF}\u{00BC}", false)
+            ->assertDontSee("\u{00C3}\u{2014}", false)
+            ->assertDontSee("\u{00C2}\u{00A9}", false);
     }
 
     private function verifiedUserWithRole(string $role): User
