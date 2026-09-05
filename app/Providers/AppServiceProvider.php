@@ -109,7 +109,7 @@ class AppServiceProvider extends ServiceProvider
         );
 
         View::composer(
-            ['home', 'layouts.site'],
+            ['home', 'dashboard', 'layouts.site'],
             function (IlluminateView $view): void {
                 $view->with(
                     'travelServices',
