@@ -1,6 +1,6 @@
 @if($errors->any())
-    <div class="egh-alert" style="background:#fee2e2;color:#991b1b">
-        <ul style="margin:0;padding-left:20px">@foreach($errors->all() as $error)<li>{{ $error }}</li>@endforeach</ul>
+    <div class="egh-alert is-error">
+        <ul class="admin-error-list">@foreach($errors->all() as $error)<li>{{ $error }}</li>@endforeach</ul>
     </div>
 @endif
 
@@ -28,7 +28,7 @@
     <label class="agt-full">Internal notes<textarea name="notes" maxlength="5000">{{ old('notes', $agent->notes ?? '') }}</textarea></label>
 </div>
 
-<div style="display:flex;gap:10px;margin-top:18px">
+<div class="admin-form-actions">
     <button class="egh-button" type="submit">{{ $submitLabel }}</button>
     <a class="egh-button secondary" href="{{ route('admin.agents.index') }}">Cancel</a>
 </div>

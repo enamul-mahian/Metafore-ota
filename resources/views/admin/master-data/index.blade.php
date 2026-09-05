@@ -3,23 +3,10 @@
 @section('title', 'Master Data')
 
 @section('content')
-<style>
-.md-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(360px,1fr));gap:20px}
-.md-section{min-width:0}.md-title{display:flex;align-items:center;justify-content:space-between;gap:12px}
-.md-form{display:grid;gap:10px;margin:14px 0 18px}.md-two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.md-form input,.md-form select{width:100%;box-sizing:border-box;border:1px solid #cbd5e1;border-radius:8px;padding:10px;background:#fff}
-.md-table-wrap{overflow:auto}.md-table{width:100%;border-collapse:collapse;font-size:14px}.md-table th,.md-table td{padding:10px 8px;border-bottom:1px solid #e5e7eb;text-align:left;white-space:nowrap}
-.md-table th{font-size:12px;text-transform:uppercase;color:#64748b}.md-actions{display:flex;gap:6px}
-.md-edit,.md-delete{border:0;border-radius:7px;padding:7px 10px;cursor:pointer}.md-edit{background:#e9eef7;color:#273852}.md-delete{background:#fee2e2;color:#991b1b}
-.md-message{display:none;margin-bottom:16px;padding:12px 14px;border-radius:8px}.md-muted{color:#64748b}
-@media(max-width:620px){.md-two{grid-template-columns:1fr}}
-</style>
+
+<x-admin.page-header title="Countries & Cities" description="Manage location records used across travel services." icon="M" eyebrow="Master data" />
 
 <div class="egh-card">
-    <div>
-        <h1 style="margin:0">Master Data</h1>
-        <p class="md-muted" style="margin:6px 0 0">Manage countries and cities used across travel services.</p>
-    </div>
 
     <div id="md-message" class="md-message"></div>
 

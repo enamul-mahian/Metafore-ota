@@ -3,16 +3,9 @@
 @section('title', 'Reports')
 
 @section('content')
-<style>
-.rpt-head{display:flex;align-items:flex-start;justify-content:space-between;gap:18px;margin-bottom:18px}.rpt-head h1,.rpt-section h2{margin:0}.rpt-muted{color:#64748b}.rpt-filter{display:flex;align-items:end;gap:12px;flex-wrap:wrap;margin-bottom:18px}.rpt-field{display:grid;gap:6px}.rpt-field span{font-size:12px;font-weight:700;color:#475569}.rpt-field input{min-height:38px;padding:8px 10px;border:1px solid #cbd5e1;border-radius:8px;background:#fff;color:#172944}.rpt-error{color:#b42318;font-size:12px}.rpt-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;margin-bottom:18px}.rpt-summary{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-top:16px}.rpt-stat{padding:15px;border:1px solid #e5e9f2;border-radius:10px;background:#f8fafc}.rpt-stat strong{display:block;font-size:24px;color:#172944}.rpt-stat span{font-size:12px;color:#64748b;text-transform:capitalize}.rpt-section{margin-bottom:18px}.rpt-section-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:14px}.rpt-table-wrap{overflow:auto}.rpt-table{width:100%;border-collapse:collapse;font-size:14px}.rpt-table th,.rpt-table td{padding:11px 8px;border-bottom:1px solid #e5e7eb;text-align:left;vertical-align:top}.rpt-table th{font-size:12px;text-transform:uppercase;color:#64748b;white-space:nowrap}.rpt-status{display:inline-block;border-radius:999px;padding:4px 8px;background:#eef2ff;color:#334155;text-transform:capitalize;white-space:nowrap}.rpt-profile-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}.rpt-profile h3{margin:0 0 5px}.rpt-profile-total{font-size:25px;font-weight:800;color:#172944}.rpt-profile dl{margin:13px 0 0}.rpt-profile dl div{display:flex;justify-content:space-between;gap:12px;padding:7px 0;border-top:1px solid #edf0f5}.rpt-profile dt{text-transform:capitalize;color:#64748b}.rpt-profile dd{margin:0;font-weight:700}@media(max-width:1100px){.rpt-profile-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:760px){.rpt-grid,.rpt-profile-grid{grid-template-columns:1fr}.rpt-summary{grid-template-columns:repeat(2,minmax(0,1fr))}.rpt-head{display:block}}
-</style>
 
-<div class="rpt-head">
-    <div>
-        <h1>Reports</h1>
-        <p class="rpt-muted" style="margin:6px 0 0">Read-only reporting from persisted application records.</p>
-    </div>
-    <span class="rpt-muted">
+<x-admin.page-header title="Reports" description="Read-only reporting from persisted application records." icon="R" eyebrow="Operational reporting">
+    <span class="admin-muted">
         @if($filters['from'] || $filters['to'])
             Booking and payment activity:
             {{ $filters['from'] ? \Illuminate\Support\Carbon::parse($filters['from'])->format('M j, Y') : 'earliest' }}
@@ -22,7 +15,7 @@
             Booking and payment activity: all time
         @endif
     </span>
-</div>
+</x-admin.page-header>
 
 <form method="GET" action="{{ route('admin.reports.index') }}" class="egh-card rpt-filter">
     <label class="rpt-field">
@@ -105,7 +98,7 @@
         @foreach($profileSummaries as $label => $summary)
             <article class="egh-card rpt-profile">
                 <h3>{{ $label }}</h3>
-                <div class="rpt-profile-total">{{ $summary['total'] }} <span class="rpt-muted" style="font-size:12px;font-weight:400">total</span></div>
+                <div class="rpt-profile-total">{{ $summary['total'] }} <span class="rpt-total-label">total</span></div>
                 <dl>
                     @foreach($summary['statuses'] as $status => $count)
                         <div><dt>{{ $status }}</dt><dd>{{ $count }}</dd></div>

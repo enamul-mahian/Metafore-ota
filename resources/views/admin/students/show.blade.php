@@ -1,8 +1,8 @@
 @extends('layouts.admin')
 @section('title', $student->first_name.' '.$student->last_name)
 @section('content')
-<style>.stu-show{display:grid;grid-template-columns:170px 1fr;gap:12px;margin-top:20px}.stu-show dt{color:#64748b}.stu-show dd{margin:0}.stu-notes{white-space:pre-wrap}@media(max-width:650px){.stu-show{grid-template-columns:1fr}}</style>
-<div class="egh-card"><div style="display:flex;justify-content:space-between;gap:16px"><div><h1 style="margin:0">{{ $student->first_name }} {{ $student->last_name }}</h1><p>Private student profile</p></div><div><a class="egh-button secondary" href="{{ route('admin.students.index') }}">Back</a> @can('students.manage')<a class="egh-button" href="{{ route('admin.students.edit', $student) }}">Edit</a>@endcan</div></div>
+<x-admin.page-header :title="$student->first_name.' '.$student->last_name" description="Review this private operational student profile." icon="S" eyebrow="Student details"><a class="egh-button secondary" href="{{ route('admin.students.index') }}">Back</a> @can('students.manage')<a class="egh-button" href="{{ route('admin.students.edit', $student) }}">Edit</a>@endcan</x-admin.page-header>
+<div class="egh-card">
 <dl class="stu-show"><dt>Reference</dt><dd>{{ $student->reference_code }}</dd><dt>Email</dt><dd>{{ $student->email }}</dd><dt>Phone</dt><dd>{{ $student->phone ?: 'Not specified' }}</dd><dt>Country</dt><dd>{{ $student->country ? $student->country->name.' ('.$student->country->iso2.')' : 'Not specified' }}</dd><dt>Date of birth</dt><dd>{{ $student->date_of_birth?->format('M j, Y') ?? 'Not specified' }}</dd><dt>Status</dt><dd>{{ ucfirst($student->status) }}</dd><dt>Notes</dt><dd class="stu-notes">{{ $student->notes ?: 'None' }}</dd></dl>
-@can('students.manage')<form method="POST" action="{{ route('admin.students.destroy', $student) }}" style="margin-top:22px" onsubmit="return confirm('Delete this student profile?')">@csrf @method('DELETE')<button class="egh-button" style="background:#b91c1c">Delete Student</button></form>@endcan</div>
+@can('students.manage')<form method="POST" action="{{ route('admin.students.destroy', $student) }}" class="admin-danger-zone" onsubmit="return confirm('Delete this student profile?')">@csrf @method('DELETE')<button class="egh-button danger">Delete Student</button></form>@endcan</div>
 @endsection

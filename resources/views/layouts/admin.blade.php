@@ -12,202 +12,16 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
     <style>
-        .egh-admin {
-            margin: 0;
-            min-height: 100vh;
-            background: #f5f7fb;
-            color: #172944;
-            font-family: "Instrument Sans", Arial, sans-serif;
-        }
-
-        .egh-skip-link {
-            position: fixed;
-            z-index: 1200;
-            top: 10px;
-            left: 10px;
-            padding: 10px 14px;
-            border-radius: 8px;
-            background: #ffffff;
-            color: #0f2b4d;
-            font-weight: 800;
-            text-decoration: none;
-            transform: translateY(-150%);
-        }
-
-        .egh-skip-link:focus {
-            transform: translateY(0);
-        }
-
-        .egh-shell {
-            display: flex;
-            min-height: 100vh;
-        }
-
-        .egh-side {
-            position: sticky;
-            z-index: 1000;
-            top: 0;
-            width: 264px;
-            height: 100vh;
-            flex: 0 0 264px;
-            overflow-y: auto;
-            box-sizing: border-box;
-            padding: 22px 16px;
-            color: #dce7f5;
-            background:
-                linear-gradient(180deg, #0d2a4d 0%, #081b33 100%);
-            box-shadow: 8px 0 28px rgba(13, 42, 77, .08);
-        }
-
-        .egh-brand {
-            display: flex;
-            align-items: center;
-            gap: 11px;
-            margin: 0 4px 24px;
-            color: #ffffff;
-            text-decoration: none;
-        }
-
-        .egh-brand-mark {
-            width: 38px;
-            height: 38px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            flex: 0 0 38px;
-            border-radius: 12px;
-            background: #2271e0;
-            box-shadow: 0 8px 20px rgba(34, 113, 224, .28);
-            font-size: 18px;
-        }
-
-        .egh-brand-copy strong,
-        .egh-brand-copy small {
-            display: block;
-        }
-
-        .egh-brand-copy strong {
-            color: #ffffff;
-            font-size: 14px;
-            line-height: 1.25;
-        }
-
-        .egh-brand-copy small {
-            margin-top: 2px;
-            color: #9eb4cf;
-            font-size: 10px;
-        }
-
-        .egh-nav {
-            display: grid;
-            gap: 5px;
-        }
-
-        .egh-nav a {
-            display: flex;
-            align-items: center;
-            min-height: 40px;
-            box-sizing: border-box;
-            padding: 9px 12px;
-            border-radius: 9px;
-            color: #b9c9dc;
-            font-size: 13px;
-            font-weight: 650;
-            line-height: 1.3;
-            text-decoration: none;
-            transition: background .16s ease, color .16s ease;
-        }
-
-        .egh-nav a:hover,
-        .egh-nav a:focus-visible {
-            color: #ffffff;
-            background: rgba(255,255,255,.09);
-            outline: none;
-        }
-
-        .egh-nav a.active {
-            color: #ffffff;
-            background: #315ff4;
-            box-shadow: 0 8px 18px rgba(49, 95, 244, .24);
-        }
-
-        .egh-main {
-            min-width: 0;
-            flex: 1;
-        }
-
-        .egh-top {
-            min-height: 70px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 18px;
-            box-sizing: border-box;
-            padding: 12px 28px;
-            border-bottom: 1px solid #e3e9f2;
-            background: rgba(255,255,255,.96);
-        }
-
-        .egh-menu-toggle {
-            display: none;
-            width: 40px;
-            height: 40px;
-            align-items: center;
-            justify-content: center;
-            border: 1px solid #dbe3ef;
-            border-radius: 10px;
-            background: #ffffff;
-            color: #183456;
-            cursor: pointer;
-            font-size: 20px;
-        }
-
-        .egh-top-actions {
-            display: flex;
-            align-items: center;
-            justify-content: flex-end;
-            gap: 14px;
-            min-width: 0;
-            margin-left: auto;
-        }
-
-        .egh-user {
-            min-width: 0;
-            color: #4b6078;
-            font-size: 12px;
-            text-align: right;
-        }
-
-        .egh-user strong {
-            display: block;
-            overflow: hidden;
-            color: #172944;
-            font-size: 13px;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-        }
-
-        .egh-top-link,
-        .egh-logout {
-            min-height: 38px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            box-sizing: border-box;
-            padding: 8px 12px;
-            border: 1px solid #dbe3ef;
-            border-radius: 9px;
-            background: #ffffff;
-            color: #26415f;
-            cursor: pointer;
-            font: inherit;
-            font-size: 12px;
-            font-weight: 750;
-            text-decoration: none;
-        }
+        /*
+        |--------------------------------------------------------------------------
+        | Compatibility utilities for existing Admin pages
+        |--------------------------------------------------------------------------
+        */
 
         .egh-content {
             min-width: 0;
+            width: 100%;
+            box-sizing: border-box;
             padding: 28px;
         }
 
@@ -226,7 +40,7 @@
             border: 1px solid #e1e7f0;
             border-radius: 14px;
             background: #ffffff;
-            box-shadow: 0 6px 24px rgba(21, 45, 82, .04);
+            box-shadow: 0 6px 24px rgba(21,45,82,.04);
         }
 
         .egh-button {
@@ -254,7 +68,7 @@
         }
 
         .egh-alert {
-            margin-bottom: 18px;
+            margin: 0 28px 18px;
             padding: 12px 14px;
             border: 1px solid #ccebd8;
             border-radius: 10px;
@@ -288,7 +102,6 @@
             background: #ffffff;
             color: #172944;
             font: inherit;
-            font-weight: 500;
         }
 
         .egh-content table {
@@ -300,65 +113,37 @@
             overflow-wrap: anywhere;
         }
 
-        .egh-backdrop {
-            display: none;
+        .admin-footer {
+            display: flex;
+            justify-content: space-between;
+            gap: 16px;
+            padding: 18px 28px;
+            border-top: 1px solid #e5eaf1;
+            background: #ffffff;
+            color: #7a8798;
+            font-size: 12px;
+        }
+
+        .egh-skip-link {
+            position: fixed;
+            z-index: 2000;
+            top: 8px;
+            left: 8px;
+            padding: 9px 12px;
+            border-radius: 8px;
+            background: #ffffff;
+            color: #163657;
+            font-weight: 700;
+            text-decoration: none;
+            transform: translateY(-150%);
+        }
+
+        .egh-skip-link:focus {
+            transform: translateY(0);
         }
 
         @media (max-width: 900px) {
-            .egh-side {
-                position: fixed;
-                left: 0;
-                width: min(300px, calc(100vw - 52px));
-                height: 100dvh;
-                flex-basis: auto;
-                transform: translateX(-105%);
-                transition: transform .2s ease;
-            }
-
-            .egh-side.is-open {
-                transform: translateX(0);
-            }
-
-            .egh-menu-toggle {
-                display: inline-flex;
-                flex: 0 0 auto;
-            }
-
-            .egh-backdrop {
-                position: fixed;
-                z-index: 900;
-                inset: 0;
-                display: block;
-                visibility: hidden;
-                background: rgba(4, 18, 35, .48);
-                opacity: 0;
-                transition: opacity .2s ease, visibility .2s ease;
-            }
-
-            .egh-backdrop.is-open {
-                visibility: visible;
-                opacity: 1;
-            }
-
-            .egh-main {
-                width: 100%;
-            }
-
-            .egh-top {
-                min-height: 62px;
-                padding: 10px 14px;
-            }
-
-            .egh-top-link {
-                display: none;
-            }
-
-            .egh-user {
-                max-width: 170px;
-            }
-
             .egh-content {
-                width: 100%;
                 padding: 16px;
             }
 
@@ -370,180 +155,318 @@
                 min-width: 560px;
             }
 
-            body.egh-menu-open {
-                overflow: hidden;
-            }
-        }
-
-        @media (max-width: 560px) {
-            .egh-user {
-                max-width: 135px;
-            }
-
-            .egh-user span {
-                display: none;
-            }
-
-            .egh-logout {
-                padding-inline: 10px;
-            }
-
-            .egh-content h1 {
-                font-size: 24px;
-                line-height: 1.2;
+            .admin-footer {
+                padding: 16px;
+                flex-direction: column;
             }
         }
     </style>
 </head>
 
-<body class="egh-admin">
-<a href="#admin-main" class="egh-skip-link">Skip to admin content</a>
+@php
+    $adminUser = auth()->user();
+    $adminRole = $adminUser?->getRoleNames()->first();
+    $adminRoleLabel = $adminRole
+        ? ucwords(str_replace('-', ' ', $adminRole))
+        : 'Admin';
+@endphp
 
-<div class="egh-shell">
-    <aside class="egh-side" data-admin-sidebar>
-        <a href="{{ route('dashboard') }}" class="egh-brand">
-            <span class="egh-brand-mark" aria-hidden="true">âœˆ</span>
-            <span class="egh-brand-copy">
+<body class="admin-body">
+
+<a href="#admin-main" class="egh-skip-link">
+    Skip to admin content
+</a>
+
+<div class="admin-shell">
+
+    <aside
+        class="admin-sidebar"
+        id="adminSidebar"
+        aria-label="Administration"
+    >
+        <div class="admin-brand">
+            <div class="admin-brand-mark" aria-hidden="true">
+                <svg viewBox="0 0 24 24">
+                    <path d="M21.5 15.5 13 12l3.5-8.5L14 2l-5.5 8.5L3 8.5 1.5 10 6 14l-2 6 1.5 1 4-5 5 4 1.5-1-3-5.5 8.5 3.5z"/>
+                </svg>
+            </div>
+
+            <div class="admin-brand-copy">
                 <strong>Eagle Global Hub LTD</strong>
-                <small>Admin workspace</small>
-            </span>
-        </a>
+                <span>Smart Travel Booking</span>
+            </div>
+        </div>
 
-        <nav class="egh-nav" aria-label="Admin navigation">
-            <a
-                href="{{ route('dashboard') }}"
-                class="{{ request()->routeIs('dashboard') ? 'active' : '' }}"
-            >Dashboard</a>
+        <nav class="admin-nav">
 
-            <a
-                href="{{ route('admin.bookings.index') }}"
-                class="{{ request()->routeIs('admin.bookings.*') ? 'active' : '' }}"
-            >Bookings</a>
+            <div class="admin-nav-section">
+                <span class="admin-nav-title">MAIN</span>
 
-            @can('reports.view')
+                @feature('dashboard')
+                    <a
+                        href="{{ route('dashboard') }}"
+                        class="admin-nav-link {{ request()->routeIs('dashboard') ? 'active' : '' }}"
+                    >
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M3 10.8 12 3l9 7.8V21h-6v-6H9v6H3z"/>
+                        </svg>
+                        <span>Dashboard</span>
+                    </a>
+                @endfeature
+
+                @can('users.view')
+                    <a
+                        href="{{ route('admin.users.index') }}"
+                        class="admin-nav-link {{ request()->routeIs('admin.users.*') ? 'active' : '' }}"
+                    >
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                            <circle cx="9" cy="8" r="4"/>
+                            <path d="M2.5 20c.8-4 3-6 6.5-6s5.7 2 6.5 6M16 7a3 3 0 1 1 0 6M17 14c2.6.4 4.2 2.2 4.7 5"/>
+                        </svg>
+                        <span>Users</span>
+                    </a>
+                @endcan
+
+                @can('roles.view')
+                    <a
+                        href="{{ route('admin.roles.index') }}"
+                        class="admin-nav-link {{ request()->routeIs('admin.roles.*') ? 'active' : '' }}"
+                    >
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M12 3 4 7v5c0 5 3.4 8 8 9 4.6-1 8-4 8-9V7z"/>
+                            <path d="m8.5 12 2.2 2.2 4.8-5"/>
+                        </svg>
+                        <span>Roles &amp; Permissions</span>
+                    </a>
+                @endcan
+            </div>
+
+            <div class="admin-nav-section">
+                <span class="admin-nav-title">SYSTEM</span>
+
+                @role('super-admin')
+                    <a
+                        href="{{ route('admin.features.index') }}"
+                        class="admin-nav-link {{ request()->routeIs('admin.features.*') ? 'active' : '' }}"
+                    >
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M4 7h16M4 12h16M4 17h16"/>
+                            <circle cx="9" cy="7" r="2"/>
+                            <circle cx="15" cy="12" r="2"/>
+                            <circle cx="8" cy="17" r="2"/>
+                        </svg>
+                        <span>Feature Control</span>
+                    </a>
+                @endrole
+
+                @can('settings.view')
+                    <a
+                        href="{{ route('admin.settings.manage') }}"
+                        class="admin-nav-link {{ request()->routeIs('admin.settings.*') ? 'active' : '' }}"
+                    >
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                            <circle cx="12" cy="12" r="3"/>
+                            <path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1-2.8 2.8-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.6V21H10v-.1a1.7 1.7 0 0 0-1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1L4.2 17l.1-.1a1.7 1.7 0 0 0 .3-1.9A1.7 1.7 0 0 0 3 14H3v-4h.1a1.7 1.7 0 0 0 1.6-1 1.7 1.7 0 0 0-.3-1.9L4.2 7 7 4.2l.1.1a1.7 1.7 0 0 0 1.9.3 1.7 1.7 0 0 0 1-1.6V3h4v.1a1.7 1.7 0 0 0 1 1.6 1.7 1.7 0 0 0 1.9-.3l.1-.1L19.8 7l-.1.1a1.7 1.7 0 0 0-.3 1.9 1.7 1.7 0 0 0 1.6 1h.1v4H21a1.7 1.7 0 0 0-1.6 1z"/>
+                        </svg>
+                        <span>Settings</span>
+                    </a>
+                @endcan
+
+                @can('master-data.view')
+                    <a
+                        href="{{ route('admin.categories.manage') }}"
+                        class="admin-nav-link {{ request()->routeIs('admin.categories.*') ? 'active' : '' }}"
+                    >
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                            <rect x="3" y="4" width="18" height="16" rx="2"/>
+                            <path d="M8 4v16M3 10h18"/>
+                        </svg>
+                        <span>Categories</span>
+                    </a>
+
+                    <a
+                        href="{{ route('admin.currencies.manage') }}"
+                        class="admin-nav-link {{ request()->routeIs('admin.currencies.*') ? 'active' : '' }}"
+                    >
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                            <circle cx="12" cy="12" r="9"/>
+                            <path d="M15.5 8.5c-.8-.7-1.9-1-3.2-1-1.8 0-3.2.8-3.2 2.1 0 3.4 6.8 1.7 6.8 5.2 0 1.3-1.4 2.2-3.4 2.2-1.5 0-2.8-.4-3.8-1.3M12 5v14"/>
+                        </svg>
+                        <span>Currencies</span>
+                    </a>
+
+                    <a
+                        href="{{ route('admin.master-data.manage') }}"
+                        class="admin-nav-link {{ request()->routeIs('admin.master-data.*') ? 'active' : '' }}"
+                    >
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                            <circle cx="12" cy="12" r="9"/>
+                            <path d="M3 12h18M12 3c2.8 2.7 4 5.7 4 9s-1.2 6.3-4 9c-2.8-2.7-4-5.7-4-9s1.2-6.3 4-9z"/>
+                        </svg>
+                        <span>Countries</span>
+                    </a>
+
+                    <a
+                        href="{{ route('admin.languages.manage') }}"
+                        class="admin-nav-link {{ request()->routeIs('admin.languages.*') ? 'active' : '' }}"
+                    >
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M4 5h16v12H8l-4 4z"/>
+                            <path d="M8 9h8M8 13h5"/>
+                        </svg>
+                        <span>Languages</span>
+                    </a>
+                @endcan
+            </div>
+
+            <div class="admin-nav-section">
+                <span class="admin-nav-title">BUSINESS</span>
+
                 <a
-                    href="{{ route('admin.reports.index') }}"
-                    class="{{ request()->routeIs('admin.reports.*') ? 'active' : '' }}"
-                >Reports</a>
-            @endcan
+                    href="{{ route('admin.bookings.index') }}"
+                    class="admin-nav-link {{ request()->routeIs('admin.bookings.*') ? 'active' : '' }}"
+                >
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <rect x="3" y="5" width="18" height="16" rx="2"/>
+                        <path d="M8 3v4M16 3v4M3 10h18"/>
+                    </svg>
+                    <span>Bookings</span>
+                </a>
 
-            @can('agents.view')
-                <a
-                    href="{{ route('admin.agents.index') }}"
-                    class="{{ request()->routeIs('admin.agents.*') ? 'active' : '' }}"
-                >Agents</a>
-            @endcan
+                @can('agents.view')
+                    <a
+                        href="{{ route('admin.agents.index') }}"
+                        class="admin-nav-link {{ request()->routeIs('admin.agents.*') ? 'active' : '' }}"
+                    >
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                            <circle cx="12" cy="7" r="4"/>
+                            <path d="M4 21c.7-4.7 3.4-7 8-7s7.3 2.3 8 7"/>
+                        </svg>
+                        <span>Agents</span>
+                    </a>
+                @endcan
 
-            @can('affiliates.view')
-                <a
-                    href="{{ route('admin.affiliates.index') }}"
-                    class="{{ request()->routeIs('admin.affiliates.*') ? 'active' : '' }}"
-                >Affiliates</a>
-            @endcan
+                @can('affiliates.view')
+                    <a
+                        href="{{ route('admin.affiliates.index') }}"
+                        class="admin-nav-link {{ request()->routeIs('admin.affiliates.*') ? 'active' : '' }}"
+                    >
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                            <circle cx="6" cy="12" r="3"/>
+                            <circle cx="18" cy="6" r="3"/>
+                            <circle cx="18" cy="18" r="3"/>
+                            <path d="m8.8 10.6 6.4-3.2M8.8 13.4l6.4 3.2"/>
+                        </svg>
+                        <span>Affiliates</span>
+                    </a>
+                @endcan
 
-            @can('students.view')
-                <a
-                    href="{{ route('admin.students.index') }}"
-                    class="{{ request()->routeIs('admin.students.*') ? 'active' : '' }}"
-                >Students</a>
-            @endcan
+                @can('students.view')
+                    <a
+                        href="{{ route('admin.students.index') }}"
+                        class="admin-nav-link {{ request()->routeIs('admin.students.*') ? 'active' : '' }}"
+                    >
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="m3 9 9-5 9 5-9 5z"/>
+                            <path d="M6 11v5c3.5 3 8.5 3 12 0v-5"/>
+                        </svg>
+                        <span>Students</span>
+                    </a>
+                @endcan
 
-            @can('institutions.view')
-                <a
-                    href="{{ route('admin.institutions.index') }}"
-                    class="{{ request()->routeIs('admin.institutions.*') ? 'active' : '' }}"
-                >Institutions</a>
-            @endcan
+                @can('institutions.view')
+                    <a
+                        href="{{ route('admin.institutions.index') }}"
+                        class="admin-nav-link {{ request()->routeIs('admin.institutions.*') ? 'active' : '' }}"
+                    >
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M3 21h18M5 21V9l7-5 7 5v12"/>
+                            <path d="M9 21v-6h6v6"/>
+                        </svg>
+                        <span>Institutions</span>
+                    </a>
+                @endcan
 
-            @can('users.view')
-                <a
-                    href="{{ route('admin.users.index') }}"
-                    class="{{ request()->routeIs('admin.users.*') ? 'active' : '' }}"
-                >Users</a>
-            @endcan
-
-            @can('roles.view')
-                <a
-                    href="{{ route('admin.roles.index') }}"
-                    class="{{ request()->routeIs('admin.roles.*') ? 'active' : '' }}"
-                >Roles &amp; Permissions</a>
-            @endcan
-
-            @can('master-data.view')
-                <a
-                    href="{{ route('admin.master-data.manage') }}"
-                    class="{{ request()->routeIs('admin.master-data.*') ? 'active' : '' }}"
-                >Master Data</a>
-
-                <a
-                    href="{{ route('admin.categories.manage') }}"
-                    class="{{ request()->routeIs('admin.categories.*') ? 'active' : '' }}"
-                >Categories</a>
-
-                <a
-                    href="{{ route('admin.currencies.manage') }}"
-                    class="{{ request()->routeIs('admin.currencies.*') ? 'active' : '' }}"
-                >Currencies</a>
-
-                <a
-                    href="{{ route('admin.languages.manage') }}"
-                    class="{{ request()->routeIs('admin.languages.*') ? 'active' : '' }}"
-                >Languages</a>
-            @endcan
-
-            @role('super-admin')
-                <a
-                    href="{{ route('admin.features.index') }}"
-                    class="{{ request()->routeIs('admin.features.*') ? 'active' : '' }}"
-                >Feature Control</a>
-            @endrole
-
-            @can('settings.view')
-                <a
-                    href="{{ route('admin.settings.manage') }}"
-                    class="{{ request()->routeIs('admin.settings.*') ? 'active' : '' }}"
-                >Settings</a>
-            @endcan
+                @can('reports.view')
+                    <a
+                        href="{{ route('admin.reports.index') }}"
+                        class="admin-nav-link {{ request()->routeIs('admin.reports.*') ? 'active' : '' }}"
+                    >
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>
+                        </svg>
+                        <span>Reports</span>
+                    </a>
+                @endcan
+            </div>
 
             @can('system-logs.view')
-                <a
-                    href="{{ route('admin.system-logs.index') }}"
-                    class="{{ request()->routeIs('admin.system-logs.*') ? 'active' : '' }}"
-                >System Logs</a>
+                <div class="admin-nav-section">
+                    <span class="admin-nav-title">SYSTEM INFO</span>
+
+                    <a
+                        href="{{ route('admin.system-logs.index') }}"
+                        class="admin-nav-link {{ request()->routeIs('admin.system-logs.*') ? 'active' : '' }}"
+                    >
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                            <rect x="4" y="3" width="16" height="18" rx="2"/>
+                            <path d="M8 8h8M8 12h8M8 16h5"/>
+                        </svg>
+                        <span>System Logs</span>
+                    </a>
+                </div>
             @endcan
         </nav>
     </aside>
 
-    <div class="egh-backdrop" data-admin-backdrop aria-hidden="true"></div>
+    <div class="admin-main">
 
-    <div class="egh-main">
-        <header class="egh-top">
-            <button
-                type="button"
-                class="egh-menu-toggle"
-                data-admin-menu-toggle
-                aria-controls="admin-navigation"
-                aria-expanded="false"
-                aria-label="Open admin navigation"
-            >â˜°</button>
+        <header class="admin-topbar">
+            <div class="admin-topbar-left">
+                <button
+                    type="button"
+                    class="admin-menu-button"
+                    id="adminMenuButton"
+                    aria-controls="adminSidebar"
+                    aria-expanded="false"
+                    aria-label="Toggle navigation"
+                >
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
 
-            <div class="egh-top-actions">
-                <div class="egh-user">
-                    <strong>{{ auth()->user()->name }}</strong>
-                    <span>{{ auth()->user()->getRoleNames()->join(', ') }}</span>
+            <div class="admin-topbar-actions">
+                <div class="admin-user">
+                    <div class="admin-user-avatar">
+                        {{ strtoupper(substr($adminUser?->name ?? 'A', 0, 1)) }}
+                    </div>
+
+                    <div class="admin-user-copy">
+                        <strong>{{ $adminUser?->name ?? 'Admin User' }}</strong>
+                        <span>{{ $adminRoleLabel }}</span>
+                    </div>
                 </div>
 
-                <a href="{{ route('home') }}" class="egh-top-link">View site</a>
+                <a class="admin-topbar-link admin-topbar-site-link" href="{{ route('home') }}">View site</a>
 
                 <form method="POST" action="{{ route('logout') }}">
                     @csrf
-                    <button type="submit" class="egh-logout">Logout</button>
+                    <button class="admin-topbar-link" type="submit">Sign out</button>
                 </form>
             </div>
         </header>
 
-        <main class="egh-content" id="admin-main">
-            @if (session('status'))
+        <main
+            id="admin-main"
+            class="@yield('page-class', 'admin-page')"
+        >
+            @if (
+                session('status')
+                && ! request()->routeIs('admin.settings.*')
+                && ! request()->routeIs('admin.features.*')
+            )
                 <div class="egh-alert" role="status">
                     {{ session('status') }}
                 </div>
@@ -551,37 +474,48 @@
 
             @yield('content')
         </main>
+
+        <footer class="admin-footer">
+            <span>
+                &copy; {{ date('Y') }} Eagle Global Hub LTD. All rights reserved.
+            </span>
+
+            <span>
+                Version 1.0.0
+            </span>
+        </footer>
+
     </div>
 </div>
 
 <script>
 document.addEventListener('DOMContentLoaded', function () {
-    const side = document.querySelector('[data-admin-sidebar]');
-    const toggle = document.querySelector('[data-admin-menu-toggle]');
-    const backdrop = document.querySelector('[data-admin-backdrop]');
+    const menuButton = document.getElementById('adminMenuButton');
+    const sidebar = document.getElementById('adminSidebar');
 
-    if (!side || !toggle || !backdrop) {
+    if (!menuButton || !sidebar) {
         return;
     }
 
     const setOpen = function (open) {
-        side.classList.toggle('is-open', open);
-        backdrop.classList.toggle('is-open', open);
-        document.body.classList.toggle('egh-menu-open', open);
-        toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
-        toggle.setAttribute(
-            'aria-label',
-            open ? 'Close admin navigation' : 'Open admin navigation'
+        sidebar.classList.toggle('is-open', open);
+        menuButton.setAttribute(
+            'aria-expanded',
+            open ? 'true' : 'false'
         );
     };
 
-    toggle.addEventListener('click', function () {
-        setOpen(!side.classList.contains('is-open'));
+    menuButton.addEventListener('click', function () {
+        setOpen(!sidebar.classList.contains('is-open'));
     });
 
-    backdrop.addEventListener('click', function () {
-        setOpen(false);
-    });
+    sidebar
+        .querySelectorAll('.admin-nav-link')
+        .forEach(function (link) {
+            link.addEventListener('click', function () {
+                setOpen(false);
+            });
+        });
 
     document.addEventListener('keydown', function (event) {
         if (event.key === 'Escape') {
@@ -590,5 +524,8 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 });
 </script>
+
+@yield('scripts')
+
 </body>
 </html>

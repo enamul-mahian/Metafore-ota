@@ -3,18 +3,12 @@
 @section('title', 'Languages')
 
 @section('content')
-<style>
-.lng-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:18px}.lng-muted{color:#64748b}.lng-form{display:grid;gap:10px;margin:18px 0}.lng-two{display:grid;grid-template-columns:1fr 1fr;gap:10px}.lng-form input{width:100%;box-sizing:border-box;border:1px solid #cbd5e1;border-radius:8px;padding:10px;background:#fff}.lng-table-wrap{overflow:auto}.lng-table{width:100%;border-collapse:collapse;font-size:14px}.lng-table th,.lng-table td{padding:10px 8px;border-bottom:1px solid #e5e7eb;text-align:left;vertical-align:top}.lng-table th{font-size:12px;text-transform:uppercase;color:#64748b;white-space:nowrap}.lng-actions{display:flex;gap:6px}.lng-edit,.lng-delete{border:0;border-radius:7px;padding:7px 10px;cursor:pointer}.lng-edit{background:#e9eef7;color:#273852}.lng-delete{background:#fee2e2;color:#991b1b}.lng-message{display:none;margin-bottom:16px;padding:12px 14px;border-radius:8px}.lng-status{white-space:nowrap}@media(max-width:620px){.lng-head{display:block}.lng-two{grid-template-columns:1fr}}
-</style>
+
+<x-admin.page-header title="Languages" description="Manage the languages available across the platform." icon="L" eyebrow="Master data">
+    <span class="admin-status-badge">{{ $languages->count() }} total</span>
+</x-admin.page-header>
 
 <div class="egh-card">
-    <div class="lng-head">
-        <div>
-            <h1 style="margin:0">Languages</h1>
-            <p class="lng-muted" style="margin:6px 0 0">Manage the languages available across the platform.</p>
-        </div>
-        <span class="lng-muted">{{ $languages->count() }} total</span>
-    </div>
 
     <div id="lng-message" class="lng-message"></div>
 

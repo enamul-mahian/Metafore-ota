@@ -1,324 +1,20 @@
-<!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="csrf-token" content="{{ csrf_token() }}">
+@extends('layouts.admin')
 
-    <title>Settings | Eagle Global Hub LTD</title>
+@section('title', 'Settings')
 
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
-</head>
+@section('page-class', 'settings-page')
 
-<body class="admin-body">
-
+@section('content')
 @php
     $user = auth()->user();
     $canManageSettings = $user?->can('settings.manage') ?? false;
 @endphp
 
-<div class="admin-shell">
-
-    {{-- =========================================================
-        SIDEBAR
-    ========================================================== --}}
-    <aside class="admin-sidebar" id="adminSidebar">
-
-        <div class="admin-brand">
-
-            <div class="admin-brand-mark">
-                <svg viewBox="0 0 24 24" aria-hidden="true">
-                    <path d="M21.5 15.5 13 12l3.5-8.5L14 2l-5.5 8.5L3 8.5 1.5 10 6 14l-2 6 1.5 1 4-5 5 4 1.5-1-3-5.5 8.5 3.5z"/>
-                </svg>
-            </div>
-
-            <div class="admin-brand-copy">
-                <strong>Eagle Global Hub LTD</strong>
-                <span>Smart Travel Booking</span>
-            </div>
-
-        </div>
-
-        <nav class="admin-nav">
-
-            {{-- MAIN --}}
-            <div class="admin-nav-section">
-
-                <span class="admin-nav-title">MAIN</span>
-
-                @feature('dashboard')
-                    <a href="{{ route('dashboard') }}" class="admin-nav-link">
-                        <svg viewBox="0 0 24 24" aria-hidden="true">
-                            <path d="M3 10.8 12 3l9 7.8V21h-6v-6H9v6H3z"/>
-                        </svg>
-                        <span>Dashboard</span>
-                    </a>
-                @endfeature
-
-                <a href="{{ route('admin.users.index') }}" class="admin-nav-link">
-                    <svg viewBox="0 0 24 24" aria-hidden="true">
-                        <circle cx="9" cy="8" r="4"/>
-                        <path d="M2.5 20c.8-4 3-6 6.5-6s5.7 2 6.5 6M16 7a3 3 0 1 1 0 6M17 14c2.6.4 4.2 2.2 4.7 5"/>
-                    </svg>
-                    <span>Users</span>
-                </a>
-
-                <a href="{{ route('admin.roles.index') }}" class="admin-nav-link">
-                    <svg viewBox="0 0 24 24" aria-hidden="true">
-                        <path d="M12 3 4 7v5c0 5 3.4 8 8 9 4.6-1 8-4 8-9V7z"/>
-                        <path d="m8.5 12 2.2 2.2 4.8-5"/>
-                    </svg>
-                    <span>Roles &amp; Permissions</span>
-                </a>
-
-            </div>
-
-            {{-- SYSTEM --}}
-            <div class="admin-nav-section">
-
-                <span class="admin-nav-title">SYSTEM</span>
-
-                @if ($user?->hasRole('super-admin'))
-                    <a
-                        href="{{ route('admin.features.index') }}"
-                        class="admin-nav-link"
-                    >
-                        <svg viewBox="0 0 24 24" aria-hidden="true">
-                            <path d="M4 7h16M4 12h16M4 17h16"/>
-                            <circle cx="9" cy="7" r="2"/>
-                            <circle cx="15" cy="12" r="2"/>
-                            <circle cx="8" cy="17" r="2"/>
-                        </svg>
-                        <span>Feature Control</span>
-                    </a>
-                @endif
-
-                <a
-                    href="{{ route('admin.settings.manage') }}"
-                    class="admin-nav-link active"
-                >
-                    <svg viewBox="0 0 24 24" aria-hidden="true">
-                        <circle cx="12" cy="12" r="3"/>
-                        <path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1-2.8 2.8-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.6V21H10v-.1a1.7 1.7 0 0 0-1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1L4.2 17l.1-.1a1.7 1.7 0 0 0 .3-1.9A1.7 1.7 0 0 0 3 14H3v-4h.1a1.7 1.7 0 0 0 1.6-1 1.7 1.7 0 0 0-.3-1.9L4.2 7 7 4.2l.1.1a1.7 1.7 0 0 0 1.9.3 1.7 1.7 0 0 0 1-1.6V3h4v.1a1.7 1.7 0 0 0 1 1.6 1.7 1.7 0 0 0 1.9-.3l.1-.1L19.8 7l-.1.1a1.7 1.7 0 0 0-.3 1.9 1.7 1.7 0 0 0 1.6 1h.1v4H21a1.7 1.7 0 0 0-1.6 1z"/>
-                    </svg>
-                    <span>Settings</span>
-                </a>
-
-                <a href="{{ route('admin.categories.manage') }}" class="admin-nav-link">
-                    <svg viewBox="0 0 24 24" aria-hidden="true">
-                        <rect x="3" y="4" width="18" height="16" rx="2"/>
-                        <path d="M8 4v16M3 10h18"/>
-                    </svg>
-                    <span>Categories</span>
-                </a>
-
-                <a href="{{ route('admin.currencies.manage') }}" class="admin-nav-link">
-                    <svg viewBox="0 0 24 24" aria-hidden="true">
-                        <circle cx="12" cy="12" r="9"/>
-                        <path d="M15.5 8.5c-.8-.7-1.9-1-3.2-1-1.8 0-3.2.8-3.2 2.1 0 3.4 6.8 1.7 6.8 5.2 0 1.3-1.4 2.2-3.4 2.2-1.5 0-2.8-.4-3.8-1.3M12 5v14"/>
-                    </svg>
-                    <span>Currencies</span>
-                </a>
-
-                <a href="{{ route('admin.master-data.manage') }}" class="admin-nav-link">
-                    <svg viewBox="0 0 24 24" aria-hidden="true">
-                        <circle cx="12" cy="12" r="9"/>
-                        <path d="M3 12h18M12 3c2.8 2.7 4 5.7 4 9s-1.2 6.3-4 9c-2.8-2.7-4-5.7-4-9s1.2-6.3 4-9z"/>
-                    </svg>
-                    <span>Countries</span>
-                </a>
-
-                <a href="{{ route('admin.languages.manage') }}" class="admin-nav-link">
-                    <svg viewBox="0 0 24 24" aria-hidden="true">
-                        <path d="M4 5h16v12H8l-4 4z"/>
-                        <path d="M8 9h8M8 13h5"/>
-                    </svg>
-                    <span>Languages</span>
-                </a>
-
-            </div>
-
-            {{-- BUSINESS --}}
-            <div class="admin-nav-section">
-
-                <span class="admin-nav-title">BUSINESS</span>
-
-                <a href="{{ route('admin.bookings.index') }}" class="admin-nav-link">
-                    <svg viewBox="0 0 24 24" aria-hidden="true">
-                        <rect x="3" y="5" width="18" height="16" rx="2"/>
-                        <path d="M8 3v4M16 3v4M3 10h18"/>
-                    </svg>
-                    <span>Bookings</span>
-                </a>
-
-                @can('agents.view')
-                <a href="{{ route('admin.agents.index') }}" class="admin-nav-link">
-                    <svg viewBox="0 0 24 24" aria-hidden="true">
-                        <circle cx="12" cy="7" r="4"/>
-                        <path d="M4 21c.7-4.7 3.4-7 8-7s7.3 2.3 8 7"/>
-                    </svg>
-                    <span>Agents</span>
-                </a>
-                @endcan
-
-                @can('affiliates.view')
-                <a href="{{ route('admin.affiliates.index') }}" class="admin-nav-link">
-                    <svg viewBox="0 0 24 24" aria-hidden="true">
-                        <circle cx="6" cy="12" r="3"/>
-                        <circle cx="18" cy="6" r="3"/>
-                        <circle cx="18" cy="18" r="3"/>
-                        <path d="m8.8 10.6 6.4-3.2M8.8 13.4l6.4 3.2"/>
-                    </svg>
-                    <span>Affiliates</span>
-                </a>
-                @endcan
-
-                @can('students.view')
-                <a href="{{ route('admin.students.index') }}" class="admin-nav-link">
-                    <svg viewBox="0 0 24 24" aria-hidden="true">
-                        <path d="m3 9 9-5 9 5-9 5z"/>
-                        <path d="M6 11v5c3.5 3 8.5 3 12 0v-5"/>
-                    </svg>
-                    <span>Students</span>
-                </a>
-                @endcan
-
-                @can('institutions.view')
-                <a href="{{ route('admin.institutions.index') }}" class="admin-nav-link">
-                    <svg viewBox="0 0 24 24" aria-hidden="true">
-                        <path d="M3 21h18M5 21V9l7-5 7 5v12"/>
-                        <path d="M9 21v-6h6v6"/>
-                    </svg>
-                    <span>Institutions</span>
-                </a>
-                @endcan
-
-                @can('reports.view')
-                <a href="{{ route('admin.reports.index') }}" class="admin-nav-link">
-                    <svg viewBox="0 0 24 24" aria-hidden="true">
-                        <path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>
-                    </svg>
-                    <span>Reports</span>
-                </a>
-                @endcan
-
-            </div>
-
-            {{-- SYSTEM INFO --}}
-            <div class="admin-nav-section">
-
-                <span class="admin-nav-title">SYSTEM INFO</span>
-
-                @can('system-logs.view')
-                <a href="{{ route('admin.system-logs.index') }}" class="admin-nav-link">
-                    <svg viewBox="0 0 24 24" aria-hidden="true">
-                        <rect x="4" y="3" width="16" height="18" rx="2"/>
-                        <path d="M8 8h8M8 12h8M8 16h5"/>
-                    </svg>
-                    <span>System Logs</span>
-                </a>
-                @endcan
-
-            </div>
-
-        </nav>
-
-    </aside>
-
-    {{-- =========================================================
-        MAIN
-    ========================================================== --}}
-    <div class="admin-main">
-
-        {{-- TOPBAR --}}
-        <header class="admin-topbar">
-
-            <div class="admin-topbar-left">
-
-                <button
-                    type="button"
-                    class="admin-menu-button"
-                    id="adminMenuButton"
-                    aria-label="Toggle navigation"
-                >
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                </button>
-
-            </div>
-
-            <div class="admin-topbar-actions">
-
-                <div class="admin-user">
-
-                    <div class="admin-user-avatar">
-                        {{ strtoupper(substr($user?->name ?? 'A', 0, 1)) }}
-                    </div>
-
-                    <div class="admin-user-copy">
-
-                        <strong>
-                            {{ $user?->name ?? 'Admin User' }}
-                        </strong>
-
-                        <span>
-                            {{ $canManageSettings ? 'Super Admin' : 'Admin' }}
-                        </span>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-        </header>
-
-        <main class="settings-page">
-
-            {{-- =====================================================
-                PAGE HEADING
-            ====================================================== --}}
-            <div class="settings-page-heading">
-
-                <div class="settings-title-wrap">
-
-                    <div class="settings-title-icon">
-
-                        <svg viewBox="0 0 24 24" aria-hidden="true">
-                            <circle cx="12" cy="12" r="3"/>
-                            <path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1-2.8 2.8-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.6V21H10v-.1a1.7 1.7 0 0 0-1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1L4.2 17l.1-.1a1.7 1.7 0 0 0 .3-1.9A1.7 1.7 0 0 0 3 14H3v-4h.1a1.7 1.7 0 0 0 1.6-1 1.7 1.7 0 0 0-.3-1.9L4.2 7 7 4.2l.1.1a1.7 1.7 0 0 0 1.9.3 1.7 1.7 0 0 0 1-1.6V3h4v.1a1.7 1.7 0 0 0 1 1.6 1.7 1.7 0 0 0 1.9-.3l.1-.1L19.8 7l-.1.1a1.7 1.7 0 0 0-.3 1.9 1.7 1.7 0 0 0 1.6 1h.1v4H21a1.7 1.7 0 0 0-1.6 1z"/>
-                        </svg>
-
-                    </div>
-
-                    <div>
-
-                        <h1>Settings</h1>
-
-                        @unless($canManageSettings)
-
-                            <span class="settings-access-mode">
-                                Read only mode
-                            </span>
-
-                        @endunless
-
-                    </div>
-
-                </div>
-
-                <div class="settings-breadcrumb">
-                    @feature('dashboard')
-                        <a href="{{ route('dashboard') }}">Dashboard</a>
-                    @else
-                        <a href="{{ route('home') }}">Website</a>
-                    @endfeature
-                    <span>&rsaquo;</span>
-                    <strong>Settings</strong>
-                </div>
-
-            </div>
+<x-admin.page-header title="Settings" description="Review and manage application configuration by group." icon="S" eyebrow="System configuration">
+    @unless ($canManageSettings)
+        <span class="settings-access-mode">Read only mode</span>
+    @endunless
+</x-admin.page-header>
 
             {{-- =====================================================
                 LIVE SUMMARY CARDS
@@ -1223,40 +919,10 @@
                 </div>
 
             @endif
+@endsection
 
-        </main>
-
-        {{-- FOOTER --}}
-        <footer class="admin-footer">
-
-            <span>
-                &copy; {{ date('Y') }} Eagle Global Hub LTD. All rights reserved.
-            </span>
-
-            <span>
-                Version 1.0.0
-            </span>
-
-        </footer>
-
-    </div>
-
-</div>
-
+@section('scripts')
 <script>
-    /*
-    |--------------------------------------------------------------------------
-    | Mobile sidebar
-    |--------------------------------------------------------------------------
-    */
-
-    const menuButton = document.getElementById('adminMenuButton');
-    const sidebar = document.getElementById('adminSidebar');
-
-    menuButton?.addEventListener('click', () => {
-        sidebar?.classList.toggle('is-open');
-    });
-
 
     /*
     |--------------------------------------------------------------------------
@@ -2128,7 +1794,6 @@
         }
 
     });
-</script>
 
-</body>
-</html>
+</script>
+@endsection

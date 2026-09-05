@@ -3,17 +3,10 @@
 @section('title', 'System Logs')
 
 @section('content')
-<style>
-.slog-head{display:flex;align-items:flex-start;justify-content:space-between;gap:18px;margin-bottom:18px}.slog-head h1,.slog-section h2{margin:0}.slog-muted{color:#64748b}.slog-notice{margin-bottom:18px;padding:15px 16px;border:1px solid #bfdbfe;border-radius:10px;background:#eff6ff;color:#1e3a5f;font-size:13px;line-height:1.55}.slog-filter{display:flex;align-items:end;gap:12px;flex-wrap:wrap;margin-bottom:18px}.slog-field{display:grid;gap:6px}.slog-field span{font-size:12px;font-weight:700;color:#475569}.slog-field select{min-width:190px;min-height:38px;padding:8px 10px;border:1px solid #cbd5e1;border-radius:8px;background:#fff;color:#172944}.slog-error{color:#b42318;font-size:12px}.slog-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-bottom:18px}.slog-stat{padding:16px}.slog-stat strong{display:block;font-size:24px;color:#172944}.slog-stat span{font-size:12px;color:#64748b;text-transform:capitalize}.slog-table-wrap{overflow:auto}.slog-table{width:100%;border-collapse:collapse;font-size:14px}.slog-table th,.slog-table td{padding:12px 9px;border-bottom:1px solid #e5e7eb;text-align:left;vertical-align:top}.slog-table th{font-size:12px;text-transform:uppercase;color:#64748b;white-space:nowrap}.slog-level{display:inline-block;border-radius:999px;padding:4px 8px;background:#eef2ff;color:#334155;font-weight:700;text-transform:uppercase;white-space:nowrap}.slog-foot{margin:14px 0 0;font-size:12px;color:#64748b}@media(max-width:900px){.slog-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:620px){.slog-head{display:block}.slog-grid{grid-template-columns:1fr}}
-</style>
 
-<div class="slog-head">
-    <div>
-        <h1>System Logs</h1>
-        <p class="slog-muted" style="margin:6px 0 0">Read-only metadata from recent persisted Laravel application log entries.</p>
-    </div>
-    <span class="slog-muted">{{ $logData['filesInspected'] }} local log {{ \Illuminate\Support\Str::plural('file', $logData['filesInspected']) }} inspected</span>
-</div>
+<x-admin.page-header title="System Logs" description="Read-only metadata from recent persisted Laravel application log entries." icon="L" eyebrow="System information">
+    <span class="admin-status-badge">{{ $logData['filesInspected'] }} local log {{ \Illuminate\Support\Str::plural('file', $logData['filesInspected']) }} inspected</span>
+</x-admin.page-header>
 
 <div class="slog-notice">
     <strong>Metadata-only security view.</strong>

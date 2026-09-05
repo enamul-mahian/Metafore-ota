@@ -1,4 +1,4 @@
-@if($errors->any())<div class="egh-alert" style="background:#fee2e2;color:#991b1b"><ul>@foreach($errors->all() as $error)<li>{{ $error }}</li>@endforeach</ul></div>@endif
+@if($errors->any())<div class="egh-alert is-error"><ul class="admin-error-list">@foreach($errors->all() as $error)<li>{{ $error }}</li>@endforeach</ul></div>@endif
 <div class="stu-form-grid">
 <label>First name<input name="first_name" value="{{ old('first_name', $student->first_name ?? '') }}" required maxlength="100"></label><label>Last name<input name="last_name" value="{{ old('last_name', $student->last_name ?? '') }}" required maxlength="100"></label>
 <label>Email<input type="email" name="email" value="{{ old('email', $student->email ?? '') }}" required maxlength="255"></label><label>Phone<input type="tel" name="phone" value="{{ old('phone', $student->phone ?? '') }}" maxlength="32"></label>
@@ -6,4 +6,4 @@
 <label>Country<select name="country_id"><option value="">Not specified</option>@foreach($countries as $country)<option value="{{ $country->id }}" @selected((string) old('country_id', $student->country_id ?? '') === (string) $country->id)>{{ $country->name }} ({{ $country->iso2 }})</option>@endforeach</select></label>
 <label>Status<select name="status">@foreach($statuses as $status)<option value="{{ $status }}" @selected(old('status', $student->status ?? \App\Models\Student::STATUS_ACTIVE) === $status)>{{ ucfirst($status) }}</option>@endforeach</select></label>
 <label class="stu-full">Private admin notes<textarea name="notes" maxlength="5000">{{ old('notes', $student->notes ?? '') }}</textarea></label></div>
-<div style="display:flex;gap:10px;margin-top:18px"><button class="egh-button">{{ $submitLabel }}</button><a class="egh-button secondary" href="{{ route('admin.students.index') }}">Cancel</a></div>
+<div class="admin-form-actions"><button class="egh-button">{{ $submitLabel }}</button><a class="egh-button secondary" href="{{ route('admin.students.index') }}">Cancel</a></div>

@@ -1,9 +1,91 @@
-@extends('layouts.site')
+@php
+    $isAdminDashboard = auth()->user()->hasAnyRole(['admin', 'super-admin']);
+@endphp
+
+@extends($isAdminDashboard ? 'layouts.admin' : 'layouts.site')
 
 @section('title', 'Dashboard')
 @section('body_class', 'dashboard-body')
+@section('page-class', 'admin-page')
 
 @section('content')
+
+    @if ($isAdminDashboard)
+        <x-admin.page-header
+            title="Dashboard"
+            description="Open the operational areas available to your assigned administration role."
+            icon="D"
+            eyebrow="Administration overview"
+        >
+            <a class="egh-button secondary" href="{{ route('home') }}">View website</a>
+        </x-admin.page-header>
+
+        <section class="egh-card">
+            <div class="admin-card-heading">
+                <div>
+                    <span class="admin-page-eyebrow">Workspace</span>
+                    <h2>Administration areas</h2>
+                    <p>Every link below follows the same permission checks as the admin navigation.</p>
+                </div>
+            </div>
+
+            <div class="admin-dashboard-grid">
+                @can('users.view')
+                    <a class="admin-dashboard-card" href="{{ route('admin.users.index') }}">
+                        <strong>Users</strong>
+                        <span>Accounts, verification, and role assignments</span>
+                    </a>
+                @endcan
+
+                @can('roles.view')
+                    <a class="admin-dashboard-card" href="{{ route('admin.roles.index') }}">
+                        <strong>Roles &amp; Permissions</strong>
+                        <span>Authorization roles and permission coverage</span>
+                    </a>
+                @endcan
+
+                @role('super-admin')
+                    <a class="admin-dashboard-card" href="{{ route('admin.features.index') }}">
+                        <strong>Feature Control</strong>
+                        <span>Visibility controls within established safety boundaries</span>
+                    </a>
+                @endrole
+
+                @can('settings.view')
+                    <a class="admin-dashboard-card" href="{{ route('admin.settings.manage') }}">
+                        <strong>Settings</strong>
+                        <span>Application configuration available to your role</span>
+                    </a>
+                @endcan
+
+                @can('master-data.view')
+                    <a class="admin-dashboard-card" href="{{ route('admin.master-data.manage') }}">
+                        <strong>Master Data</strong>
+                        <span>Countries, cities, categories, currencies, and languages</span>
+                    </a>
+                @endcan
+
+                <a class="admin-dashboard-card" href="{{ route('admin.bookings.index') }}">
+                    <strong>Bookings</strong>
+                    <span>Read-only persisted flight order attempts</span>
+                </a>
+
+                @can('reports.view')
+                    <a class="admin-dashboard-card" href="{{ route('admin.reports.index') }}">
+                        <strong>Reports</strong>
+                        <span>Read-only operational reporting</span>
+                    </a>
+                @endcan
+
+                @can('system-logs.view')
+                    <a class="admin-dashboard-card" href="{{ route('admin.system-logs.index') }}">
+                        <strong>System Logs</strong>
+                        <span>Redacted, metadata-only application events</span>
+                    </a>
+                @endcan
+            </div>
+        </section>
+    @else
 
     <main class="dashboard-container">
 
@@ -337,5 +419,7 @@
         </section>
 
     </main>
+
+    @endif
 
 @endsection

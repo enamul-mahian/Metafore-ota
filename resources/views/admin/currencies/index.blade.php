@@ -3,18 +3,12 @@
 @section('title', 'Currencies')
 
 @section('content')
-<style>
-.cur-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:18px}.cur-muted{color:#64748b}.cur-form{display:grid;gap:10px;margin:18px 0}.cur-two{display:grid;grid-template-columns:1fr 1fr;gap:10px}.cur-form input{width:100%;box-sizing:border-box;border:1px solid #cbd5e1;border-radius:8px;padding:10px;background:#fff}.cur-table-wrap{overflow:auto}.cur-table{width:100%;border-collapse:collapse;font-size:14px}.cur-table th,.cur-table td{padding:10px 8px;border-bottom:1px solid #e5e7eb;text-align:left;vertical-align:top}.cur-table th{font-size:12px;text-transform:uppercase;color:#64748b;white-space:nowrap}.cur-actions{display:flex;gap:6px}.cur-edit,.cur-delete{border:0;border-radius:7px;padding:7px 10px;cursor:pointer}.cur-edit{background:#e9eef7;color:#273852}.cur-delete{background:#fee2e2;color:#991b1b}.cur-message{display:none;margin-bottom:16px;padding:12px 14px;border-radius:8px}.cur-status{white-space:nowrap}@media(max-width:620px){.cur-head{display:block}.cur-two{grid-template-columns:1fr}}
-</style>
+
+<x-admin.page-header title="Currencies" description="Manage the currencies available across the platform." icon="C" eyebrow="Master data">
+    <span class="admin-status-badge">{{ $currencies->count() }} total</span>
+</x-admin.page-header>
 
 <div class="egh-card">
-    <div class="cur-head">
-        <div>
-            <h1 style="margin:0">Currencies</h1>
-            <p class="cur-muted" style="margin:6px 0 0">Manage the currencies available across the platform.</p>
-        </div>
-        <span class="cur-muted">{{ $currencies->count() }} total</span>
-    </div>
 
     <div id="cur-message" class="cur-message"></div>
 

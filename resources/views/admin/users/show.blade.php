@@ -1,7 +1,37 @@
-﻿@extends('layouts.admin')
+@extends('layouts.admin')
+
 @section('title', 'User Details')
+
 @section('content')
-<div style="display:flex;justify-content:space-between;align-items:center"><div><h1>{{ $user->name }}</h1><p>User account details.</p></div>@can('users.manage') @if(auth()->user()->hasRole('super-admin') || ! $user->hasRole('super-admin')) <a class="egh-button" href="{{ route('admin.users.edit', $user) }}">Edit User</a> @endif @endcan</div>
-<div class="egh-card"><p><strong>Email:</strong> {{ $user->email }}</p><p><strong>Role:</strong> {{ $user->getRoleNames()->join(', ') ?: 'No role' }}</p><p><strong>Verified:</strong> {{ $user->email_verified_at ? 'Yes' : 'No' }}</p><p><strong>Created:</strong> {{ $user->created_at?->format('d M Y H:i') }}</p></div>
-@can('users.manage') @if(! auth()->user()->is($user) && ! $user->hasRole('super-admin')) <form method="POST" action="{{ route('admin.users.destroy', $user) }}" style="margin-top:20px" onsubmit="return confirm('Delete this user?')">@csrf @method('DELETE')<button class="egh-button" type="submit">Delete User</button></form> @endif @endcan
+    <x-admin.page-header
+        :title="$user->name"
+        description="Review this account's identity, role, and verification status."
+        icon="U"
+        eyebrow="User details"
+    >
+        @can('users.manage')
+            @if (auth()->user()->hasRole('super-admin') || ! $user->hasRole('super-admin'))
+                <a class="egh-button" href="{{ route('admin.users.edit', $user) }}">Edit User</a>
+            @endif
+        @endcan
+    </x-admin.page-header>
+
+    <section class="egh-card">
+        <dl class="admin-detail-list">
+            <dt>Email</dt><dd>{{ $user->email }}</dd>
+            <dt>Role</dt><dd><span class="admin-status-badge">{{ $user->getRoleNames()->join(', ') ?: 'No role' }}</span></dd>
+            <dt>Verified</dt><dd>{{ $user->email_verified_at ? 'Yes' : 'No' }}</dd>
+            <dt>Created</dt><dd>{{ $user->created_at?->format('d M Y H:i') }}</dd>
+        </dl>
+    </section>
+
+    @can('users.manage')
+        @if (! auth()->user()->is($user) && ! $user->hasRole('super-admin'))
+            <form method="POST" action="{{ route('admin.users.destroy', $user) }}" class="admin-danger-zone" onsubmit="return confirm('Delete this user?')">
+                @csrf
+                @method('DELETE')
+                <button class="egh-button danger" type="submit">Delete User</button>
+            </form>
+        @endif
+    @endcan
 @endsection

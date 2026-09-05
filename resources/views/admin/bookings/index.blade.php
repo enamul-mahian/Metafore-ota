@@ -3,18 +3,12 @@
 @section('title', 'Bookings')
 
 @section('content')
-<style>
-.ab-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:18px}.ab-muted{color:#64748b}.ab-table-wrap{overflow:auto}.ab-table{width:100%;border-collapse:collapse;font-size:14px}.ab-table th,.ab-table td{padding:11px 8px;border-bottom:1px solid #e5e7eb;text-align:left;vertical-align:top}.ab-table th{font-size:12px;text-transform:uppercase;color:#64748b;white-space:nowrap}.ab-status{display:inline-block;border-radius:999px;padding:4px 8px;background:#eef2ff;color:#334155;white-space:nowrap}.ab-link{color:#244fc7;text-decoration:none;font-weight:600}.ab-pagination{margin-top:18px}
-</style>
+
+<x-admin.page-header title="Bookings" description="Read-only operational view of persisted flight order attempts." icon="B" eyebrow="Travel operations">
+    <span class="admin-status-badge">{{ $bookings->total() }} total</span>
+</x-admin.page-header>
 
 <div class="egh-card">
-    <div class="ab-head">
-        <div>
-            <h1 style="margin:0">Bookings</h1>
-            <p class="ab-muted" style="margin:6px 0 0">Read-only operational view of persisted flight order attempts.</p>
-        </div>
-        <span class="ab-muted">{{ $bookings->total() }} total</span>
-    </div>
 
     <div class="ab-table-wrap">
         <table class="ab-table">

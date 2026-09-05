@@ -3,18 +3,12 @@
 @section('title', 'Categories')
 
 @section('content')
-<style>
-.cat-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:18px}.cat-muted{color:#64748b}.cat-form{display:grid;gap:10px;margin:18px 0}.cat-two{display:grid;grid-template-columns:1fr 1fr;gap:10px}.cat-form input,.cat-form textarea{width:100%;box-sizing:border-box;border:1px solid #cbd5e1;border-radius:8px;padding:10px;background:#fff}.cat-form textarea{min-height:90px;resize:vertical}.cat-table-wrap{overflow:auto}.cat-table{width:100%;border-collapse:collapse;font-size:14px}.cat-table th,.cat-table td{padding:10px 8px;border-bottom:1px solid #e5e7eb;text-align:left;vertical-align:top}.cat-table th{font-size:12px;text-transform:uppercase;color:#64748b;white-space:nowrap}.cat-actions{display:flex;gap:6px}.cat-edit,.cat-delete{border:0;border-radius:7px;padding:7px 10px;cursor:pointer}.cat-edit{background:#e9eef7;color:#273852}.cat-delete{background:#fee2e2;color:#991b1b}.cat-message{display:none;margin-bottom:16px;padding:12px 14px;border-radius:8px}.cat-status{white-space:nowrap}@media(max-width:620px){.cat-head{display:block}.cat-two{grid-template-columns:1fr}}
-</style>
+
+<x-admin.page-header title="Categories" description="Manage reusable travel and service categories." icon="C" eyebrow="Master data">
+    <span class="admin-status-badge">{{ $categories->count() }} total</span>
+</x-admin.page-header>
 
 <div class="egh-card">
-    <div class="cat-head">
-        <div>
-            <h1 style="margin:0">Categories</h1>
-            <p class="cat-muted" style="margin:6px 0 0">Manage reusable travel and service categories.</p>
-        </div>
-        <span class="cat-muted">{{ $categories->count() }} total</span>
-    </div>
 
     <div id="cat-message" class="cat-message"></div>
 

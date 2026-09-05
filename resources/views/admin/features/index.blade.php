@@ -1,104 +1,13 @@
-<!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+@extends('layouts.admin')
 
-    <title>Feature Control | Eagle Global Hub LTD</title>
+@section('title', 'Feature Control')
 
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
-</head>
+@section('page-class', 'settings-page feature-control-page')
 
-<body class="admin-body">
-<div class="admin-shell">
-    <aside class="admin-sidebar" id="adminSidebar">
-        <div class="admin-brand">
-            <div class="admin-brand-mark" aria-hidden="true">&#9992;</div>
-            <div class="admin-brand-copy">
-                <strong>Eagle Global Hub LTD</strong>
-                <span>Super Admin Control</span>
-            </div>
-        </div>
-
-        <nav class="admin-nav" aria-label="Administration">
-            <div class="admin-nav-section">
-                <span class="admin-nav-title">MAIN</span>
-                <a href="{{ route('home') }}" class="admin-nav-link">
-                    <span aria-hidden="true">&#8962;</span>
-                    <span>Website</span>
-                </a>
-                @feature('dashboard')
-                    <a href="{{ route('dashboard') }}" class="admin-nav-link">
-                        <span aria-hidden="true">&#9638;</span>
-                        <span>Dashboard</span>
-                    </a>
-                @endfeature
-            </div>
-
-            <div class="admin-nav-section">
-                <span class="admin-nav-title">SYSTEM</span>
-                <a
-                    href="{{ route('admin.features.index') }}"
-                    class="admin-nav-link active"
-                >
-                    <span aria-hidden="true">&#9881;</span>
-                    <span>Feature Control</span>
-                </a>
-                <a
-                    href="{{ route('admin.settings.manage') }}"
-                    class="admin-nav-link"
-                >
-                    <span aria-hidden="true">&#9776;</span>
-                    <span>Settings</span>
-                </a>
-            </div>
-        </nav>
-    </aside>
-
-    <div class="admin-main">
-        <header class="admin-topbar">
-            <div class="admin-topbar-left">
-                <button
-                    type="button"
-                    class="admin-menu-button"
-                    id="adminMenuButton"
-                    aria-label="Toggle navigation"
-                >
-                    <span></span><span></span><span></span>
-                </button>
-            </div>
-
-            <div class="admin-user">
-                <div class="admin-user-avatar">
-                    {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
-                </div>
-                <div class="admin-user-copy">
-                    <strong>{{ auth()->user()->name }}</strong>
-                    <span>Super Admin</span>
-                </div>
-            </div>
-        </header>
-
-        <main class="settings-page feature-control-page">
-            <div class="settings-page-heading">
-                <div class="settings-title-wrap">
-                    <div class="settings-title-icon" aria-hidden="true">&#9881;</div>
-                    <div>
-                        <h1>Feature Control</h1>
-                        <span class="settings-access-mode">Super Admin only</span>
-                    </div>
-                </div>
-
-                <div class="settings-breadcrumb">
-                    @feature('dashboard')
-                        <a href="{{ route('dashboard') }}">Dashboard</a>
-                    @else
-                        <a href="{{ route('home') }}">Website</a>
-                    @endfeature
-                    <span>&rsaquo;</span>
-                    <strong>Feature Control</strong>
-                </div>
-            </div>
+@section('content')
+<x-admin.page-header title="Feature Control" description="Manage feature visibility within established provider and security boundaries." icon="F" eyebrow="System configuration">
+    <span class="settings-access-mode">Super Admin only</span>
+</x-admin.page-header>
 
             @if (session('status'))
                 <div class="feature-control-alert" role="status">
@@ -197,8 +106,4 @@
                     </form>
                 @endforeach
             </section>
-        </main>
-    </div>
-</div>
-</body>
-</html>
+@endsection

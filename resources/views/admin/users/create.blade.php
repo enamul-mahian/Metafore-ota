@@ -3,12 +3,17 @@
 @section('title', 'Create User')
 
 @section('content')
-    <h1>Create User</h1>
+    <x-admin.page-header
+        title="Create User"
+        description="Create an account and assign its initial authorization role."
+        icon="U"
+        eyebrow="Account management"
+    />
 
     <form
         method="POST"
         action="{{ route('admin.users.store') }}"
-        class="egh-card"
+        class="egh-card admin-form-card"
     >
         @csrf
 
@@ -82,11 +87,13 @@
             </label>
         </p>
 
-        <button class="egh-button" type="submit">Create User</button>
+        <div class="admin-form-actions">
+            <button class="egh-button" type="submit">Create User</button>
 
-        <a
-            class="egh-button secondary"
-            href="{{ route('admin.users.index') }}"
-        >Cancel</a>
+            <a
+                class="egh-button secondary"
+                href="{{ route('admin.users.index') }}"
+            >Cancel</a>
+        </div>
     </form>
 @endsection

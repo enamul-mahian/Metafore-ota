@@ -3,12 +3,17 @@
 @section('title', 'Edit User')
 
 @section('content')
-    <h1>Edit User</h1>
+    <x-admin.page-header
+        title="Edit User"
+        description="Update account details, role assignment, or access credentials."
+        icon="U"
+        eyebrow="Account management"
+    />
 
     <form
         method="POST"
         action="{{ route('admin.users.update', $user) }}"
-        class="egh-card"
+        class="egh-card admin-form-card"
     >
         @csrf
         @method('PATCH')
@@ -86,11 +91,13 @@
             </label>
         </p>
 
-        <button class="egh-button" type="submit">Save Changes</button>
+        <div class="admin-form-actions">
+            <button class="egh-button" type="submit">Save Changes</button>
 
-        <a
-            class="egh-button secondary"
-            href="{{ route('admin.users.show', $user) }}"
-        >Cancel</a>
+            <a
+                class="egh-button secondary"
+                href="{{ route('admin.users.show', $user) }}"
+            >Cancel</a>
+        </div>
     </form>
 @endsection

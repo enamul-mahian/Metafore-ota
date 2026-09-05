@@ -3,15 +3,11 @@
 @section('title', $agent->name)
 
 @section('content')
-<style>.agt-show-head{display:flex;justify-content:space-between;gap:16px;align-items:flex-start;margin-bottom:18px}.agt-show-list{display:grid;grid-template-columns:minmax(150px,1fr) 2fr;gap:12px;margin:0}.agt-show-list dt{color:#64748b}.agt-show-list dd{margin:0;word-break:break-word}.agt-actions{display:flex;gap:10px;flex-wrap:wrap}.agt-danger{background:#b91c1c}.agt-notes{white-space:pre-wrap}@media(max-width:650px){.agt-show-head{display:block}.agt-actions{margin-top:12px}.agt-show-list{grid-template-columns:1fr}}</style>
+<x-admin.page-header :title="$agent->name" description="Review this operational agent profile." icon="A" eyebrow="Agent details">
+    <a class="egh-button secondary" href="{{ route('admin.agents.index') }}">Back</a>
+    @can('agents.manage')<a class="egh-button" href="{{ route('admin.agents.edit', $agent) }}">Edit</a>@endcan
+</x-admin.page-header>
 <div class="egh-card">
-    <div class="agt-show-head">
-        <div><h1 style="margin:0">{{ $agent->name }}</h1><p style="color:#64748b">Agent profile</p></div>
-        <div class="agt-actions">
-            <a class="egh-button secondary" href="{{ route('admin.agents.index') }}">Back</a>
-            @can('agents.manage')<a class="egh-button" href="{{ route('admin.agents.edit', $agent) }}">Edit</a>@endcan
-        </div>
-    </div>
     <dl class="agt-show-list">
         <dt>Email</dt><dd>{{ $agent->email }}</dd>
         <dt>Phone</dt><dd>{{ $agent->phone ?: 'Not specified' }}</dd>
@@ -23,10 +19,10 @@
         <dt>Notes</dt><dd class="agt-notes">{{ $agent->notes ?: 'None' }}</dd>
     </dl>
     @can('agents.manage')
-        <form method="POST" action="{{ route('admin.agents.destroy', $agent) }}" style="margin-top:22px" onsubmit="return confirm('Delete this agent profile?')">
+        <form method="POST" action="{{ route('admin.agents.destroy', $agent) }}" class="admin-danger-zone" onsubmit="return confirm('Delete this agent profile?')">
             @csrf
             @method('DELETE')
-            <button class="egh-button agt-danger" type="submit">Delete Agent</button>
+            <button class="egh-button danger" type="submit">Delete Agent</button>
         </form>
     @endcan
 </div>
