@@ -191,4 +191,19 @@ class RolePermissionTest extends TestCase
             );
         }
     }
+
+    public function test_reports_view_permission_is_limited_to_admin_roles(): void
+    {
+        foreach (['admin', 'super-admin'] as $roleName) {
+            $user = User::factory()->create();
+            $user->assignRole($roleName);
+
+            $this->assertTrue($user->fresh()->can('reports.view'));
+        }
+
+        $customer = User::factory()->create();
+        $customer->assignRole('customer');
+
+        $this->assertFalse($customer->fresh()->can('reports.view'));
+    }
 }

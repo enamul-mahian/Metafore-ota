@@ -14,6 +14,7 @@ use App\Http\Controllers\Admin\InstitutionController;
 use App\Http\Controllers\Admin\LanguageController;
 use App\Http\Controllers\Admin\LanguagePageController;
 use App\Http\Controllers\Admin\MasterDataPageController;
+use App\Http\Controllers\Admin\ReportPageController;
 use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\SettingPageController;
 use App\Http\Controllers\Admin\StudentController;
@@ -662,6 +663,18 @@ Route::get(
         'role:admin|super-admin',
     ])
     ->name('admin.bookings.show');
+
+Route::get(
+    '/admin/reports',
+    [ReportPageController::class, 'index']
+)
+    ->middleware([
+        'auth',
+        'verified',
+        'role:admin|super-admin',
+        'permission:reports.view',
+    ])
+    ->name('admin.reports.index');
 
 Route::get(
     '/admin/categories',

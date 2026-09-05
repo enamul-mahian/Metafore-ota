@@ -193,12 +193,14 @@
                 </a>
                 @endcan
 
-                <a href="#" class="admin-nav-link">
+                @can('reports.view')
+                <a href="{{ route('admin.reports.index') }}" class="admin-nav-link">
                     <svg viewBox="0 0 24 24" aria-hidden="true">
                         <path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>
                     </svg>
                     <span>Reports</span>
                 </a>
+                @endcan
 
             </div>
 
