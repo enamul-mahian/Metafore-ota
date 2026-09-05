@@ -186,9 +186,7 @@
     >
         <div class="admin-brand">
             <div class="admin-brand-mark" aria-hidden="true">
-                <svg viewBox="0 0 24 24">
-                    <path d="M21.5 15.5 13 12l3.5-8.5L14 2l-5.5 8.5L3 8.5 1.5 10 6 14l-2 6 1.5 1 4-5 5 4 1.5-1-3-5.5 8.5 3.5z"/>
-                </svg>
+                <span class="admin-brand-plane-glyph">✈</span>
             </div>
 
             <div class="admin-brand-copy">
@@ -419,6 +417,14 @@
         </nav>
     </aside>
 
+    <button
+        type="button"
+        class="admin-sidebar-backdrop"
+        id="adminSidebarBackdrop"
+        aria-label="Close navigation"
+        hidden
+    ></button>
+
     <div class="admin-main">
 
         <header class="admin-topbar">
@@ -492,21 +498,37 @@
 document.addEventListener('DOMContentLoaded', function () {
     const menuButton = document.getElementById('adminMenuButton');
     const sidebar = document.getElementById('adminSidebar');
+    const backdrop = document.getElementById('adminSidebarBackdrop');
 
-    if (!menuButton || !sidebar) {
+    if (!menuButton || !sidebar || !backdrop) {
         return;
     }
 
     const setOpen = function (open) {
-        sidebar.classList.toggle('is-open', open);
+        const mobileOpen = Boolean(open) && window.innerWidth <= 1024;
+
+        sidebar.classList.toggle('is-open', mobileOpen);
+        document.body.classList.toggle('admin-nav-open', mobileOpen);
+        backdrop.hidden = !mobileOpen;
+
         menuButton.setAttribute(
             'aria-expanded',
-            open ? 'true' : 'false'
+            mobileOpen ? 'true' : 'false'
         );
     };
 
     menuButton.addEventListener('click', function () {
         setOpen(!sidebar.classList.contains('is-open'));
+    });
+
+    backdrop.addEventListener('click', function () {
+        setOpen(false);
+    });
+
+    window.addEventListener('resize', function () {
+        if (window.innerWidth > 1024) {
+            setOpen(false);
+        }
     });
 
     sidebar

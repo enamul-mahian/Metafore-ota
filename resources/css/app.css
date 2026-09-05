@@ -13653,3 +13653,864 @@ body.bookings-body {
         grid-template-columns: 1fr;
     }
 }
+
+/* ==========================================================================
+   EAGLE ADMIN PREMIUM POLISH V1
+   Shared Admin/Super-Admin visual layer only.
+   ========================================================================== */
+
+.admin-body {
+    --admin-sidebar-width: 280px;
+    --admin-ink: #10233f;
+    --admin-muted: #66768c;
+    --admin-line: #dde6f1;
+    --admin-soft-line: #e8eef6;
+    --admin-surface: #ffffff;
+    --admin-surface-soft: #f7f9fd;
+    --admin-blue: #315ff4;
+    --admin-blue-dark: #244bc6;
+    --admin-navy: #081d39;
+    margin: 0;
+    min-height: 100vh;
+    overflow-x: hidden;
+    background:
+        radial-gradient(circle at 78% 0%, rgba(49, 95, 244, .055), transparent 30%),
+        #f4f7fb;
+    color: var(--admin-ink);
+}
+
+.admin-shell {
+    min-height: 100vh;
+}
+
+/* Premium expanded navigation */
+
+.admin-sidebar {
+    width: var(--admin-sidebar-width);
+    border-right: 1px solid rgba(255, 255, 255, .07);
+    background:
+        radial-gradient(circle at 28px 54px, rgba(70, 114, 255, .23), transparent 180px),
+        linear-gradient(180deg, #091f3d 0%, #071a32 52%, #06172c 100%);
+    box-shadow: 16px 0 36px rgba(5, 23, 46, .08);
+}
+
+.admin-sidebar::-webkit-scrollbar {
+    width: 5px;
+}
+
+.admin-sidebar::-webkit-scrollbar-thumb {
+    background: rgba(168, 190, 224, .18);
+}
+
+.admin-brand {
+    box-sizing: border-box;
+    width: 100%;
+    height: auto;
+    min-height: 92px;
+    padding: 18px 18px 17px;
+    gap: 13px;
+    border-bottom: 1px solid rgba(255, 255, 255, .075);
+    background: linear-gradient(180deg, rgba(255, 255, 255, .035), rgba(255, 255, 255, 0));
+}
+
+.admin-brand-mark {
+    width: 44px;
+    height: 44px;
+    flex: 0 0 44px;
+    border: 1px solid rgba(126, 159, 255, .28);
+    border-radius: 13px;
+    background:
+        linear-gradient(145deg, rgba(70, 114, 255, .22), rgba(70, 114, 255, .07));
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, .1),
+        0 10px 24px rgba(0, 0, 0, .14);
+}
+
+.admin-brand-mark svg {
+    width: 23px;
+    height: 23px;
+}
+
+.admin-brand-copy {
+    min-width: 0;
+    gap: 4px;
+}
+
+.admin-brand-copy strong {
+    max-width: 100%;
+    color: #ffffff;
+    font-size: 16px;
+    font-weight: 820;
+    line-height: 1.18;
+    letter-spacing: -.01em;
+    white-space: normal;
+    overflow-wrap: normal;
+}
+
+.admin-brand-copy span {
+    max-width: 100%;
+    color: #9fb3cf;
+    font-size: 10.5px;
+    font-weight: 650;
+    line-height: 1.3;
+    letter-spacing: .025em;
+    white-space: normal;
+}
+
+.admin-nav {
+    padding: 17px 12px 28px;
+}
+
+.admin-nav-section {
+    margin-bottom: 18px;
+}
+
+.admin-nav-section:last-child {
+    margin-bottom: 0;
+}
+
+.admin-nav-title {
+    display: block;
+    padding: 0 11px;
+    margin-bottom: 7px;
+    color: #6f86a5;
+    font-size: 9px;
+    font-weight: 850;
+    letter-spacing: .15em;
+}
+
+.admin-nav-link {
+    position: relative;
+    min-height: 46px;
+    margin: 2px 0;
+    gap: 12px;
+    border: 1px solid transparent;
+    border-radius: 12px;
+    padding: 0 12px;
+    color: #afbdd0;
+    font-size: 12.5px;
+    font-weight: 680;
+    line-height: 1.25;
+    transition:
+        color .16s ease,
+        background-color .16s ease,
+        border-color .16s ease,
+        transform .16s ease,
+        box-shadow .16s ease;
+}
+
+.admin-nav-link svg {
+    width: 18px;
+    height: 18px;
+    flex: 0 0 18px;
+    color: #7e94b4;
+    opacity: .92;
+    transition: color .16s ease, opacity .16s ease;
+}
+
+.admin-nav-link:hover {
+    border-color: rgba(141, 168, 211, .13);
+    color: #f4f7ff;
+    background: rgba(255, 255, 255, .055);
+    transform: translateX(1px);
+}
+
+.admin-nav-link:hover svg {
+    color: #a9bbff;
+    opacity: 1;
+}
+
+.admin-nav-link.active {
+    border-color: rgba(111, 144, 255, .28);
+    color: #ffffff;
+    background:
+        linear-gradient(90deg, rgba(49, 95, 244, .34), rgba(49, 95, 244, .13));
+    box-shadow:
+        inset 3px 0 0 #6f8dff,
+        0 8px 20px rgba(0, 0, 0, .1);
+}
+
+.admin-nav-link.active::after {
+    content: "";
+    position: absolute;
+    right: 11px;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: #8ea5ff;
+    box-shadow: 0 0 0 4px rgba(142, 165, 255, .09);
+}
+
+.admin-nav-link.active svg {
+    color: #b9c7ff;
+    opacity: 1;
+}
+
+/* Main surface and topbar */
+
+.admin-main {
+    width: calc(100% - var(--admin-sidebar-width));
+    min-width: 0;
+    margin-left: var(--admin-sidebar-width);
+    background: transparent;
+}
+
+.admin-topbar {
+    position: sticky;
+    top: 0;
+    z-index: 30;
+    min-height: 70px;
+    padding: 0 26px;
+    border-bottom: 1px solid rgba(218, 227, 239, .92);
+    background: rgba(255, 255, 255, .93);
+    box-shadow: 0 4px 18px rgba(16, 35, 63, .025);
+    backdrop-filter: blur(14px);
+}
+
+.admin-topbar-actions {
+    gap: 10px;
+}
+
+.admin-user {
+    padding: 6px 11px 6px 7px;
+    border: 1px solid #e3e9f2;
+    border-radius: 12px;
+    background: #fbfcfe;
+}
+
+.admin-user-avatar {
+    box-shadow:
+        inset 0 0 0 1px rgba(49, 95, 244, .11),
+        0 5px 12px rgba(49, 95, 244, .08);
+}
+
+.admin-user-copy strong {
+    color: #1c304c;
+}
+
+.admin-user-copy span {
+    color: #78889c;
+}
+
+.admin-topbar-link {
+    min-height: 38px;
+    border-color: #dfe6f0;
+    border-radius: 10px;
+    padding: 8px 12px;
+    background: #ffffff;
+    box-shadow: 0 2px 7px rgba(25, 46, 77, .025);
+}
+
+.admin-topbar-link:hover {
+    border-color: #cbd7ef;
+    background: #f3f6ff;
+}
+
+/* Premium page frame */
+
+.admin-page {
+    width: 100%;
+    max-width: 1560px;
+    box-sizing: border-box;
+    margin: 0 auto;
+    padding: 30px 30px 34px;
+}
+
+.admin-page-heading {
+    position: relative;
+    box-sizing: border-box;
+    overflow: hidden;
+    align-items: stretch;
+    gap: 26px;
+    margin-bottom: 22px;
+    padding: 24px 25px;
+    border: 1px solid #dce5f1;
+    border-radius: 18px;
+    background:
+        radial-gradient(circle at 88% 12%, rgba(49, 95, 244, .09), transparent 220px),
+        linear-gradient(135deg, #ffffff 0%, #fbfcff 72%, #f6f8ff 100%);
+    box-shadow:
+        0 13px 34px rgba(18, 42, 76, .055),
+        inset 0 1px 0 rgba(255, 255, 255, .9);
+}
+
+.admin-page-heading::before {
+    content: "";
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: 4px;
+    background: linear-gradient(180deg, #315ff4, #6d8bff);
+}
+
+.admin-page-title-wrap {
+    position: relative;
+    z-index: 1;
+    gap: 16px;
+}
+
+.admin-page-title-icon {
+    width: 50px;
+    height: 50px;
+    flex: 0 0 50px;
+    border: 1px solid rgba(49, 95, 244, .12);
+    border-radius: 14px;
+    color: #ffffff;
+    background:
+        linear-gradient(145deg, #315ff4 0%, #496ff5 58%, #708cff 100%);
+    box-shadow:
+        0 10px 22px rgba(49, 95, 244, .18),
+        inset 0 1px 0 rgba(255, 255, 255, .2);
+    font-size: 17px;
+    font-weight: 850;
+}
+
+.admin-page-eyebrow {
+    margin-bottom: 5px;
+    color: #5270c9;
+    font-size: 9.5px;
+    font-weight: 850;
+    letter-spacing: .145em;
+}
+
+.admin-page-heading h1,
+.admin-page > h1 {
+    color: #112640;
+    font-size: clamp(24px, 2vw, 28px);
+    font-weight: 820;
+    line-height: 1.12;
+    letter-spacing: -.035em;
+}
+
+.admin-page-heading p {
+    max-width: 760px;
+    margin-top: 8px;
+    color: #64758b;
+    font-size: 13.5px;
+    line-height: 1.6;
+}
+
+.admin-page-heading-side {
+    position: relative;
+    z-index: 1;
+    justify-content: space-between;
+    min-width: max-content;
+}
+
+.admin-page-breadcrumb {
+    gap: 7px;
+    width: fit-content;
+    padding: 6px 9px;
+    border: 1px solid #e1e7f1;
+    border-radius: 999px;
+    color: #8290a3;
+    background: rgba(255, 255, 255, .72);
+    font-size: 10.5px;
+    box-shadow: 0 3px 10px rgba(18, 42, 76, .025);
+}
+
+.admin-page-breadcrumb a {
+    color: #687991;
+}
+
+.admin-page-breadcrumb strong {
+    color: #344761;
+}
+
+.admin-page-actions {
+    justify-content: flex-end;
+}
+
+/* Cards, controls and data surfaces */
+
+.egh-card,
+.admin-card {
+    border-color: #dfe7f1;
+    border-radius: 16px;
+    background: #ffffff;
+    box-shadow:
+        0 10px 28px rgba(18, 42, 76, .045),
+        inset 0 1px 0 rgba(255, 255, 255, .8);
+}
+
+.admin-card-heading {
+    padding-bottom: 13px;
+    border-bottom: 1px solid #edf1f6;
+}
+
+.admin-card-heading h2,
+.egh-card h2,
+.admin-card h2 {
+    color: #152a45;
+    font-weight: 800;
+}
+
+.egh-button,
+.admin-button {
+    min-height: 41px;
+    border-radius: 10px;
+    padding: 9px 15px;
+    background: linear-gradient(180deg, #3b67f5 0%, #315ff4 100%);
+    box-shadow:
+        0 8px 18px rgba(49, 95, 244, .16),
+        inset 0 1px 0 rgba(255, 255, 255, .16);
+}
+
+.egh-button:hover,
+.admin-button:hover {
+    background: linear-gradient(180deg, #315ff4 0%, #244fd5 100%);
+    box-shadow: 0 10px 22px rgba(49, 95, 244, .2);
+}
+
+.egh-button.secondary,
+.admin-button.secondary {
+    border-color: #dbe4ef;
+    color: #31445e;
+    background: #ffffff;
+    box-shadow: 0 3px 9px rgba(18, 42, 76, .035);
+}
+
+.egh-button.secondary:hover,
+.admin-button.secondary:hover {
+    border-color: #c9d7ed;
+    color: #244fc7;
+    background: #f5f7ff;
+}
+
+.admin-page input:not([type="checkbox"]):not([type="radio"]),
+.admin-page select,
+.admin-page textarea {
+    border-color: #d5dfeb;
+    border-radius: 10px;
+    background: #ffffff;
+    box-shadow: inset 0 1px 2px rgba(18, 42, 76, .018);
+}
+
+.admin-page input:not([type="checkbox"]):not([type="radio"]):hover,
+.admin-page select:hover,
+.admin-page textarea:hover {
+    border-color: #c5d2e2;
+}
+
+.admin-page input:not([type="checkbox"]):not([type="radio"]):focus,
+.admin-page select:focus,
+.admin-page textarea:focus {
+    border-color: #6d8af4;
+    box-shadow:
+        0 0 0 3px rgba(49, 95, 244, .11),
+        inset 0 1px 2px rgba(18, 42, 76, .015);
+}
+
+.admin-filter-bar,
+.agt-filter,
+.af-filter,
+.stu-filter,
+.ins-filter,
+.rpt-filter,
+.slog-filter {
+    box-sizing: border-box;
+    padding: 14px;
+    border: 1px solid #e2e9f2;
+    border-radius: 14px;
+    background: #fafbfd;
+}
+
+.admin-table-wrap,
+.agt-table-wrap,
+.cat-table-wrap,
+.cur-table-wrap,
+.lng-table-wrap,
+.md-table-wrap,
+.ab-table-wrap,
+.rpt-table-wrap,
+.slog-table-wrap {
+    box-sizing: border-box;
+    border: 1px solid #e1e8f1;
+    border-radius: 14px;
+    background: #ffffff;
+    box-shadow: 0 6px 20px rgba(18, 42, 76, .025);
+    overflow-x: auto;
+    overflow-y: hidden;
+}
+
+.admin-page th,
+.admin-data-table th {
+    color: #66778e;
+    background: #f6f8fb;
+    font-size: 9.5px;
+    letter-spacing: .095em;
+}
+
+.admin-page th,
+.admin-page td,
+.admin-data-table th,
+.admin-data-table td {
+    padding: 13px 14px;
+}
+
+.admin-page tbody tr,
+.admin-data-table tbody tr {
+    transition: background-color .14s ease, box-shadow .14s ease;
+}
+
+.admin-page tbody tr:hover,
+.admin-data-table tbody tr:hover {
+    background: #f8faff;
+}
+
+.admin-permission-badge {
+    border-color: #d8e3fb;
+    color: #375bb7;
+    background: #f3f6ff;
+    box-shadow: inset 0 0 0 1px rgba(49, 95, 244, .015);
+}
+
+.admin-check-card {
+    border-color: #e1e8f1;
+    border-radius: 10px;
+    background: #fbfcfe;
+}
+
+.admin-empty-state {
+    min-height: 120px;
+    color: #758499 !important;
+    background:
+        radial-gradient(circle at 50% 50%, rgba(49, 95, 244, .035), transparent 220px);
+}
+
+.admin-dashboard-card {
+    border-color: #dfe7f1;
+    border-radius: 14px;
+    padding: 18px;
+    background:
+        linear-gradient(145deg, #ffffff, #f8faff);
+    box-shadow: 0 7px 20px rgba(18, 42, 76, .03);
+}
+
+.admin-dashboard-card:hover {
+    border-color: #c7d5f4;
+    box-shadow: 0 12px 26px rgba(31, 70, 145, .075);
+}
+
+.admin-footer {
+    margin-top: auto;
+    border-top-color: #e1e8f1;
+    background: rgba(255, 255, 255, .8);
+}
+
+/* Drawer backdrop */
+
+.admin-sidebar-backdrop {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 55;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    border: 0;
+    padding: 0;
+    background: rgba(5, 18, 35, .48);
+    cursor: default;
+    backdrop-filter: blur(2px);
+}
+
+.admin-sidebar-backdrop[hidden] {
+    display: none !important;
+}
+
+.admin-menu-button {
+    border-radius: 10px;
+}
+
+/* Responsive drawer */
+
+@media (max-width: 1024px) {
+    .admin-body.admin-nav-open {
+        overflow: hidden;
+    }
+
+    .admin-sidebar {
+        z-index: 60;
+        width: min(286px, calc(100vw - 44px));
+        max-width: calc(100vw - 44px);
+        box-shadow: 18px 0 50px rgba(4, 18, 37, .28);
+    }
+
+    .admin-sidebar.is-open + .admin-sidebar-backdrop,
+    .admin-sidebar-backdrop:not([hidden]) {
+        display: block;
+    }
+
+    .admin-main {
+        width: 100%;
+        margin-left: 0;
+    }
+
+    .admin-topbar {
+        padding-right: 18px;
+        padding-left: 18px;
+    }
+}
+
+@media (max-width: 760px) {
+    .admin-page {
+        padding: 20px 16px 30px;
+    }
+
+    .admin-page-heading {
+        flex-direction: column;
+        gap: 18px;
+        padding: 20px 19px;
+        border-radius: 16px;
+    }
+
+    .admin-page-heading-side {
+        width: 100%;
+        min-width: 0;
+        align-items: flex-start;
+        gap: 12px;
+    }
+
+    .admin-page-breadcrumb {
+        max-width: 100%;
+        white-space: normal;
+    }
+
+    .admin-page-actions {
+        width: 100%;
+        justify-content: flex-start;
+    }
+
+    .admin-page-title-icon {
+        width: 46px;
+        height: 46px;
+        flex-basis: 46px;
+    }
+
+    .admin-card,
+    .egh-card {
+        border-radius: 14px;
+    }
+}
+
+@media (max-width: 430px) {
+    .admin-sidebar {
+        width: min(286px, calc(100vw - 30px));
+        max-width: calc(100vw - 30px);
+    }
+
+    .admin-brand {
+        min-height: 88px;
+        padding: 16px 15px;
+    }
+
+    .admin-brand-mark {
+        width: 42px;
+        height: 42px;
+        flex-basis: 42px;
+    }
+
+    .admin-brand-copy strong {
+        font-size: 15px;
+    }
+
+    .admin-page {
+        padding: 16px 13px 28px;
+    }
+
+    .admin-page-heading {
+        padding: 18px 16px;
+    }
+
+    .admin-page-title-wrap {
+        gap: 12px;
+    }
+
+    .admin-page-heading h1,
+    .admin-page > h1 {
+        font-size: 24px;
+    }
+
+    .admin-page-actions,
+    .admin-page-actions .egh-button,
+    .admin-page-actions .admin-button {
+        width: 100%;
+    }
+
+    .admin-page-actions .egh-button,
+    .admin-page-actions .admin-button {
+        justify-content: center;
+    }
+}
+
+/* End EAGLE ADMIN PREMIUM POLISH V1 */
+
+/* ==========================================================================
+   EAGLE ADMIN ICON SYSTEM V1
+   ========================================================================== */
+
+.admin-brand-mark {
+    display: inline-grid;
+    place-items: center;
+    color: #86a3ff;
+}
+
+.admin-brand-mark svg {
+    width: 27px;
+    height: 27px;
+    overflow: visible;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.admin-brand-mark .admin-brand-eagle {
+    fill: rgba(89, 126, 255, .16);
+    stroke: #7797ff;
+    stroke-width: 1.7;
+}
+
+.admin-brand-mark .admin-brand-eagle-detail {
+    fill: none;
+    stroke: #c3d0ff;
+    stroke-width: 1.65;
+}
+
+.admin-page-title-icon {
+    overflow: hidden;
+}
+
+.admin-page-title-icon svg {
+    width: 23px;
+    height: 23px;
+    display: block;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.admin-page-title-icon svg circle,
+.admin-page-title-icon svg rect,
+.admin-page-title-icon svg path {
+    vector-effect: non-scaling-stroke;
+}
+
+@media (max-width: 430px) {
+    .admin-brand-mark svg {
+        width: 25px;
+        height: 25px;
+    }
+
+    .admin-page-title-icon svg {
+        width: 21px;
+        height: 21px;
+    }
+}
+
+/* End EAGLE ADMIN ICON SYSTEM V1 */
+
+/* ==========================================================================
+   EAGLE ADMIN BRAND PLANE V2
+   Reference: bright blue rounded square with clean white airplane.
+   ========================================================================== */
+
+.admin-brand-mark {
+    display: inline-grid;
+    width: 40px;
+    height: 40px;
+    flex: 0 0 40px;
+    place-items: center;
+    border: 0;
+    border-radius: 11px;
+    color: #ffffff;
+    background:
+        linear-gradient(145deg, #3375ff 0%, #3d8cff 100%);
+    box-shadow:
+        0 7px 16px rgba(40, 108, 245, .24),
+        inset 0 1px 0 rgba(255, 255, 255, .22);
+}
+
+.admin-brand-mark .admin-brand-plane {
+    display: block;
+    width: 19px;
+    height: 19px;
+    overflow: visible;
+    fill: currentColor;
+    stroke: none;
+}
+
+.admin-brand-mark .admin-brand-plane path {
+    fill: currentColor;
+    stroke: none;
+}
+
+@media (max-width: 430px) {
+    .admin-brand-mark {
+        width: 38px;
+        height: 38px;
+        flex-basis: 38px;
+        border-radius: 10px;
+    }
+
+    .admin-brand-mark .admin-brand-plane {
+        width: 18px;
+        height: 18px;
+    }
+}
+
+/* End EAGLE ADMIN BRAND PLANE V2 */
+
+/* ==========================================================================
+   EAGLE ADMIN PLANE DIRECTION FIX V3
+   Match approved reference: airplane nose points right.
+   ========================================================================== */
+
+.admin-brand-mark .admin-brand-plane {
+    transform: scaleX(-1);
+    transform-origin: center;
+}
+
+/* End EAGLE ADMIN PLANE DIRECTION FIX V3 */
+
+/* ==========================================================================
+   EAGLE ADMIN FINAL PLANE GLYPH V4
+   Match approved reference: simple solid white airplane.
+   ========================================================================== */
+
+.admin-brand-mark {
+    width: 38px;
+    height: 38px;
+    flex: 0 0 38px;
+    border-radius: 10px;
+    background: linear-gradient(145deg, #367cff 0%, #3188f6 100%);
+}
+
+.admin-brand-plane-glyph {
+    display: block;
+    color: #ffffff;
+    font-family: "Segoe UI Symbol", "Arial Unicode MS", sans-serif;
+    font-size: 20px;
+    font-weight: 400;
+    line-height: 1;
+    text-align: center;
+    transform: translateY(-1px);
+    -webkit-font-smoothing: antialiased;
+}
+
+@media (max-width: 430px) {
+    .admin-brand-mark {
+        width: 36px;
+        height: 36px;
+        flex-basis: 36px;
+    }
+
+    .admin-brand-plane-glyph {
+        font-size: 19px;
+    }
+}
+
+/* End EAGLE ADMIN FINAL PLANE GLYPH V4 */
