@@ -173,13 +173,15 @@
                 </a>
                 @endcan
 
-                <a href="#" class="admin-nav-link">
+                @can('students.view')
+                <a href="{{ route('admin.students.index') }}" class="admin-nav-link">
                     <svg viewBox="0 0 24 24" aria-hidden="true">
                         <path d="m3 9 9-5 9 5-9 5z"/>
                         <path d="M6 11v5c3.5 3 8.5 3 12 0v-5"/>
                     </svg>
                     <span>Students</span>
                 </a>
+                @endcan
 
                 <a href="#" class="admin-nav-link">
                     <svg viewBox="0 0 24 24" aria-hidden="true">
