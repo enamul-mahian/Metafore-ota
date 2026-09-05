@@ -26,6 +26,9 @@
             @can('students.view')
                 <a href="{{ route('admin.students.index') }}" class="{{ request()->routeIs('admin.students.*') ? 'active' : '' }}">Students</a>
             @endcan
+            @can('institutions.view')
+                <a href="{{ route('admin.institutions.index') }}" class="{{ request()->routeIs('admin.institutions.*') ? 'active' : '' }}">Institutions</a>
+            @endcan
             @can('users.view')
                 <a href="{{ route('admin.users.index') }}" class="{{ request()->routeIs('admin.users.*') ? 'active' : '' }}">Users</a>
             @endcan

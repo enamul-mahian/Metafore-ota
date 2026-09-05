@@ -10,6 +10,7 @@ use App\Http\Controllers\Admin\CountryController;
 use App\Http\Controllers\Admin\CurrencyController;
 use App\Http\Controllers\Admin\CurrencyPageController;
 use App\Http\Controllers\Admin\FeatureControlController;
+use App\Http\Controllers\Admin\InstitutionController;
 use App\Http\Controllers\Admin\LanguageController;
 use App\Http\Controllers\Admin\LanguagePageController;
 use App\Http\Controllers\Admin\MasterDataPageController;
@@ -564,6 +565,22 @@ Route::get(
     ->name('flights.bookings.orders.attempts.confirmation.show');
 
 require __DIR__.'/admin-users-roles.php';
+
+Route::middleware(['auth', 'verified', 'role:admin|super-admin'])
+    ->prefix('admin/institutions')->name('admin.institutions.')
+    ->group(function () {
+        Route::middleware('can:institutions.view')->group(function () {
+            Route::get('/', [InstitutionController::class, 'index'])->name('index');
+            Route::get('/{institution}', [InstitutionController::class, 'show'])->whereNumber('institution')->name('show');
+        });
+        Route::middleware('can:institutions.manage')->group(function () {
+            Route::get('/create', [InstitutionController::class, 'create'])->name('create');
+            Route::post('/', [InstitutionController::class, 'store'])->name('store');
+            Route::get('/{institution}/edit', [InstitutionController::class, 'edit'])->whereNumber('institution')->name('edit');
+            Route::patch('/{institution}', [InstitutionController::class, 'update'])->whereNumber('institution')->name('update');
+            Route::delete('/{institution}', [InstitutionController::class, 'destroy'])->whereNumber('institution')->name('destroy');
+        });
+    });
 
 Route::middleware(['auth', 'verified', 'role:admin|super-admin'])
     ->prefix('admin/students')->name('admin.students.')

@@ -49,6 +49,9 @@ class RolePermissionSeeder extends Seeder
             'students.view',
             'students.manage',
 
+            'institutions.view',
+            'institutions.manage',
+
             'flights.search',
             'flights.book',
 
@@ -125,6 +128,9 @@ class RolePermissionSeeder extends Seeder
 
             'students.view',
             'students.manage',
+
+            'institutions.view',
+            'institutions.manage',
 
             'flights.search',
             'flights.book',
