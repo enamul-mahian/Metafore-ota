@@ -123,6 +123,7 @@ return [
     | - Registration
     | - Password reset
     | - Email verification
+    | - Profile information updates
     |
     | Two-factor authentication and passkeys are intentionally deferred.
     |
@@ -132,6 +133,7 @@ return [
         Features::registration(),
         Features::resetPasswords(),
         Features::emailVerification(),
+        Features::updateProfileInformation(),
     ],
 
 ];

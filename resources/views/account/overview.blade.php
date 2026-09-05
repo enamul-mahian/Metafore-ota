@@ -53,19 +53,78 @@
                     </div>
                 </div>
 
-                <dl class="account-detail-list">
+                <form
+                    method="POST"
+                    action="{{ route('user-profile-information.update') }}"
+                    class="account-profile-form"
+                >
+                    @csrf
+                    @method('PUT')
 
-                    <div>
-                        <dt>Full Name</dt>
-                        <dd>{{ auth()->user()->name }}</dd>
+                    @if (session('status') === \Laravel\Fortify\Fortify::PROFILE_INFORMATION_UPDATED)
+                        <div class="account-form-success" role="status">
+                            Profile information updated.
+                        </div>
+                    @endif
+
+                    <div class="account-form-field">
+                        <label for="account-name">Full Name</label>
+
+                        <input
+                            id="account-name"
+                            name="name"
+                            type="text"
+                            value="{{ old('name', auth()->user()->name) }}"
+                            autocomplete="name"
+                            required
+                            @error('name', 'updateProfileInformation')
+                                aria-invalid="true"
+                                aria-describedby="account-name-error"
+                            @enderror
+                        >
+
+                        @error('name', 'updateProfileInformation')
+                            <span id="account-name-error" class="account-form-error">
+                                {{ $message }}
+                            </span>
+                        @enderror
                     </div>
 
-                    <div>
-                        <dt>Email Address</dt>
-                        <dd>{{ auth()->user()->email }}</dd>
+                    <div class="account-form-field">
+                        <label for="account-email">Email Address</label>
+
+                        <input
+                            id="account-email"
+                            name="email"
+                            type="email"
+                            value="{{ old('email', auth()->user()->email) }}"
+                            autocomplete="email"
+                            required
+                            @error('email', 'updateProfileInformation')
+                                aria-invalid="true"
+                                aria-describedby="account-email-error"
+                            @enderror
+                        >
+
+                        @error('email', 'updateProfileInformation')
+                            <span id="account-email-error" class="account-form-error">
+                                {{ $message }}
+                            </span>
+                        @enderror
                     </div>
 
-                </dl>
+                    <p class="account-form-note">
+                        Changing your email address requires you to verify the
+                        new address before returning to verified-only pages.
+                    </p>
+
+                    <button
+                        type="submit"
+                        class="site-button site-button-primary"
+                    >
+                        Save Profile
+                    </button>
+                </form>
 
             </article>
 
