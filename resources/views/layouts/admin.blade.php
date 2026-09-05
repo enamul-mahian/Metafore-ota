@@ -17,6 +17,9 @@
         <nav class="egh-nav">
             <a href="{{ route('dashboard') }}">Dashboard</a>
             <a href="{{ route('admin.bookings.index') }}" class="{{ request()->routeIs('admin.bookings.*') ? 'active' : '' }}">Bookings</a>
+            @can('reports.view')
+                <a href="{{ route('admin.reports.index') }}" class="{{ request()->routeIs('admin.reports.*') ? 'active' : '' }}">Reports</a>
+            @endcan
             @can('agents.view')
                 <a href="{{ route('admin.agents.index') }}" class="{{ request()->routeIs('admin.agents.*') ? 'active' : '' }}">Agents</a>
             @endcan
