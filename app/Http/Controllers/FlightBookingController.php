@@ -18,7 +18,9 @@ final class FlightBookingController extends Controller
                     (int) $request->user()->getAuthIdentifier(),
                 )
                 ->latest()
-                ->get();
+                ->latest('id')
+                ->paginate(10)
+                ->withQueryString();
 
         return view(
             'bookings.index',

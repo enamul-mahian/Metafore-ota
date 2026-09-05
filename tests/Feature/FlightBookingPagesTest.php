@@ -94,6 +94,56 @@ class FlightBookingPagesTest extends TestCase
             ->assertDontSee('pay_customer_private_123');
     }
 
+    public function test_customer_booking_history_is_paginated_in_deterministic_latest_order(): void
+    {
+        $user =
+            $this->bookingUser();
+
+        $oldestBooking =
+            $this->createBookingForUser($user);
+
+        for ($bookingNumber = 0; $bookingNumber < 9; $bookingNumber++) {
+            $this->createBookingForUser($user);
+        }
+
+        $newestBooking =
+            $this->createBookingForUser($user);
+
+        $firstPage = $this->actingAs($user)
+            ->get(route('bookings.index'))
+            ->assertOk()
+            ->assertSee('Booking #'.$newestBooking->id)
+            ->assertSee('Showing 1&ndash;10', false)
+            ->assertSee('of 11 bookings')
+            ->assertSee('Page 1 of 2')
+            ->assertSee(
+                route('bookings.index', ['page' => 2]),
+                false,
+            );
+
+        $firstPage->assertViewHas(
+            'bookings',
+            fn ($bookings): bool => $bookings->count() === 10
+                && $bookings->first()->is($newestBooking)
+                && ! $bookings->contains($oldestBooking),
+        );
+
+        $secondPage = $this->actingAs($user)
+            ->get(route('bookings.index', ['page' => 2]))
+            ->assertOk()
+            ->assertSee('Booking #'.$oldestBooking->id)
+            ->assertSee('Showing 11&ndash;11', false)
+            ->assertSee('of 11 bookings')
+            ->assertSee('Page 2 of 2');
+
+        $secondPage->assertViewHas(
+            'bookings',
+            fn ($bookings): bool => $bookings->count() === 1
+                && $bookings->first()->is($oldestBooking)
+                && ! $bookings->contains($newestBooking),
+        );
+    }
+
     public function test_customer_can_view_owned_booking_details_without_supplier_identifiers(): void
     {
         $user =
