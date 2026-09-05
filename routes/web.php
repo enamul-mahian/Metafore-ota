@@ -15,6 +15,7 @@ use App\Http\Controllers\Admin\LanguagePageController;
 use App\Http\Controllers\Admin\MasterDataPageController;
 use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\SettingPageController;
+use App\Http\Controllers\Admin\StudentController;
 use App\Http\Controllers\Flight\FlightBookingConfirmationIntentController;
 use App\Http\Controllers\Flight\FlightBookingDraftController;
 use App\Http\Controllers\Flight\FlightBookingDraftReviewController;
@@ -563,6 +564,22 @@ Route::get(
     ->name('flights.bookings.orders.attempts.confirmation.show');
 
 require __DIR__.'/admin-users-roles.php';
+
+Route::middleware(['auth', 'verified', 'role:admin|super-admin'])
+    ->prefix('admin/students')->name('admin.students.')
+    ->group(function () {
+        Route::middleware('can:students.view')->group(function () {
+            Route::get('/', [StudentController::class, 'index'])->name('index');
+            Route::get('/{student}', [StudentController::class, 'show'])->whereNumber('student')->name('show');
+        });
+        Route::middleware('can:students.manage')->group(function () {
+            Route::get('/create', [StudentController::class, 'create'])->name('create');
+            Route::post('/', [StudentController::class, 'store'])->name('store');
+            Route::get('/{student}/edit', [StudentController::class, 'edit'])->whereNumber('student')->name('edit');
+            Route::patch('/{student}', [StudentController::class, 'update'])->whereNumber('student')->name('update');
+            Route::delete('/{student}', [StudentController::class, 'destroy'])->whereNumber('student')->name('destroy');
+        });
+    });
 
 Route::middleware(['auth', 'verified', 'role:admin|super-admin'])
     ->prefix('admin/affiliates')
