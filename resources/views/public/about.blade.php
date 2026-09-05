@@ -49,11 +49,12 @@
             </article>
 
             <article class="public-page-panel">
-                <h2>Future Services</h2>
+                <h2>Additional Services</h2>
 
                 <p>
-                    Hotels, tours and visa services are marked Coming Soon and
-                    are not part of the active booking flow.
+                    Hotels, tours and visa discovery is shown as available only
+                    when its provider integration is configured. Transactional
+                    booking or application access is not implied.
                 </p>
             </article>
         </section>

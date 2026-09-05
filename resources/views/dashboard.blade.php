@@ -207,59 +207,76 @@
                     @endcan
                 @endfeature
 
-                @feature('hotels')
-                    <article class="dashboard-service-card">
-                    <div class="service-icon" aria-hidden="true">
-                        H
-                    </div>
+                @foreach ([
+                    'hotels' => [
+                        'icon' => 'H',
+                        'description' => 'Search configured hotel availability and stay options.',
+                    ],
+                    'tours' => [
+                        'icon' => 'T',
+                        'description' => 'Search configured tours and destination activities.',
+                    ],
+                    'visa' => [
+                        'icon' => 'V',
+                        'description' => 'Review configured visa and entry requirement information.',
+                    ],
+                ] as $serviceKey => $presentation)
+                    @feature($serviceKey)
+                        @php
+                            $service = $travelServices[$serviceKey] ?? null;
+                            $hasPermission = $service
+                                && (
+                                    $service['permission'] === null
+                                    || auth()->user()->can($service['permission'])
+                                );
+                            $canAccess = $service
+                                && $service['available']
+                                && $service['route_name']
+                                && $hasPermission;
+                        @endphp
 
-                    <h3>Hotels</h3>
+                        @if ($canAccess)
+                            <a
+                                href="{{ route($service['route_name']) }}"
+                                class="dashboard-service-card dashboard-service-card-link"
+                            >
+                                <div class="service-icon" aria-hidden="true">
+                                    {{ $presentation['icon'] }}
+                                </div>
 
-                    <p>
-                        Hotel booking is not part of the active service yet.
-                    </p>
+                                <h3>{{ $service['label'] }}</h3>
 
-                    <span class="service-status">
-                        Coming Soon
-                    </span>
-                    </article>
-                @endfeature
+                                <p>{{ $presentation['description'] }}</p>
 
-                @feature('tours')
-                    <article class="dashboard-service-card">
-                    <div class="service-icon" aria-hidden="true">
-                        T
-                    </div>
+                                <span class="service-status service-status-live">
+                                    {{ $service['status'] }}
+                                </span>
+                            </a>
+                        @else
+                            <article class="dashboard-service-card">
+                                <div class="service-icon" aria-hidden="true">
+                                    {{ $presentation['icon'] }}
+                                </div>
 
-                    <h3>Tours</h3>
+                                <h3>{{ $service['label'] ?? ucfirst($serviceKey) }}</h3>
 
-                    <p>
-                        Tour booking is not part of the active service yet.
-                    </p>
+                                <p>
+                                    @if ($service && $service['available'])
+                                        This service is not enabled for your account.
+                                    @else
+                                        This service is not configured for customer use.
+                                    @endif
+                                </p>
 
-                    <span class="service-status">
-                        Coming Soon
-                    </span>
-                    </article>
-                @endfeature
-
-                @feature('visa')
-                    <article class="dashboard-service-card">
-                    <div class="service-icon" aria-hidden="true">
-                        V
-                    </div>
-
-                    <h3>Visa</h3>
-
-                    <p>
-                        Visa services are not part of the active service yet.
-                    </p>
-
-                    <span class="service-status">
-                        Coming Soon
-                    </span>
-                    </article>
-                @endfeature
+                                <span class="service-status">
+                                    {{ $service && $service['available']
+                                        ? 'Unavailable'
+                                        : ($service['status'] ?? 'Not Configured') }}
+                                </span>
+                            </article>
+                        @endif
+                    @endfeature
+                @endforeach
 
             </div>
 
