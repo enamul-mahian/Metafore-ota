@@ -116,15 +116,12 @@ final class FlightOrderReconciliationController extends Controller
         return $this->noStore(
             response()->json([
                 'data' => [
-                    'status' =>
-                        FlightOrderAttempt::STATUS_PROCESSING,
+                    'status' => FlightOrderAttempt::STATUS_PROCESSING,
 
-                    'provider' =>
-                        $provider,
+                    'provider' => $provider,
                 ],
 
-                'message' =>
-                    'Flight order reconciliation is still processing.',
+                'message' => 'Flight order reconciliation is still processing.',
             ], 202),
         );
     }
@@ -142,15 +139,12 @@ final class FlightOrderReconciliationController extends Controller
         return $this->noStore(
             response()->json([
                 'data' => [
-                    'status' =>
-                        $status,
+                    'status' => $status,
 
-                    'provider' =>
-                        $provider,
+                    'provider' => $provider,
                 ],
 
-                'message' =>
-                    $message,
+                'message' => $message,
             ]),
         );
     }
@@ -159,11 +153,9 @@ final class FlightOrderReconciliationController extends Controller
     {
         return $this->noStore(
             response()->json([
-                'data' =>
-                    null,
+                'data' => null,
 
-                'message' =>
-                    'Flight order reconciliation is unavailable.',
+                'message' => 'Flight order reconciliation is unavailable.',
             ], 404),
         );
     }
@@ -172,11 +164,9 @@ final class FlightOrderReconciliationController extends Controller
     {
         return $this->noStore(
             response()->json([
-                'data' =>
-                    null,
+                'data' => null,
 
-                'message' =>
-                    'Flight order reconciliation is temporarily unavailable.',
+                'message' => 'Flight order reconciliation is temporarily unavailable.',
             ], 503),
         );
     }

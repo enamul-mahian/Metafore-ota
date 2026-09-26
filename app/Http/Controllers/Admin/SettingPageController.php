@@ -16,7 +16,7 @@ class SettingPageController extends Controller
     public function __invoke(): View
     {
         $items = Setting::query()
-            ->where('group', '!=', 'features')
+            ->whereNotIn('group', ['features', 'site'])
             ->orderBy('group')
             ->orderBy('key')
             ->get()

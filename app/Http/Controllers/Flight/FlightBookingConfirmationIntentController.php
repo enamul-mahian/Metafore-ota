@@ -170,26 +170,20 @@ final class FlightBookingConfirmationIntentController extends Controller
         $response =
             response()->json([
                 'data' => [
-                    'status' =>
-                        'confirmation_intent',
+                    'status' => 'confirmation_intent',
 
-                    'confirmation_intent_token' =>
-                        $confirmationIntentToken,
+                    'confirmation_intent_token' => $confirmationIntentToken,
 
-                    'traveler_count' =>
-                        count($travelers),
+                    'traveler_count' => count($travelers),
 
-                    'offer' =>
-                        $this->offerForResponse(
-                            $currentOffer,
-                        ),
+                    'offer' => $this->offerForResponse(
+                        $currentOffer,
+                    ),
 
-                    'revalidation' =>
-                        $safeRevalidation,
+                    'revalidation' => $safeRevalidation,
 
-                    'expires_in_seconds' =>
-                        $confirmationIntentStore
-                            ->expiresInSeconds(),
+                    'expires_in_seconds' => $confirmationIntentStore
+                        ->expiresInSeconds(),
                 ],
             ], 201);
 
@@ -205,8 +199,7 @@ final class FlightBookingConfirmationIntentController extends Controller
     {
         $response =
             response()->json([
-                'message' =>
-                    'This booking draft is no longer available. Please search again.',
+                'message' => 'This booking draft is no longer available. Please search again.',
             ], 410);
 
         $response->headers->set(
@@ -224,23 +217,18 @@ final class FlightBookingConfirmationIntentController extends Controller
         $response =
             response()->json([
                 'data' => [
-                    'status' =>
-                        'live_revalidation_required',
+                    'status' => 'live_revalidation_required',
 
-                    'provider' =>
-                        is_string($provider)
+                    'provider' => is_string($provider)
                             ? $provider
                             : null,
 
-                    'live_revalidation' =>
-                        $liveRevalidation === true,
+                    'live_revalidation' => $liveRevalidation === true,
 
-                    'confirmation_intent_created' =>
-                        false,
+                    'confirmation_intent_created' => false,
                 ],
 
-                'message' =>
-                    'A live supplier fare revalidation is required before confirmation.',
+                'message' => 'A live supplier fare revalidation is required before confirmation.',
             ], 409);
 
         $response->headers->set(
@@ -252,8 +240,8 @@ final class FlightBookingConfirmationIntentController extends Controller
     }
 
     /**
-     * @param array<string, mixed> $offer
-     * @param array<string, mixed> $revalidation
+     * @param  array<string, mixed>  $offer
+     * @param  array<string, mixed>  $revalidation
      */
     private function fareChangedResponse(
         array $offer,
@@ -262,28 +250,22 @@ final class FlightBookingConfirmationIntentController extends Controller
         $response =
             response()->json([
                 'data' => [
-                    'status' =>
-                        'fare_changed',
+                    'status' => 'fare_changed',
 
-                    'requires_review' =>
-                        true,
+                    'requires_review' => true,
 
-                    'confirmation_intent_created' =>
-                        false,
+                    'confirmation_intent_created' => false,
 
-                    'offer' =>
-                        $this->offerForResponse(
-                            $offer,
-                        ),
+                    'offer' => $this->offerForResponse(
+                        $offer,
+                    ),
 
-                    'revalidation' =>
-                        $this->revalidationForResponse(
-                            $revalidation,
-                        ),
+                    'revalidation' => $this->revalidationForResponse(
+                        $revalidation,
+                    ),
                 ],
 
-                'message' =>
-                    'The fare changed. Please review the latest trusted fare before confirming.',
+                'message' => 'The fare changed. Please review the latest trusted fare before confirming.',
             ], 409);
 
         $response->headers->set(
@@ -295,92 +277,80 @@ final class FlightBookingConfirmationIntentController extends Controller
     }
 
     /**
-     * @param array<string, mixed> $offer
+     * @param  array<string, mixed>  $offer
      * @return array<string, mixed>
      */
     private function offerForResponse(
         array $offer,
     ): array {
         return [
-            'id' =>
-                $offer['id']
+            'id' => $offer['id']
                     ?? null,
 
-            'provider' =>
-                $offer['provider']
+            'provider' => $offer['provider']
                     ?? null,
 
-            'total_amount' =>
-                $offer['total_amount']
+            'total_amount' => $offer['total_amount']
                     ?? null,
 
-            'currency' =>
-                $offer['currency']
+            'currency' => $offer['currency']
                     ?? null,
 
             'owner' => [
-                'code' =>
-                    data_get(
-                        $offer,
-                        'owner.code',
-                    ),
+                'code' => data_get(
+                    $offer,
+                    'owner.code',
+                ),
 
-                'name' =>
-                    data_get(
-                        $offer,
-                        'owner.name',
-                    ),
+                'name' => data_get(
+                    $offer,
+                    'owner.name',
+                ),
             ],
 
-            'origin' =>
-                $offer['origin']
+            'origin' => $offer['origin']
                     ?? null,
 
-            'destination' =>
-                $offer['destination']
+            'destination' => $offer['destination']
                     ?? null,
         ];
     }
 
     /**
-     * @param array<string, mixed> $revalidation
+     * @param  array<string, mixed>  $revalidation
      * @return array<string, mixed>
      */
     private function revalidationForResponse(
         array $revalidation,
     ): array {
         return [
-            'status' =>
-                is_string(
-                    $revalidation['status']
-                        ?? null
-                )
+            'status' => is_string(
+                $revalidation['status']
+                    ?? null
+            )
                     ? $revalidation['status']
                     : null,
 
-            'provider' =>
-                is_string(
-                    $revalidation['provider']
-                        ?? null
-                )
+            'provider' => is_string(
+                $revalidation['provider']
+                    ?? null
+            )
                     ? $revalidation['provider']
                     : null,
 
-            'live_revalidation' =>
-                (
-                    $revalidation[
-                        'live_revalidation'
-                    ]
-                    ?? false
-                ) === true,
+            'live_revalidation' => (
+                $revalidation[
+                    'live_revalidation'
+                ]
+                ?? false
+            ) === true,
 
-            'price_changed' =>
-                (
-                    $revalidation[
-                        'price_changed'
-                    ]
-                    ?? false
-                ) === true,
+            'price_changed' => (
+                $revalidation[
+                    'price_changed'
+                ]
+                ?? false
+            ) === true,
         ];
     }
 }

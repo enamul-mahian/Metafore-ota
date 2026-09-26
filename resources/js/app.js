@@ -1,3 +1,39 @@
+/**
+ * Conversion tracking bridge (window.EGH.track from site.js). Tracking must
+ * never interrupt the booking flow, so every call is guarded.
+ */
+function trackFlightEvent(name, params = {}) {
+    try {
+        window.EGH?.track?.(name, params);
+    } catch {
+        // Ignore tracking failures.
+    }
+}
+
+/**
+ * Tracking parameters for an offer (amount and currency come from server data).
+ */
+function flightTrackingItem(offer) {
+    const value = Number(offer?.total_amount);
+    const slices = Array.isArray(offer?.slices) ? offer.slices : [];
+    const origin = slices[0]?.origin?.iata_code || '';
+    const destination = slices[0]?.destination?.iata_code || '';
+
+    return {
+        ...(Number.isFinite(value) ? { value } : {}),
+        ...(offer?.total_currency ? { currency: offer.total_currency } : {}),
+        items: [
+            {
+                item_name: [offer?.owner?.name || 'Flight', [origin, destination].filter(Boolean).join('-')]
+                    .filter(Boolean)
+                    .join(' '),
+                item_category: 'flight',
+                ...(Number.isFinite(value) ? { price: value } : {}),
+            },
+        ],
+    };
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     const form = document.querySelector('[data-flight-search-form]');
 
@@ -114,6 +150,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     updateTripType();
     updateReturnMinimum();
+
+    let selectedFlightOffer = null;
 
     const createFlightElement = (
         tagName,
@@ -1207,6 +1245,9 @@ document.addEventListener('DOMContentLoaded', () => {
         panel.className =
             'flight-order-payment-panel';
 
+        // Server-confirmed order total (from payment readiness) for tracking.
+        let orderTracking = {};
+
         const status =
             document.createElement('p');
 
@@ -1395,8 +1436,21 @@ document.addEventListener('DOMContentLoaded', () => {
                     ) {
                         confirmationButton.remove();
 
+                        panel.classList.add(
+                            'is-confirmed',
+                        );
+
                         status.textContent =
                             `Booking confirmed. Reference: ${bookingReference.trim()}.`;
+
+                        trackFlightEvent(
+                            'purchase',
+                            {
+                                ...orderTracking,
+                                transaction_id:
+                                    bookingReference.trim(),
+                            },
+                        );
 
                         return;
                     }
@@ -1693,6 +1747,11 @@ document.addEventListener('DOMContentLoaded', () => {
                     .flightPaymentExecutionBusy =
                     'true';
 
+                trackFlightEvent(
+                    'add_payment_info',
+                    orderTracking,
+                );
+
                 button.disabled =
                     true;
 
@@ -1910,6 +1969,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 button.textContent =
                     'Pay now';
+
+                const readinessOrder = {
+                    ...(selectedFlightOffer || {}),
+                };
+
+                readinessOrder.total_amount =
+                    payload?.data?.total_amount;
+
+                readinessOrder.total_currency =
+                    payload?.data?.total_currency;
+
+                orderTracking =
+                    flightTrackingItem(readinessOrder);
 
                 status.textContent =
                     'The order is ready for payment. Payment requires this separate explicit Pay now action.';
@@ -3025,6 +3097,14 @@ async function reviewFlightBookingDraft(bookingDraftToken) {
         resultsElement.prepend(
             revalidationNotice,
         );
+
+        if (amount !== '' && currency !== '') {
+            document.dispatchEvent(
+                new CustomEvent('flight:fare-updated', {
+                    detail: { amount, currency },
+                }),
+            );
+        }
     }
     // END FLIGHT BOOKING REVALIDATION REVIEW UI
 
@@ -3259,6 +3339,11 @@ const validateFlightTravelers = async (
 
         const travelers =
             collectTravelerPayload(review);
+
+        trackFlightEvent(
+            'begin_checkout',
+            flightTrackingItem(selectedFlightOffer)
+        );
 
         button.disabled = true;
         button.textContent =
@@ -3843,6 +3928,20 @@ const validateFlightTravelers = async (
                 selectionToken
             );
 
+            selectedFlightOffer =
+                payload?.data?.offer || offer;
+
+            trackFlightEvent(
+                'view_item',
+                flightTrackingItem(selectedFlightOffer)
+            );
+
+            document.dispatchEvent(
+                new CustomEvent('flight:selected', {
+                    detail: payload?.data || {},
+                })
+            );
+
             showStatus(
                 (
                     'Flight selected securely. '
@@ -3868,6 +3967,107 @@ const validateFlightTravelers = async (
                     : 'Selection unavailable';
         }
     };
+    /**
+     * Guests can compare offers, but booking needs an account: show a clear
+     * sign-in step whose link returns to this search after login.
+     */
+    const renderGuestSignInPrompt = (
+        offer,
+        card,
+        signInUrl
+    ) => {
+        resultsBox
+            .querySelector('[data-flight-guest-sign-in]')
+            ?.remove();
+
+        const returnUrl = new URL(
+            signInUrl,
+            document.baseURI
+        );
+
+        [
+            'trip_type',
+            'origin',
+            'destination',
+            'departure_date',
+            'return_date',
+            'cabin_class',
+            'adults',
+            'children',
+            'infants',
+        ].forEach((name) => {
+            const field = form.elements.namedItem(name);
+            const value = field && !field.disabled
+                ? String(field.value || '')
+                : '';
+
+            if (value !== '') {
+                returnUrl.searchParams.set(name, value);
+            }
+        });
+
+        const prompt = createFlightElement(
+            'section',
+            'flight-guest-sign-in'
+        );
+
+        prompt.dataset.flightGuestSignIn = '';
+        prompt.setAttribute('role', 'region');
+        prompt.setAttribute(
+            'aria-label',
+            'Log in to book this flight'
+        );
+
+        const text = createFlightElement('div');
+
+        text.append(
+            createFlightElement(
+                'strong',
+                '',
+                'Log in to book this flight'
+            ),
+            createFlightElement(
+                'p',
+                '',
+                (
+                    `${offer?.owner?.name || 'This flight'} · `
+                    + formatFlightMoney(
+                        offer?.total_amount,
+                        offer?.total_currency
+                    )
+                    + '. Traveller details, booking and payment '
+                    + 'need a verified Eagle Global Hub account. '
+                    + 'After you log in or create an account you '
+                    + 'return to this search.'
+                )
+            )
+        );
+
+        const link = createFlightElement(
+            'a',
+            'btn btn--blue flight-guest-sign-in-link',
+            'Log in to book'
+        );
+
+        link.href = returnUrl.toString();
+
+        prompt.append(text, link);
+
+        card.after(prompt);
+
+        trackFlightEvent(
+            'view_item',
+            flightTrackingItem(offer)
+        );
+
+        prompt.scrollIntoView({
+            behavior: 'smooth',
+            block: 'nearest',
+        });
+
+        link.focus({ preventScroll: true });
+    };
+
     const renderFlightOffer = (offer) => {
         const card = createFlightElement(
             'article',
@@ -4011,19 +4211,33 @@ const validateFlightTravelers = async (
             );
         }
 
+        const guestSignInUrl =
+            resultsBox.dataset.flightSignInUrl;
+
         const selectButton = createFlightElement(
             'button',
             'flight-select-button',
-            offer?.selection_token
+            offer?.selection_token || guestSignInUrl
                 ? 'Select Flight'
                 : 'Selection unavailable'
         );
 
         selectButton.type = 'button';
         selectButton.disabled =
-            !offer?.selection_token;
+            !offer?.selection_token && !guestSignInUrl;
 
-        if (offer?.selection_token) {
+        if (guestSignInUrl) {
+            selectButton.addEventListener(
+                'click',
+                () => {
+                    renderGuestSignInPrompt(
+                        offer,
+                        card,
+                        guestSignInUrl
+                    );
+                }
+            );
+        } else if (offer?.selection_token) {
             selectButton.addEventListener(
                 'click',
                 () => {
@@ -4076,20 +4290,39 @@ const validateFlightTravelers = async (
             'flight-offer-cards'
         );
 
-        offers.forEach((offer) => {
-            cards.append(
-                renderFlightOffer(offer)
-            );
+        offers.forEach((offer, index) => {
+            const card = renderFlightOffer(offer);
+
+            card.dataset.offerIndex = String(index);
+            cards.append(card);
         });
 
         resultsBox.append(cards);
         resultsBox.hidden = false;
+
+        document.dispatchEvent(
+            new CustomEvent('flight:results', {
+                detail: { offers },
+            })
+        );
     };
     form.addEventListener('submit', async (event) => {
         event.preventDefault();
 
         clearErrors();
         hideStatus();
+
+        const searchOrigin = form.elements.namedItem('origin')?.value || '';
+        const searchDestination = form.elements.namedItem('destination')?.value || '';
+
+        trackFlightEvent('search', {
+            search_term: `${searchOrigin}-${searchDestination}`,
+            origin: searchOrigin,
+            destination: searchDestination,
+            departure_date: form.elements.namedItem('departure_date')?.value || '',
+            travel_class: form.elements.namedItem('cabin_class')?.value || '',
+            service: 'flights',
+        });
 
         resultsBox.hidden = true;
         resultsBox.textContent = '';
@@ -4170,4 +4403,9 @@ const validateFlightTravelers = async (
             submitButton.textContent = originalButtonText;
         }
     });
+
+    // Criteria from the homepage search or the sign-in return link: search on load.
+    if (form.dataset.flightAutoSearch !== undefined) {
+        form.requestSubmit(submitButton);
+    }
 });

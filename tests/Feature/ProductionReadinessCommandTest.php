@@ -41,6 +41,16 @@ final class ProductionReadinessCommandTest extends TestCase
                         'src' => 'resources/js/app.js',
                         'isEntry' => true,
                     ],
+                    'resources/css/site.css' => [
+                        'file' => 'assets/site.css',
+                        'src' => 'resources/css/site.css',
+                        'isEntry' => true,
+                    ],
+                    'resources/js/site.js' => [
+                        'file' => 'assets/site.js',
+                        'src' => 'resources/js/site.js',
+                        'isEntry' => true,
+                    ],
                 ],
                 JSON_THROW_ON_ERROR,
             ),

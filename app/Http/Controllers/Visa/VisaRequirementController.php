@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Visa;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Visa\CheckVisaRequirementsRequest;
+use App\Models\Country;
 use App\Services\Travel\TravelServiceRegistry;
 use App\Services\Visa\VisaRequirementService;
 use Illuminate\Contracts\View\View;
@@ -30,6 +31,14 @@ class VisaRequirementController extends Controller
         return view('visa.requirements', [
             'criteria' => $criteria,
             'information' => $requirementService->requirements($criteria),
+            'countryNames' => Country::query()
+                ->whereIn('iso3', [
+                    $criteria['nationality'],
+                    $criteria['origin_country'],
+                    $criteria['destination_country'],
+                ])
+                ->pluck('name', 'iso3')
+                ->all(),
         ]);
     }
 }

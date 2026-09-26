@@ -38,11 +38,9 @@ final class FlightOrderPaymentAttemptStatusController extends Controller
         return response()
             ->json([
                 'data' => [
-                    'status' =>
-                        $attempt->status,
+                    'status' => $attempt->status,
 
-                    'provider' =>
-                        $attempt->provider,
+                    'provider' => $attempt->provider,
                 ],
             ])
             ->header(
@@ -60,8 +58,7 @@ final class FlightOrderPaymentAttemptStatusController extends Controller
         return response()
             ->json(
                 [
-                    'message' =>
-                        'Flight payment attempt is unavailable.',
+                    'message' => 'Flight payment attempt is unavailable.',
                 ],
                 404,
             )

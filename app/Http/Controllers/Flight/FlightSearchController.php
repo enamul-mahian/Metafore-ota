@@ -21,13 +21,27 @@ final class FlightSearchController extends Controller
             $criteria
         );
 
-        $offers = $selectionStore
-            ->attachSelectionTokens(
-                $request->user()
-                    ->getAuthIdentifier(),
-                $criteria,
+        $user = $request->user();
+
+        /*
+         * Guests may browse offers, but selection tokens are bound to a
+         * signed-in customer, so guests never receive one.
+         */
+        $offers = $user === null
+            ? array_values(array_map(
+                static function (array $offer): array {
+                    unset($offer['selection_token']);
+
+                    return $offer;
+                },
                 $offers,
-            );
+            ))
+            : $selectionStore
+                ->attachSelectionTokens(
+                    $user->getAuthIdentifier(),
+                    $criteria,
+                    $offers,
+                );
 
         return response()->json([
             'data' => [

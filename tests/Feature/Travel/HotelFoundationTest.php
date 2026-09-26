@@ -19,10 +19,13 @@ class HotelFoundationTest extends TestCase
         $this->seed(RolePermissionSeeder::class);
     }
 
-    public function test_guest_is_redirected_from_hotel_service(): void
+    public function test_guest_can_view_hotel_service_page_with_quote_fallback(): void
     {
         $this->get(route('hotels.index'))
-            ->assertRedirect(route('login'));
+            ->assertOk()
+            ->assertSee('Hotel service is not configured')
+            ->assertSee('Not Configured')
+            ->assertSee(route('enquiries.create', ['service' => 'hotels']), false);
     }
 
     public function test_verified_customer_sees_safe_unconfigured_state(): void

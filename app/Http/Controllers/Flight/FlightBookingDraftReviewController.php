@@ -100,12 +100,10 @@ final class FlightBookingDraftReviewController extends Controller
                     $revalidation,
                 ),
 
-                'created_at' =>
-                    $draft['created_at']
+                'created_at' => $draft['created_at']
                     ?? null,
 
-                'expires_in_seconds' =>
-                    $bookingDraftStore->expiresInSeconds(),
+                'expires_in_seconds' => $bookingDraftStore->expiresInSeconds(),
             ],
         ]);
 
@@ -118,53 +116,44 @@ final class FlightBookingDraftReviewController extends Controller
     }
 
     /**
-     * @param array<string, mixed> $criteria
+     * @param  array<string, mixed>  $criteria
      * @return array<string, mixed>
      */
     private function criteriaForReview(
         array $criteria,
     ): array {
         return [
-            'trip_type' =>
-                $criteria['trip_type']
+            'trip_type' => $criteria['trip_type']
                 ?? null,
 
-            'origin' =>
-                $criteria['origin']
+            'origin' => $criteria['origin']
                 ?? null,
 
-            'destination' =>
-                $criteria['destination']
+            'destination' => $criteria['destination']
                 ?? null,
 
-            'departure_date' =>
-                $criteria['departure_date']
+            'departure_date' => $criteria['departure_date']
                 ?? null,
 
-            'return_date' =>
-                $criteria['return_date']
+            'return_date' => $criteria['return_date']
                 ?? null,
 
-            'adults' =>
-                $criteria['adults']
+            'adults' => $criteria['adults']
                 ?? null,
 
-            'children' =>
-                $criteria['children']
+            'children' => $criteria['children']
                 ?? null,
 
-            'infants' =>
-                $criteria['infants']
+            'infants' => $criteria['infants']
                 ?? null,
 
-            'cabin_class' =>
-                $criteria['cabin_class']
+            'cabin_class' => $criteria['cabin_class']
                 ?? null,
         ];
     }
 
     /**
-     * @param array<string, mixed> $offer
+     * @param  array<string, mixed>  $offer
      * @return array<string, mixed>
      */
     private function offerForReview(
@@ -175,30 +164,24 @@ final class FlightBookingDraftReviewController extends Controller
             ?? null;
 
         return [
-            'id' =>
-                $offer['id']
+            'id' => $offer['id']
                 ?? null,
 
-            'provider' =>
-                $offer['provider']
+            'provider' => $offer['provider']
                 ?? null,
 
-            'total_amount' =>
-                $offer['total_amount']
+            'total_amount' => $offer['total_amount']
                 ?? null,
 
-            'currency' =>
-                $offer['currency']
+            'currency' => $offer['currency']
                 ?? null,
 
             'owner' => [
-                'code' =>
-                    is_array($owner)
+                'code' => is_array($owner)
                         ? ($owner['code'] ?? null)
                         : null,
 
-                'name' =>
-                    is_array($owner)
+                'name' => is_array($owner)
                         ? ($owner['name'] ?? null)
                         : null,
             ],
@@ -207,12 +190,10 @@ final class FlightBookingDraftReviewController extends Controller
              * The Duffel adapter deliberately preserves the trusted normalized
              * route/slices from the original server-side selection.
              */
-            'origin' =>
-                $offer['origin']
+            'origin' => $offer['origin']
                 ?? null,
 
-            'destination' =>
-                $offer['destination']
+            'destination' => $offer['destination']
                 ?? null,
         ];
     }
@@ -223,19 +204,17 @@ final class FlightBookingDraftReviewController extends Controller
      * No supplier payload, traveler PII, token, order, payment, or ticket
      * object is returned through this response.
      *
-     * @param array<string, mixed> $revalidation
+     * @param  array<string, mixed>  $revalidation
      * @return array<string, mixed>
      */
     private function revalidationForReview(
         array $revalidation,
     ): array {
         return [
-            'status' =>
-                $revalidation['status']
+            'status' => $revalidation['status']
                 ?? null,
 
-            'provider' =>
-                $revalidation['provider']
+            'provider' => $revalidation['provider']
                 ?? null,
 
             'live_revalidation' => (bool) (
@@ -254,8 +233,7 @@ final class FlightBookingDraftReviewController extends Controller
     {
         $response = response()->json(
             [
-                'message' =>
-                    'Booking draft is no longer available. Please create a new draft.',
+                'message' => 'Booking draft is no longer available. Please create a new draft.',
             ],
             410,
         );

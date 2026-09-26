@@ -19,11 +19,95 @@ class FlightSearchControllerTest extends TestCase
         $this->seed(RolePermissionSeeder::class);
     }
 
-    public function test_guest_cannot_search_flights(): void
+    public function test_guest_can_search_flights_but_receives_no_selection_tokens(): void
     {
+        $this->app->instance(
+            FlightSearchProvider::class,
+            $this->fakeProvider()
+        );
+
         $this->postJson(
             route('flights.search'),
             $this->validPayload()
+        )
+            ->assertOk()
+            ->assertJsonPath('data.offers.0.id', 'offer-1')
+            ->assertJsonMissingPath('data.offers.0.selection_token');
+    }
+
+    public function test_signed_in_customer_receives_selection_tokens(): void
+    {
+        $this->app->instance(
+            FlightSearchProvider::class,
+            $this->fakeProvider()
+        );
+
+        $token = $this->actingAs($this->customer())
+            ->postJson(
+                route('flights.search'),
+                $this->validPayload()
+            )
+            ->assertOk()
+            ->json('data.offers.0.selection_token');
+
+        $this->assertIsString($token);
+        $this->assertSame(64, strlen($token));
+    }
+
+    public function test_guest_search_is_validated_and_rate_limited(): void
+    {
+        $this->postJson(
+            route('flights.search'),
+            $this->validPayload(['origin' => 'D1'])
+        )
+            ->assertUnprocessable()
+            ->assertJsonValidationErrors(['origin']);
+
+        for ($attempt = 2; $attempt <= 20; $attempt++) {
+            $this->postJson(route('flights.search'), []);
+        }
+
+        $this->postJson(
+            route('flights.search'),
+            $this->validPayload()
+        )->assertTooManyRequests();
+    }
+
+    public function test_signed_in_user_without_permission_cannot_search(): void
+    {
+        $user = User::factory()->create([
+            'email_verified_at' => now(),
+        ]);
+
+        $this->actingAs($user)
+            ->postJson(
+                route('flights.search'),
+                $this->validPayload()
+            )
+            ->assertForbidden();
+    }
+
+    public function test_unverified_user_cannot_search(): void
+    {
+        $user = User::factory()->create([
+            'email_verified_at' => null,
+        ]);
+
+        $user->assignRole('customer');
+
+        $this->actingAs($user)
+            ->postJson(
+                route('flights.search'),
+                $this->validPayload()
+            )
+            ->assertForbidden();
+    }
+
+    public function test_guest_cannot_select_an_offer(): void
+    {
+        $this->postJson(
+            route('flights.offers.select'),
+            ['selection_token' => str_repeat('a', 64)]
         )->assertUnauthorized();
     }
 
@@ -236,6 +320,24 @@ class FlightSearchControllerTest extends TestCase
             ->assertStatus(503);
     }
 
+    private function fakeProvider(): FlightSearchProvider
+    {
+        return new class implements FlightSearchProvider
+        {
+            public function search(array $criteria): array
+            {
+                return [
+                    [
+                        'id' => 'offer-1',
+                        'provider' => 'fake',
+                        'total_amount' => '450.00',
+                        'total_currency' => 'USD',
+                    ],
+                ];
+            }
+        };
+    }
+
     private function customer(): User
     {
         $user = User::factory()->create([
@@ -248,7 +350,7 @@ class FlightSearchControllerTest extends TestCase
     }
 
     /**
-     * @param array<string, mixed> $overrides
+     * @param  array<string, mixed>  $overrides
      * @return array<string, mixed>
      */
     private function validPayload(

@@ -1,0 +1,146 @@
+/* =========================================================
+   Eagle Global Hub — service pages, enquiries, contact,
+   holiday packages, info and error pages (loaded after info.css)
+   ========================================================= */
+
+/* Spam honeypot: invisible to people, still in the DOM for bots */
+.hp-field{position:absolute!important;left:-10000px!important;width:1px;height:1px;overflow:hidden}
+
+/* Inline notice (not configured, validation summary, honest notes) */
+.notice-box{display:flex;gap:12px;align-items:flex-start;padding:14px 16px;border-radius:12px;background:var(--soft);border:1px solid var(--line);font-size:13.5px;color:#334155}
+.notice-box > .ic{color:var(--blue);margin-top:2px}
+.notice-box--warn{background:#fffaf0;border-color:#fde7b0}
+.notice-box--warn > .ic{color:#b45309}
+.notice-box--error{background:#fff5f5;border-color:#f5c2bf;color:#9f1d1d}
+.notice-box--error > .ic{color:var(--red)}
+.notice-box ul{margin-top:4px;padding-left:18px;list-style:disc}
+.notice-box b{color:var(--navy)}
+
+/* Page hero spacing variant used by service pages */
+.page-hero--svc .page-hero__in{padding-top:36px;padding-bottom:40px}
+.page-hero__actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px}
+.page-hero__actions .btn{align-self:auto}
+
+/* Form helpers */
+.field .hint{margin-top:-2px}
+.field--error .input{border-color:var(--red)}
+.field__error{font-size:12px;color:var(--red)}
+.form-actions{display:flex;flex-direction:column;gap:10px}
+.form-actions .btn{justify-content:center}
+select.input{appearance:auto}
+.egh-site input[type=date].input,.egh-site input[type=time].input,.egh-site input[type=month].input{min-width:0;-webkit-appearance:none;appearance:none;display:flex;align-items:center}
+
+/* "What happens next" card */
+.next-steps{list-style:none;display:flex;flex-direction:column;gap:16px;counter-reset:n}
+.next-steps li{display:grid;grid-template-columns:34px 1fr;gap:12px;counter-increment:n}
+.next-steps li::before{content:counter(n);width:34px;height:34px;border-radius:50%;background:var(--sky);color:var(--blue);display:grid;place-items:center;font-weight:700;font-size:14px}
+.next-steps b{display:block;color:var(--navy);font-size:14px}
+.next-steps p{font-size:12.5px;color:var(--muted);margin-top:2px}
+
+/* Other services list in the side column */
+.svc-links{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.svc-links a{display:flex;align-items:center;gap:8px;padding:10px;border:1px solid var(--line);border-radius:10px;font-size:13px;font-weight:500;color:var(--navy);min-height:44px}
+.svc-links a:hover{border-color:var(--blue);background:var(--sky)}
+.svc-links .ic{width:16px;height:16px;color:var(--blue)}
+
+/* Confirmation block after a form is sent */
+.done-box .done-box__ref{display:inline-block;margin-top:8px;font-size:13px;color:var(--muted)}
+.done-box p{color:#475569;margin-top:6px;font-size:14px}
+
+/* Not configured / unavailable state */
+.svc-state{display:grid;grid-template-columns:auto 1fr;gap:18px;align-items:start}
+.svc-state .svc__ic{width:56px;height:56px}
+.svc-state .svc__ic .ic{width:26px;height:26px}
+.svc-state h2{font-size:clamp(18px,2vw,22px);font-weight:700;color:var(--navy);margin-top:6px}
+.svc-state p{color:#475569;font-size:14px;margin-top:6px;max-width:640px}
+.svc-state .row{margin-top:14px}
+.svc-state .btn{align-self:auto}
+
+/* Search card on hotel / tour / visa pages */
+.svc-search{margin-top:-34px;position:relative;z-index:2;box-shadow:var(--shadow)}
+.svc-search .form-grid{align-items:end}
+.svc-search .btn{height:46px;justify-content:center}
+
+/* Result list: honest provider data only */
+.hcard--plain{grid-template-columns:72px 1fr 190px;align-items:center}
+.hcard__ic{width:56px;height:56px;border-radius:14px;display:grid;place-items:center}
+.hcard__ic .ic{width:26px;height:26px}
+.hcard--plain .hcard__price{gap:8px}
+.hcard--plain .hcard__price small{max-width:170px}
+.results-note{margin-top:14px}
+
+/* Visa requirement result */
+.req-card h2{font-size:18px}
+.req-crit{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.req-crit span{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.14);border-radius:999px;padding:4px 12px;font-size:12.5px}
+.page-hero--light .req-crit span{background:#fff;border:1px solid var(--line);color:var(--navy)}
+.req-crit .ic{width:14px;height:14px}
+
+/* Holiday packages */
+.pkg-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.pkg{display:flex;flex-direction:column;gap:10px;background:#fff;border:1px solid var(--line);border-radius:var(--radius);padding:20px;transition:transform .2s,box-shadow .2s,border-color .2s}
+.pkg:hover{transform:translateY(-3px);box-shadow:var(--shadow);border-color:#cfdcf5}
+.pkg h3{font-size:17px;font-weight:700;color:var(--navy)}
+.pkg p{font-size:13.5px;color:#475569;flex:1}
+.pkg .btn{align-self:flex-start}
+.pkg .svc__ic{width:52px;height:52px}
+
+/* Newsletter partial */
+.news-form{display:flex;flex-direction:column;gap:8px;width:min(460px,100%)}
+.news-form .subscribe{width:100%}
+.news-form .subscribe input{min-height:44px}
+.news-done{display:flex;align-items:center;gap:10px;background:#fff;border-radius:14px;padding:12px 16px;color:var(--navy);font-size:14px;font-weight:500;box-shadow:var(--shadow-lg)}
+.news-done .ic{color:var(--green)}
+.news-error{font-size:12.5px;color:#ffd4d1}
+.news-band{background:linear-gradient(120deg,var(--navy),#1a4bb8);border-radius:var(--radius);padding:24px 26px;color:#fff;display:flex;align-items:center;justify-content:space-between;gap:18px;flex-wrap:wrap;margin-top:38px}
+.news-band h2{font-size:clamp(18px,2.2vw,24px);font-weight:700}
+.news-band p{color:#dbe4ff;font-size:13.5px}
+
+/* Contact */
+.cinfo--empty{grid-template-columns:1fr}
+.cinfo li a{color:var(--blue);font-weight:500;overflow-wrap:anywhere}
+.map--link .btn{align-self:auto}
+
+/* Info pages (about, support, terms) */
+.info-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.info-card{display:flex;flex-direction:column;gap:8px}
+.info-card .svc__ic{margin-bottom:4px}
+.info-card h2{font-size:17px;font-weight:700;color:var(--navy)}
+.info-card p{font-size:14px;color:#475569}
+.info-stack{display:flex;flex-direction:column;gap:14px;max-width:860px}
+.info-stack .card h2{font-size:17px;font-weight:700;color:var(--navy);margin-bottom:6px}
+.info-stack .card p{font-size:14px;color:#475569}
+
+/* Error pages */
+.err{text-align:center;padding:56px 0 64px;max-width:620px;margin:0 auto}
+.err__code{font-size:clamp(64px,12vw,120px);font-weight:800;line-height:1;background:linear-gradient(135deg,var(--blue),var(--navy));-webkit-background-clip:text;background-clip:text;color:transparent}
+.err h1{font-size:clamp(22px,3vw,30px);font-weight:700;color:var(--navy);margin-top:10px}
+.err p{color:#475569;margin-top:8px}
+.err .row{justify-content:center;margin-top:20px}
+.err .btn{align-self:auto}
+.err .svc-links{margin-top:28px;text-align:left}
+
+@media (max-width:1100px){
+  .pkg-grid{grid-template-columns:repeat(2,1fr)}
+}
+@media (max-width:960px){
+  .info-grid{grid-template-columns:1fr 1fr}
+  .hcard--plain{grid-template-columns:56px 1fr}
+  .svc-search{margin-top:-24px}
+}
+@media (max-width:640px){
+  .info-grid,.pkg-grid{grid-template-columns:1fr}
+  .svc-state{grid-template-columns:1fr;gap:10px}
+  .hcard--plain{grid-template-columns:1fr}
+  .hcard--plain .hcard__ic{display:none}
+  .hcard--plain .hcard__price{align-items:stretch}
+  .hcard--plain .hcard__price .btn{justify-content:center}
+  .news-band{padding:20px}
+  .svc-search{margin-top:-18px}
+  .page-hero__actions .btn{flex:1 1 100%;justify-content:center}
+}
+@media (pointer:coarse){
+  .svc-links a,.faq summary{min-height:44px;align-items:center}
+}
+.form-grid--1{grid-template-columns:1fr}
+[data-list] .hcard--plain .hcard__price small{white-space:normal;max-width:none;flex:1 1 180px}

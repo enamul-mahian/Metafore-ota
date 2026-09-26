@@ -1,0 +1,217 @@
+/* =========================================================
+   Eagle Global Hub — flight & hotel booking flow extras
+   (flights, flight-booking, flight-payment, hotels,
+    hotel-details, hotel-booking). Loaded after pages.css.
+   ========================================================= */
+
+/* Result-page search bar */
+.searchbar .fld__box{background:#fff}
+.searchbar .fld--route{flex:1.4 1 240px}
+.searchbar .fld--route .fld__box input{font-weight:600;color:var(--navy)}
+.searchbar .fld--route .swap{flex:none;color:var(--blue)}
+.searchbar .fld > label{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.searchbar .fld__box select{appearance:none;-webkit-appearance:none;cursor:pointer;color:#334155}
+.searchbar .fld__box input[type=date]{min-width:0}
+.searchbar .btn{padding:0 22px;justify-content:center}
+.searchbar .dates{display:flex;align-items:center;gap:6px;min-width:0;flex:1}
+.searchbar .dates input{flex:1}
+
+/* Results head */
+.results-head{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+.results-head .h1{font-size:clamp(18px,2vw,22px)}
+.results-head p{font-size:13px;color:var(--muted)}
+.sortbar .seg button{text-align:left;min-width:0}
+.sortbar .seg button small{display:block;font-size:11px;opacity:.8;font-weight:400}
+.sortbar label{display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--muted)}
+.filters__head{display:none;align-items:center;justify-content:space-between;padding:14px 0 6px;font-weight:700;color:var(--navy)}
+.filters .opt[aria-disabled=true]{opacity:.45;cursor:default}
+.stars-opt{color:var(--gold);letter-spacing:1px}
+.filters__apply{display:none}
+.backdrop{display:none}
+
+/* Flight result specifics */
+.airline__logo.c-bg{background:#006a4e}
+.airline__logo.c-ek{background:#d71921}
+.airline__logo.c-qr{background:#5c0632}
+.airline__logo.c-g9{background:#e2231a}
+.airline__logo.c-fz{background:#f47920}
+.airline__logo.c-bs{background:#0f3b8c}
+.route__line b{display:block;font-weight:500;color:#334155}
+.route__line em{font-style:normal;color:var(--green);font-weight:600}
+.route__line em.stop{color:#b45309}
+.price .btn{display:inline-flex}
+.price__was{font-size:11.5px;color:var(--green);font-weight:600}
+.flight__meta .fare-tag{margin-left:auto}
+.flight.is-best{border-color:#bcd0f7}
+
+/* Booking steps inside a card */
+.steps-card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px 10px 2px;margin-bottom:18px}
+.steps-card .steps{margin:0 0 14px}
+.step i .ic{width:14px;height:14px;stroke-width:3}
+
+/* Traveller / guest box */
+.pax-box{border:1px solid var(--line);border-radius:12px;background:var(--soft);padding:16px}
+.pax-box + .pax-box{margin-top:14px}
+.pax-box__head{display:flex;justify-content:space-between;align-items:center;font-weight:600;color:var(--navy);font-size:14px;margin-bottom:12px}
+.sub-title{color:var(--blue);font-weight:600;font-size:14px;margin:4px 0 10px}
+.form-note{display:flex;gap:8px;align-items:flex-start;font-size:12.5px;color:#475569;background:#fff8e6;border:1px solid #fde7b0;border-radius:10px;padding:10px 12px;margin-top:14px}
+.form-note .ic{color:#b45309;width:16px;height:16px;margin-top:1px}
+.pax-box .input{background:#fff}
+select.input{appearance:auto;cursor:pointer}
+.phone-code{display:flex;align-items:center;justify-content:center;gap:6px;font-weight:600;color:var(--navy);font-size:14px;background:#fff}
+.phone-code .flag-bd{width:20px;height:13px;border-radius:2px;background:radial-gradient(circle at 44% 50%,#f42a41 0 28%,transparent 29%),#006a4e;flex:none}
+.input-group .phone-code{width:92px;flex:none;border:1.5px solid var(--line);border-right:0;border-radius:10px 0 0 10px;height:46px}
+.input-group .phone-code + .input{border-radius:0 10px 10px 0}
+
+/* Summary specifics */
+.summary__head{margin:-18px -18px 14px;padding:14px 18px;background:var(--soft);border-bottom:1px solid var(--line);border-radius:14px 14px 0 0;font-weight:700;color:var(--navy);font-size:16px}
+.fsum{border:1px solid var(--line);border-radius:12px;padding:12px;display:flex;gap:12px;margin-bottom:12px}
+.fsum .airline__logo{width:46px;height:46px}
+.fsum b{color:var(--navy)}
+.fsum small{display:block;font-size:12px;color:var(--muted)}
+.fsum__route{display:flex;align-items:center;gap:8px;font-weight:700;color:var(--navy);margin-top:4px}
+.fsum__route .ic{width:14px;height:14px;color:var(--muted)}
+.summary__label{font-size:12.5px;font-weight:600;color:#475569;margin:10px 0 2px;text-transform:uppercase;letter-spacing:.04em}
+.summary details{border-bottom:1px solid var(--line);padding:8px 0}
+.summary summary{cursor:pointer;list-style:none;display:flex;justify-content:space-between;align-items:center;font-size:13.5px;color:#334155;font-weight:500}
+.summary summary .ic{width:15px;height:15px;transition:transform .2s}
+.summary details[open] summary .ic{transform:rotate(180deg)}
+.summary details p{font-size:12.5px;color:var(--muted);margin-top:6px}
+.summary__row--discount{color:var(--green)}
+.summary .perks{display:flex;flex-direction:column;gap:6px;margin-top:12px;font-size:12px;color:#475569}
+.summary .perks span{display:flex;gap:6px;align-items:center}
+.summary .perks .ic{width:14px;height:14px;color:var(--green)}
+.hsum img{width:96px;height:78px}
+.hsum b{display:block;color:var(--navy);font-size:14px;line-height:1.3}
+.hsum small{font-size:12px;color:var(--muted)}
+.stay{display:grid;grid-template-columns:1fr auto 1fr;gap:8px;align-items:center;padding:4px 0 10px;border-bottom:1px solid var(--line);margin-bottom:8px}
+.stay small{display:block;font-size:11.5px;color:var(--muted)}
+.stay b{font-size:14px;color:var(--navy)}
+.stay > :last-child{text-align:right}
+.stay .ic{color:var(--muted);width:16px;height:16px}
+
+/* Payment */
+.pay-item + .pay-item{margin-top:10px}
+.pay-item .pay-panel{margin-top:0}
+.pay-item.is-on .pay-opt{border-radius:12px 12px 0 0;border-color:var(--blue);background:#f5f9ff}
+.pay-item .pay-opt > .chev{margin-left:auto;color:var(--muted);transition:transform .2s}
+.pay-item.is-on .pay-opt > .chev{transform:rotate(90deg);color:var(--blue)}
+.pay-item .logos + .chev{margin-left:8px}
+.pay-opt__ic.c-card{background:var(--sky);color:var(--blue)}
+.pay-opt__ic.c-bkash{background:#fde7f1;color:#e2136e}
+.pay-opt__ic.c-nagad{background:#fff0e3;color:#f26522}
+.pay-opt__ic.c-bank{background:#eef1f6;color:#334155}
+.pay-opt small{display:block;font-size:12px;color:var(--muted);font-weight:400}
+.cardlogo{font-size:10px;font-weight:800;padding:3px 6px;border-radius:5px;border:1px solid var(--line);background:#fff;letter-spacing:.02em}
+.cardlogo.visa{color:#1a1f71}
+.cardlogo.mc{color:#eb001b}
+.cardlogo.amex{color:#2e77bc}
+.pay-panel fieldset{border:0;padding:0;margin:0;min-width:0}
+.pay-panel .check{margin-top:12px;font-size:13px}
+.bank-list{display:grid;grid-template-columns:auto 1fr;gap:6px 14px;font-size:13px}
+.bank-list dt{color:var(--muted)}
+.bank-list dd{color:var(--navy);font-weight:600;font-variant-numeric:tabular-nums}
+.promo-row{display:flex;gap:8px;margin-top:6px}
+.promo-row .input{height:40px}
+.promo-row .btn{flex:none}
+
+/* Confirmation */
+.confirm{max-width:760px;margin:0 auto;text-align:center}
+.confirm__tick{width:76px;height:76px;border-radius:50%;background:#e3f7ea;color:var(--green);display:grid;place-items:center;margin:0 auto 14px}
+.confirm__tick .ic{width:38px;height:38px;stroke-width:2.6}
+.confirm__ref{display:inline-flex;gap:10px;align-items:center;background:var(--sky);border:1.5px dashed #9dbaf0;border-radius:12px;padding:10px 18px;margin:14px 0;font-size:14px}
+.confirm__ref b{font-size:18px;letter-spacing:.06em;color:var(--blue)}
+.confirm .summary__row{font-size:13.5px}
+.confirm__box{text-align:left;margin-top:8px}
+.confirm__actions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:18px}
+.confirm__actions .btn{align-self:auto}
+
+/* Hotel details */
+.hd-head{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap;margin-bottom:14px}
+.hd-head .h1{margin-bottom:4px}
+.hd-head .row{gap:10px}
+.hd-price{text-align:right}
+.hd-price small{display:block;font-size:12px;color:var(--muted)}
+.hd-price b{font-size:24px;color:var(--navy);font-variant-numeric:tabular-nums}
+.gallery{position:relative}
+.gallery__more{position:absolute;right:12px;bottom:12px;align-self:auto}
+.hd-tabs{margin-top:18px}
+.room__info p{font-size:13px;color:var(--muted);margin:4px 0 6px}
+.room__feat{display:flex;gap:6px 14px;flex-wrap:wrap;font-size:12.5px;color:#334155}
+.room__feat span{display:flex;gap:5px;align-items:center}
+.room__feat .ic{width:14px;height:14px;color:var(--green)}
+.room__buy{text-align:right;display:flex;flex-direction:column;align-items:flex-end;gap:2px}
+.room__buy b{font-size:20px;color:var(--navy);font-variant-numeric:tabular-nums}
+.room__buy small{font-size:11.5px;color:var(--muted)}
+.room__buy .btn{margin-top:8px;align-self:flex-end}
+.room__buy .badge{margin-bottom:4px}
+.amen-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:10px}
+.amen-grid span{display:flex;align-items:center;gap:8px;font-size:13.5px;color:#334155;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:#fff}
+.amen-grid .ic{color:var(--blue)}
+.review{border-top:1px solid var(--line);padding:14px 0}
+.review:first-of-type{border-top:0}
+.review__top{display:flex;align-items:center;gap:10px;margin-bottom:6px}
+.review__top img{width:40px;height:40px;border-radius:50%;object-fit:cover}
+.review__top b{display:block;font-size:13.5px;color:var(--navy)}
+.review__top small{font-size:12px;color:var(--muted)}
+.review p{font-size:13.5px;color:#475569}
+.score{display:flex;align-items:center;gap:14px}
+.score b{font-size:34px;color:var(--blue);line-height:1}
+.facts{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;font-size:13px;margin-top:12px}
+.facts span{display:flex;gap:8px;align-items:center;color:#334155}
+.facts .ic{width:16px;height:16px;color:var(--blue)}
+
+/* Responsive */
+@media (max-width:960px){
+  .filters__head{display:flex}
+  .filters{padding-bottom:70px}
+  .filters__apply{display:flex;position:sticky;bottom:0;background:#fff;padding:12px 0;margin-top:8px}
+  .filters.is-open ~ .backdrop,.backdrop.is-open{display:block;position:fixed;inset:0;background:rgba(6,22,56,.45);z-index:89}
+  .sortbar .seg{flex:1 1 100%}
+  .sortbar .seg button{flex:1}
+  .summary__head{margin-top:-18px}
+}
+@media (max-width:640px){
+  .searchbar{padding:10px}
+  .searchbar .fld{flex:1 1 100%}
+  .searchbar .btn{width:100%}
+  .flight{padding:14px}
+  .flight__meta .fare-tag{margin-left:0}
+  .sortbar label{flex:1 1 100%}
+  .sortbar select{flex:1}
+  .hd-price{text-align:left}
+  .room__buy{align-items:stretch;text-align:left;flex-direction:row;flex-wrap:wrap;justify-content:space-between;border-top:1px dashed var(--line);padding-top:10px}
+  .room__buy .btn{margin-top:0;align-self:center}
+  .facts{grid-template-columns:1fr}
+  .confirm__ref{flex-direction:column;gap:2px}
+  .steps-card{padding:12px 4px 0}
+}
+
+/* Photo viewer (hotel details) */
+.lightbox{position:fixed;inset:0;z-index:130;background:rgba(6,14,34,.92);display:none;align-items:center;justify-content:center;gap:12px;padding:56px 12px}
+.lightbox.is-open{display:flex}
+.lightbox img{max-width:min(1100px,calc(100% - 120px));max-height:100%;border-radius:12px;object-fit:contain}
+.lightbox__x,.lightbox__nav{width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,.14);color:#fff;display:grid;place-items:center;flex:none}
+.lightbox__x:hover,.lightbox__nav:hover{background:rgba(255,255,255,.28)}
+.lightbox__x{position:absolute;top:12px;right:12px}
+.lightbox__cap{position:absolute;bottom:14px;left:0;right:0;text-align:center;color:#cbd5e1;font-size:13px}
+@media (max-width:640px){
+  .lightbox img{max-width:100%}
+  .lightbox__nav{position:absolute;bottom:44px}
+  .lightbox__nav[data-d="-1"]{left:calc(50% - 56px)}
+  .lightbox__nav[data-d="1"]{right:calc(50% - 56px)}
+}
+
+/* Fixes */
+.layout-2 > *,.layout-side > *{min-width:0}
+@media (min-width:961px){.filters__group:has(+ .filters__apply){border-bottom:0}}
+@media (max-width:640px){.sortbar .seg button{padding:8px 8px;font-size:12px}}
+.hcard > *,.room > *,.flight > *{min-width:0}
+.loc{align-items:flex-start}.loc .ic{margin-top:2px}
+@media (max-width:960px){.hcard__price{flex-wrap:wrap;gap:4px 10px}.hcard__price .badge{flex-basis:100%;width:max-content;max-width:max-content}.hcard__price .btn{margin-left:auto}}
+@media (min-width:641px){.gallery{grid-template-rows:repeat(2,minmax(0,1fr))}.gallery img{min-height:0}}
+.room__buy b{display:block}.room__buy small{display:block}
+@media (max-width:640px){#stayForm{grid-template-columns:1fr 1fr}#stayForm .field:nth-child(n+3){grid-column:1/-1}.room img{aspect-ratio:16/9}}
+main [hidden]{display:none!important}
+@media (max-width:640px){.pay-opt .logos{display:none}.pay-opt{padding:12px}.pay-panel .form-grid--2{grid-template-columns:1fr 1fr}.filters__apply .btn{gap:4px}}
+textarea.input{font:inherit;font-size:14px}

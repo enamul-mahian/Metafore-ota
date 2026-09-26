@@ -34,8 +34,7 @@ final class FlightOrderPaymentReadinessController extends Controller
             return response()
                 ->json(
                     [
-                        'message' =>
-                            'Flight order payment readiness is temporarily unavailable.',
+                        'message' => 'Flight order payment readiness is temporarily unavailable.',
                     ],
                     503,
                 )
@@ -56,23 +55,17 @@ final class FlightOrderPaymentReadinessController extends Controller
         return response()
             ->json([
                 'data' => [
-                    'status' =>
-                        $readiness['status'],
+                    'status' => $readiness['status'],
 
-                    'provider' =>
-                        $readiness['provider'],
+                    'provider' => $readiness['provider'],
 
-                    'awaiting_payment' =>
-                        $readiness['awaiting_payment'],
+                    'awaiting_payment' => $readiness['awaiting_payment'],
 
-                    'total_amount' =>
-                        $readiness['total_amount'],
+                    'total_amount' => $readiness['total_amount'],
 
-                    'total_currency' =>
-                        $readiness['total_currency'],
+                    'total_currency' => $readiness['total_currency'],
 
-                    'payment_required_by' =>
-                        $readiness['payment_required_by'],
+                    'payment_required_by' => $readiness['payment_required_by'],
                 ],
             ])
             ->header(
@@ -90,8 +83,7 @@ final class FlightOrderPaymentReadinessController extends Controller
         return response()
             ->json(
                 [
-                    'message' =>
-                        'Flight order payment readiness is unavailable.',
+                    'message' => 'Flight order payment readiness is unavailable.',
                 ],
                 404,
             )

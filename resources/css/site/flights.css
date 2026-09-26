@@ -1,0 +1,272 @@
+/* =========================================================
+   Eagle Global Hub — flight search, results & booking steps
+   (re-skins the markup rendered by resources/js/app.js; every
+   selector is scoped to .fs so legacy app.css rules lose)
+   ========================================================= */
+
+/* ---------- Top band ---------- */
+.fs-hero{position:relative;background:#0c2754 center/cover no-repeat;color:#fff}
+.fs-hero::before{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(6,22,56,.9),rgba(6,22,56,.55) 60%,rgba(6,22,56,.25))}
+.fs-hero__in{position:relative;padding-top:22px;padding-bottom:64px}
+.fs-hero .crumbs{color:#c6d2f0}
+.fs-hero .crumbs a:hover{color:#fff}
+.fs-hero h1{font-size:clamp(24px,3vw,34px);font-weight:700;line-height:1.2}
+.fs-hero p{color:#dbe4ff;margin-top:6px;max-width:620px;font-size:14px}
+.fs-page{padding-bottom:56px}
+.fs-page > .container{margin-top:-46px;position:relative}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+
+/* ---------- Search bar ---------- */
+.fs .fs-bar{background:#fff;border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow);padding:14px 16px 6px}
+.fs .fs-trip{display:flex;gap:22px;border:0;margin:0 0 10px;padding:0;min-width:0}
+.fs .fs-trip .radio{min-height:32px;font-weight:500}
+.fs .fs-grid{display:grid;grid-template-columns:minmax(0,2fr) repeat(2,minmax(150px,1fr)) minmax(0,1fr) minmax(0,1fr) auto;gap:10px;align-items:start}
+.fs .fs-route{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);gap:6px;align-items:start}
+.fs .fld > label,.fs .fs-pax__label{font-size:12px;color:var(--muted);font-weight:500}
+.fs .fld__box{height:50px;background:#fbfcfe}
+.fs .fld__box input,.fs .fld__box select{height:100%;border:0;background:transparent;padding:0;box-shadow:none;font-size:14px;color:var(--ink)}
+.fs .fld__box input[data-airport-code]{text-transform:uppercase;font-weight:700;letter-spacing:.08em;color:var(--navy)}
+.fs .fld__box select{appearance:none;-webkit-appearance:none;cursor:pointer}
+.fs .fs-swap{margin:26px 0 0;width:40px;height:40px}
+.fs .fs-help{font-size:11px;color:#94a3b8;min-height:0}
+.fs .flight-field-error{display:block;min-height:0;font-size:11.5px;color:#c0262d;line-height:1.3}
+.fs .flight-field-error:empty{display:none}
+.fs .fs-submit{align-self:start;margin-top:24px;height:50px;border-radius:10px;justify-content:center;padding:0 24px;font-size:14px;white-space:nowrap}
+.fs .fs-submit:disabled{opacity:.7;cursor:wait}
+.fs .fs-pax-error{padding:0 2px 8px}
+
+/* Travellers dropdown */
+.fs .fs-pax{position:relative;min-width:0}
+.fs .fs-pax > summary{list-style:none;cursor:pointer;display:flex;flex-direction:column;gap:6px}
+.fs .fs-pax > summary::-webkit-details-marker{display:none}
+.fs .fs-pax > summary .fld__box{font-size:14px;color:#334155;white-space:nowrap;overflow:hidden}
+.fs .fs-pax > summary .fld__box > span{overflow:hidden;text-overflow:ellipsis;flex:1}
+.fs .fs-pax[open] > summary .fld__box{border-color:var(--blue);box-shadow:0 0 0 4px rgba(37,99,235,.12);background:#fff}
+.fs .fs-pax[open] .fs-pax__chev{transform:rotate(180deg)}
+.fs .fs-pax__pop{position:absolute;right:0;top:calc(100% + 8px);width:min(300px,calc(100vw - 32px));background:#fff;border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow-lg);padding:14px;z-index:40;display:grid;gap:10px}
+.fs .fs-pax__row{display:grid;grid-template-columns:1fr 84px;gap:4px 12px;align-items:center}
+.fs .fs-pax__row label b{display:block;font-size:13.5px;color:var(--navy)}
+.fs .fs-pax__row label small{font-size:11.5px;color:var(--muted)}
+.fs .fs-pax__row .input{height:42px;text-align:center}
+.fs .fs-pax__row .flight-field-error{grid-column:1/-1}
+
+/* ---------- Stepper ---------- */
+.fs .fs-steps{margin:18px 0 0}
+
+/* ---------- Layout ---------- */
+.fs .fs-layout{display:grid;grid-template-columns:270px minmax(0,1fr);gap:22px;align-items:start;margin-top:18px}
+.fs .fs-layout > *{min-width:0}
+.fs[data-flight-stage="search"] .fs-layout,
+.fs:not([data-flight-stage="select"]) .fs-layout{grid-template-columns:minmax(0,1fr)}
+.fs:not([data-flight-stage="select"]) .fs-filters,
+.fs:not([data-flight-stage="select"]) .fs-results-head,
+.fs:not([data-flight-stage="select"]) .fs-sortbar,
+.fs:not([data-flight-stage="select"]) .filters-toggle{display:none}
+.fs .fs-filters{top:92px}
+.fs .fs-body{display:grid;grid-template-columns:minmax(0,1fr);gap:22px;align-items:start}
+.fs .fs-body:has(.fs-summary:not([hidden])){grid-template-columns:minmax(0,1fr) 340px}
+.fs .fs-body > *{min-width:0}
+.fs .fs-flow{display:flex;flex-direction:column;gap:14px}
+.fs .fs-change{margin-bottom:12px}
+.fs .fs-results-head .h2{font-size:clamp(17px,2vw,21px)}
+
+/* Intro (before the first search) */
+.fs .fs-intro{display:grid;gap:14px}
+.fs .fs-intro__card{display:flex;gap:14px;align-items:flex-start}
+.fs .fs-how .card{display:flex;flex-direction:column;gap:6px;padding:18px}
+.fs .fs-how__n{font-size:12px;font-weight:700;color:var(--blue);letter-spacing:.08em}
+.fs .fs-how strong{color:var(--navy);font-size:14.5px}
+.fs .fs-how p{font-size:13px;color:var(--muted)}
+.fs .fs-enquiry{text-align:center}
+.fs .fs-nomatch p{font-size:14px}
+
+/* Status line from app.js */
+.fs .flight-status{padding:12px 14px;border-radius:12px;font-size:13.5px;font-weight:500;line-height:1.5;border:1px solid #cfe0fb;background:var(--sky);color:#1a3f8f}
+.fs .flight-status-success{background:#ecfbf1;border-color:#bfe9cd;color:#166534}
+.fs .flight-status-error{background:#fff5f5;border-color:#f5c2bf;color:#9f1d1d}
+
+/* ---------- Results list ---------- */
+.fs .flight-results{padding:0;margin:0;border:0;background:transparent;color:var(--ink);font-size:14px;line-height:1.5;display:flex;flex-direction:column;gap:14px}
+.fs .flight-results[hidden]{display:none}
+.fs .flight-results-heading{display:none}
+.fs .flight-offer-cards{display:flex;flex-direction:column;gap:12px}
+.fs[data-flight-stage="travellers"]:not([data-flight-show-offers]) .flight-offer-cards,
+.fs[data-flight-stage="review"] .flight-offer-cards,
+.fs[data-flight-stage="payment"] .flight-offer-cards,
+.fs[data-flight-stage="confirmation"] .flight-offer-cards{display:none}
+
+.fs .flight-offer-card{display:grid;grid-template-columns:200px minmax(0,1fr) 170px;grid-template-areas:"id slices price" "id slices select";column-gap:18px;row-gap:8px;align-items:center;background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px 18px;box-shadow:none;margin:0;transition:box-shadow .2s,border-color .2s}
+.fs .flight-offer-card:hover{box-shadow:var(--shadow);border-color:#cfdcf5}
+.fs .flight-offer-card > *{min-width:0}
+.fs .flight-offer-header,.fs .flight-offer-footer{display:contents}
+.fs .flight-offer-identity{grid-area:id;display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:0;padding:0}
+.fs .flight-owner-mark{width:42px;height:42px;border-radius:12px;display:grid;place-items:center;background:var(--sky);color:var(--blue);font-weight:700;font-size:16px;flex:none;box-shadow:none}
+.fs .flight-owner-name{display:block;font-size:14px;color:var(--navy);font-weight:600;line-height:1.3}
+.fs .flight-owner-code{display:block;font-size:11.5px;color:var(--muted)}
+.fs .flight-demo-badge,.fs .flight-payment-badge{display:inline-flex;align-items:center;padding:3px 9px;border-radius:999px;font-size:11px;font-weight:600;background:#fff3dc;color:#b45309;border:0;letter-spacing:0}
+.fs .flight-payment-badge{background:#e6efff;color:#1a56db}
+.fs .flight-offer-price{grid-area:price;display:flex;flex-direction:column;align-items:flex-end;text-align:right;gap:0;padding:0;margin:0;border:0;background:transparent}
+.fs .flight-offer-price span{font-size:11.5px;color:var(--muted);font-weight:500;text-transform:none;letter-spacing:0}
+.fs .flight-offer-price strong{font-size:19px;font-weight:700;color:var(--navy);font-variant-numeric:tabular-nums;line-height:1.2}
+.fs .flight-select-button{grid-area:select;justify-self:end;align-self:start;display:inline-flex;align-items:center;justify-content:center;min-height:42px;padding:0 22px;border-radius:10px;border:0;background:var(--blue);color:#fff;font-weight:600;font-size:13.5px;box-shadow:0 8px 18px rgba(26,86,219,.25);cursor:pointer;width:auto;min-width:0}
+.fs .flight-select-button:hover{background:var(--navy)}
+.fs .flight-select-button:disabled{background:#cbd5e1;box-shadow:none;cursor:not-allowed}
+.fs .flight-payment-badge,.fs .flight-demo-note{grid-column:1/-1;justify-self:start}
+.fs .flight-demo-note{font-size:12px;color:#b45309;margin:0;padding:0;background:none;border:0}
+
+.fs .flight-offer-slices{grid-area:slices;display:flex;flex-direction:column;gap:10px;margin:0;padding:0;border:0}
+.fs .flight-offer-slice{margin:0;padding:0;border:0;background:transparent}
+.fs .flight-offer-slice + .flight-offer-slice{padding-top:10px;border-top:1px dashed var(--line)}
+.fs .flight-slice-heading{display:flex;flex-direction:row;text-align:left;justify-content:space-between;align-items:center;gap:8px;margin:0 0 4px;padding:0;border:0;background:none}
+.fs .flight-slice-heading > div{display:flex;flex-direction:row;text-align:left;align-items:center;gap:8px;flex-wrap:wrap}
+.fs .flight-slice-label{font-size:11px;font-weight:600;color:var(--blue);background:var(--sky);padding:2px 8px;border-radius:999px;letter-spacing:0;text-transform:none}
+.fs .flight-slice-route{font-size:13px;color:var(--navy);font-weight:600}
+.fs .flight-slice-duration{font-size:12px;color:var(--muted)}
+.fs .flight-offer-segment{display:grid;grid-template-columns:minmax(0,1.1fr) auto minmax(60px,1fr) auto;gap:10px;align-items:center;padding:6px 0;margin:0;border:0;background:transparent}
+.fs .flight-offer-segment + .flight-offer-segment{border-top:1px solid #f1f4f9}
+.fs .flight-segment-carrier{display:flex;align-items:center;gap:8px;min-width:0}
+.fs .flight-carrier-mark{display:none}
+.fs .flight-carrier-text{min-width:0}
+.fs .flight-carrier-text strong{display:block;font-size:12.5px;color:#334155;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.fs .flight-carrier-text span{display:block;font-size:11.5px;color:var(--muted)}
+.fs .flight-segment-point{display:flex;flex-direction:column;min-width:0;padding:0;border:0;background:none}
+.fs .flight-segment-point strong{font-size:17px;font-weight:700;color:var(--ink);line-height:1.2}
+.fs .flight-segment-point span{font-size:11.5px;color:var(--muted)}
+.fs .flight-segment-point-arrival{text-align:right}
+.fs .flight-segment-journey{white-space:nowrap;display:flex;flex-direction:column;align-items:center;gap:2px;font-size:11.5px;color:var(--muted);min-width:0}
+.fs .flight-segment-line{display:block;width:100%;height:2px;font-size:0;color:transparent;background:repeating-linear-gradient(90deg,#b6c2d9 0 6px,transparent 6px 10px);position:relative;margin:4px 0}
+.fs .flight-segment-line::after{content:"";position:absolute;right:-2px;top:-4px;width:10px;height:10px;border-radius:50%;background:var(--blue)}
+
+/* Guest: sign in to book */
+.fs .flight-guest-sign-in{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;padding:16px 18px;border-radius:14px;border:1.5px solid #bcd0f7;background:linear-gradient(120deg,#eef5ff,#fff)}
+.fs .flight-guest-sign-in strong{display:block;color:var(--navy);font-size:15px}
+.fs .flight-guest-sign-in p{font-size:13px;color:#475569;margin-top:2px;max-width:560px}
+.fs .flight-guest-sign-in .btn{align-self:center;min-height:44px;padding:0 22px;border-radius:10px}
+
+/* ---------- Traveller details & following steps ---------- */
+.fs .flight-traveler-review,
+.fs .flight-booking-confirmation-intent-panel,
+.fs .flight-order-execution-panel,
+.fs .flight-order-payment-panel{background:#fff;border:1px solid var(--line);border-radius:14px;padding:20px;margin:0;box-shadow:none;color:var(--ink)}
+.fs .flight-traveler-review{display:flex;flex-direction:column;gap:14px}
+.fs .flight-traveler-review > *{margin:0}
+.fs .flight-traveler-review-header{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;flex-wrap:wrap;padding:0;border:0;background:none}
+.fs .flight-review-kicker{font-size:11.5px;font-weight:700;color:var(--blue);letter-spacing:.08em}
+.fs .flight-traveler-review-header h3{font-size:20px;font-weight:700;color:var(--navy);margin:2px 0 4px}
+.fs .flight-traveler-review-header p{font-size:13px;color:var(--muted);max-width:560px}
+.fs .flight-selected-fare{display:flex;flex-direction:column;align-items:flex-end;padding:10px 14px;border-radius:12px;background:var(--soft);border:1px solid var(--line)}
+.fs .flight-selected-fare span{font-size:12px;color:var(--muted)}
+.fs .flight-selected-fare strong{font-size:17px;color:var(--navy)}
+.fs .fs-body:has(.fs-summary:not([hidden])) .flight-selected-fare{display:none}
+.fs .flight-review-demo-warning{padding:10px 12px;border-radius:10px;background:#fff8e6;border:1px solid #fde7b0;color:#92400e;font-size:12.5px}
+.fs .flight-passenger-summary{display:flex;gap:8px;flex-wrap:wrap}
+.fs .flight-passenger-pill{padding:4px 12px;border-radius:999px;background:var(--sky);color:var(--blue);font-size:12px;font-weight:600}
+.fs .flight-traveler-list{display:flex;flex-direction:column;gap:14px}
+.fs .flight-traveler-card{border:1px solid var(--line);border-radius:12px;background:var(--soft);padding:16px;margin:0;box-shadow:none}
+.fs .flight-traveler-card-header{min-height:0;display:flex;justify-content:space-between;align-items:center;margin:0 0 12px;padding:0;border:0;background:none}
+.fs .flight-traveler-card-header strong{font-size:14px;color:var(--navy)}
+.fs .flight-traveler-card-header span{font-size:12px;color:var(--blue);font-weight:600;background:#fff;border:1px solid #cfe0fb;border-radius:999px;padding:2px 10px}
+.fs .flight-traveler-fields{padding:0;margin:0;border:0;background:none;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.fs .flight-traveler-field{padding:0;border:0;background:none;display:flex;flex-direction:column;gap:6px;min-width:0;margin:0}
+.fs .flight-traveler-field-label,.fs .flight-traveler-label{text-transform:none;letter-spacing:0;font-size:12.5px;font-weight:500;color:#475569}
+.fs .flight-traveler-input{height:46px;border:1.5px solid var(--line);border-radius:10px;padding:0 12px;background:#fff;font-size:14px;width:100%;color:var(--ink);box-shadow:none}
+.fs .flight-traveler-input:focus{outline:0;border-color:var(--blue);box-shadow:0 0 0 4px rgba(37,99,235,.12)}
+.fs .flight-traveler-input.is-invalid{border-color:#e0322b;background:#fff8f8}
+.fs .flight-traveler-draft-notice{display:flex;gap:8px;align-items:flex-start;font-size:12.5px;color:#475569;background:#fff8e6;border:1px solid #fde7b0;border-radius:10px;padding:10px 12px}
+.fs .flight-traveler-draft-notice strong{color:#92400e;white-space:nowrap}
+.fs .flight-traveler-actions{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;border-top:1px solid var(--line);padding-top:14px}
+.fs .flight-traveler-actions > span{font-size:12.5px;color:var(--muted);max-width:420px}
+.fs .flight-booking-continue,
+.fs .flight-booking-confirmation-intent-button,
+.fs .flight-order-execution-button{display:inline-flex;align-items:center;justify-content:center;min-height:46px;padding:0 24px;border-radius:10px;border:0;background:var(--blue);color:#fff;font-weight:600;font-size:14px;box-shadow:0 8px 18px rgba(26,86,219,.25);cursor:pointer;width:auto}
+.fs .flight-booking-continue:hover,
+.fs .flight-booking-confirmation-intent-button:hover,
+.fs .flight-order-execution-button:hover{background:var(--navy)}
+.fs .flight-booking-continue:disabled,
+.fs .flight-booking-confirmation-intent-button:disabled,
+.fs .flight-order-execution-button:disabled{background:#cbd5e1;color:#475569;box-shadow:none;cursor:default}
+.fs .flight-order-payment-button:not(:disabled){background:var(--green);box-shadow:0 8px 18px rgba(22,163,74,.25)}
+.fs .flight-traveler-validation-feedback{padding:10px 12px;border-radius:10px;font-size:13px;border:1px solid var(--line);background:var(--soft)}
+.fs .flight-traveler-validation-feedback.is-error{background:#fff5f5;border-color:#f5c2bf;color:#9f1d1d}
+.fs .flight-traveler-validation-feedback.is-success{background:#ecfbf1;border-color:#bfe9cd;color:#166534}
+
+.fs .flight-booking-draft-status,
+.fs .flight-booking-revalidation-status{margin:0;padding:12px 14px;border-radius:12px;font-size:13px;line-height:1.5;border:1px solid #cfe0fb;background:var(--sky);color:#1a3f8f}
+.fs .flight-booking-revalidation-status[data-flight-booking-revalidation-status="price-changed"],
+.fs .flight-booking-revalidation-status[data-flight-booking-revalidation-status="demo-only"]{background:#fff8e6;border-color:#fde7b0;color:#92400e}
+
+.fs .flight-booking-confirmation-intent-panel,
+.fs .flight-order-execution-panel,
+.fs .flight-order-payment-panel{display:flex;flex-direction:column;gap:10px;align-items:flex-start}
+.fs .flight-booking-confirmation-intent-panel > *,
+.fs .flight-order-execution-panel > *,
+.fs .flight-order-payment-panel > *{margin:0;max-width:100%}
+.fs .flight-booking-confirmation-intent-status,
+.fs .flight-order-execution-status,
+.fs .flight-order-payment-status{font-size:13.5px;color:var(--navy);font-weight:500}
+.fs .flight-booking-confirmation-intent-fare{font-size:18px;font-weight:700;color:var(--navy)}
+.fs .flight-booking-confirmation-intent-disclaimer,
+.fs .flight-order-execution-disclaimer{font-size:12.5px;color:var(--muted)}
+.fs .flight-order-payment-panel{border-color:#bcd0f7;background:linear-gradient(180deg,#f5f9ff,#fff)}
+.fs .flight-order-payment-panel::before{content:"Payment";font-size:18px;font-weight:700;color:var(--navy)}
+.fs .flight-order-payment-panel.is-confirmed{border-color:#bfe9cd;background:linear-gradient(180deg,#ecfbf1,#fff)}
+.fs .flight-order-payment-panel.is-confirmed::before{content:"Booking confirmed"}
+.fs .flight-order-payment-panel.is-confirmed .flight-order-payment-status{font-size:16px;font-weight:700;color:#166534}
+
+/* Sticky fare summary */
+.fs .fs-summary{top:92px}
+.fs .fs-summary .fsum{align-items:center}
+.fs .fs-summary__mark{background:var(--sky);color:var(--blue)}
+.fs .fs-summary [data-flight-summary-travellers]{margin:0}
+
+/* Phone continue bar */
+.fs-sticky{display:none}
+
+/* ---------- Tablet ---------- */
+@media (max-width:1100px){
+  .fs .fs-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
+  .fs .fs-route{grid-column:1/-1}
+  .fs .fs-submit{margin-top:24px}
+  .fs .fs-body:has(.fs-summary:not([hidden])){grid-template-columns:minmax(0,1fr) 300px}
+  .fs .flight-traveler-fields{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media (max-width:960px){
+  .fs .fs-layout{grid-template-columns:minmax(0,1fr)}
+  .fs .fs-filters{top:0}
+  .fs .fs-body:has(.fs-summary:not([hidden])){grid-template-columns:minmax(0,1fr)}
+  .fs .fs-summary{position:static;order:-1}
+  .fs .flight-offer-card{grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"id price" "slices slices" "select select";padding:14px}
+  .fs .flight-select-button{justify-self:stretch;width:100%}
+  .fs .flight-offer-slices{border-top:1px solid var(--line);padding-top:10px}
+}
+
+/* ---------- Phone ---------- */
+@media (max-width:640px){
+  .fs-hero__in{padding-top:14px;padding-bottom:56px}
+  .fs-hero p{display:none}
+  .fs .fs-bar{padding:12px 12px 4px;border-radius:14px}
+  .fs .fs-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+  .fs .fs-route{grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);gap:4px}
+  .fs .fs-swap{width:36px;height:36px;margin-top:28px}
+  .fs .fs-pax,.fs .fs-submit{grid-column:1/-1}
+  .fs .fs-submit{margin-top:4px;width:100%}
+  .fs .fs-pax__pop{left:0;right:auto;width:100%}
+  .fs .fld__box{height:48px;padding:0 10px;gap:8px}
+  .fs .fs-route .fld__box .ic{display:none}
+  .fs .fs-how{grid-template-columns:1fr}
+  .fs .fs-sortbar .seg{width:100%}
+  .fs .flight-offer-segment{grid-template-columns:auto minmax(40px,1fr) auto;row-gap:2px}
+  .fs .flight-segment-carrier{grid-column:1/-1}
+  .fs .flight-segment-point strong{font-size:16px}
+  .fs .flight-traveler-fields{grid-template-columns:1fr}
+  .fs .flight-traveler-review,.fs .flight-booking-confirmation-intent-panel,.fs .flight-order-execution-panel,.fs .flight-order-payment-panel{padding:16px}
+  .fs .flight-traveler-actions .flight-booking-continue,.fs .flight-booking-confirmation-intent-button,.fs .flight-order-execution-button{width:100%}
+  .fs .flight-guest-sign-in .btn{width:100%;justify-content:center}
+  .fs .fs-summary{display:none}
+
+  .fs-sticky:not([hidden]){display:flex;position:fixed;left:0;right:0;bottom:0;z-index:80;align-items:center;justify-content:space-between;gap:12px;background:#fff;border-top:1px solid var(--line);box-shadow:0 -8px 24px rgba(15,35,90,.12);padding:10px 16px calc(10px + env(safe-area-inset-bottom))}
+  .fs-sticky small{display:block;font-size:11.5px;color:var(--muted)}
+  .fs-sticky b{font-size:17px;color:var(--navy);font-variant-numeric:tabular-nums}
+  .fs-sticky .btn{min-height:46px;padding:0 26px;border-radius:10px;align-self:center}
+  .fs:has(.fs-sticky:not([hidden])) .fs-page{padding-bottom:calc(96px + env(safe-area-inset-bottom))}
+}

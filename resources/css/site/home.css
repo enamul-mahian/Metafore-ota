@@ -1,0 +1,27 @@
+/* Homepage additions on top of base.css (search tabs as forms, service status, newsletter states). */
+.search__trip{border:0;padding:0;margin:0 0 14px;min-width:0}
+.search__grid>.fld--half{flex:1 1 140px}
+.search__grid select{appearance:none;-webkit-appearance:none;cursor:pointer;color:var(--ink)}
+.fld.is-disabled{opacity:.45}
+.search__note{margin:12px 0 0;font-size:12.5px;color:var(--muted)}
+.search__note .link{color:var(--blue);font-weight:600}
+.search__cta{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:16px}
+.search__cta b{display:block;font-size:17px;color:var(--navy)}
+.search__cta p{margin:4px 0 0;color:var(--muted);font-size:14px;max-width:56ch}
+.search__cta-actions{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.search__cta-actions .btn,.search__cta-actions .search__go{min-height:48px;height:auto}
+.svc__status{display:inline-block;margin-top:4px;padding:2px 8px;border-radius:999px;background:#eef2f7;color:var(--muted);font-size:10.5px;font-style:normal;font-weight:600;letter-spacing:.02em}
+.svc__status.is-live{background:#e7f7ee;color:#137a3f}
+div.svc{cursor:default}
+.hp-field{position:absolute;left:-10000px;width:1px;height:1px;overflow:hidden}
+.cta__done{margin-top:10px;padding:8px 12px;border-radius:10px;background:rgba(22,163,74,.9);color:#fff;font-size:13.5px;display:inline-block}
+.cta__error{margin-top:10px;padding:8px 12px;border-radius:10px;background:rgba(224,50,43,.92);color:#fff;font-size:13.5px;display:inline-block}
+.page-home .promo__title{font-size:clamp(18px,2vw,22px)}
+@media (max-width:640px){
+  .search__grid>.fld--half{flex:1 1 calc(50% - 6px)}
+  .search__cta-actions{width:100%}
+  .search__cta-actions>*{flex:1 1 100%;justify-content:center}
+  .stab{min-height:48px}
+}
+.promo--sky .promo__title,.promo--sand .promo__title{color:var(--navy)}
+.cta h2{color:#fff;font-size:clamp(20px,2.4vw,28px);line-height:1.2;font-weight:700}

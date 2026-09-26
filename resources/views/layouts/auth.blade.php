@@ -1,138 +1,88 @@
+@php
+    $logoUrl = $site->imageUrl('logo');
+    $pageTitle = trim($__env->yieldContent('title', 'Eagle Global Hub LTD'));
+    $pageDescription = trim($__env->yieldContent('meta_description', 'Secure account access for Eagle Global Hub LTD flight, hotel, tour, visa and work visa services.'));
+@endphp
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="theme-color" content="#0b1f4d">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>@yield('title', 'Eagle Global Hub LTD')</title>
+    <title>{{ $pageTitle }}</title>
+    <meta name="description" content="{{ $pageDescription }}">
+    <meta name="robots" content="{{ trim($__env->yieldContent('robots', 'noindex,follow')) }}">
+    <link rel="canonical" href="{{ url()->current() }}">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Eagle Global Hub">
+    <meta property="og:title" content="{{ $pageTitle }}">
+    <meta property="og:description" content="{{ $pageDescription }}">
+    <meta property="og:image" content="{{ $site->imageUrl('home.hero') }}">
+    <link rel="icon" href="{{ $logoUrl }}">
 
-    <meta
-        name="description"
-        content="Secure account access for Eagle Global Hub LTD flight and travel services."
-    >
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @vite(['resources/css/app.css', 'resources/css/site.css', 'resources/js/app.js', 'resources/js/site.js'])
+
+    @include('partials.site.tracking-head')
 </head>
 
-<body class="auth-body">
+<body class="egh-site auth-page">
+    @include('partials.site.tracking-body')
+    @include('partials.site.icons')
 
-    <main class="auth-shell">
+    <main class="auth2" id="main-content">
 
-        <section class="auth-visual">
-
-            <div class="auth-visual-top">
-                <a href="{{ route('home') }}" class="auth-brand">
-                    <span class="auth-brand-icon" aria-hidden="true">
-                        &#9992;
-                    </span>
-
-                    <span>
-                        <strong>Eagle Global Hub LTD</strong>
-                        <small>Flights & Travel</small>
-                    </span>
+        <section class="auth2__visual" style="background-image:url('{{ $site->imageUrl('home.hero') }}')">
+            <div class="auth2__visual-top">
+                <a href="{{ route('home') }}" class="logo logo--light" aria-label="Eagle Global Hub home">
+                    <img src="{{ $logoUrl }}" alt="Eagle Global Hub logo" class="logo__mark" width="76" height="40">
+                    <span class="logo__txt"><b>EAGLE</b><small>GLOBAL HUB LTD.</small></span>
                 </a>
-
-                <a href="{{ route('home') }}" class="auth-home-link">
-                    Back to website
+                <a href="{{ route('home') }}" class="auth2__back">
+                    <svg class="ic"><use href="#i-chev-l"/></svg>Back to website
                 </a>
             </div>
 
-            <div class="auth-visual-content">
+            <div class="auth2__copy">
+                <span class="auth2__eyebrow">Secure travel account</span>
+                <h1>@yield('hero-title', 'Your journey starts with secure account access.')</h1>
+                <p>@yield('hero-description', 'Search, review and manage your travel from one verified account.')</p>
 
-                <span class="auth-eyebrow">
-                    SECURE TRAVEL ACCOUNT
-                </span>
-
-                <h1>
-                    @yield(
-                        'hero-title',
-                        'Your journey starts with secure account access.'
-                    )
-                </h1>
-
-                <p>
-                    @yield(
-                        'hero-description',
-                        'Search, review and manage your flight journey from one verified account.'
-                    )
-                </p>
-
-                <div class="auth-trust-list">
-
-                    <div>
-                        <span aria-hidden="true">&#10003;</span>
-
-                        <p>
-                            <strong>Verified account access</strong>
-                            <small>
-                                Protected areas require authenticated and verified access.
-                            </small>
-                        </p>
-                    </div>
-
-                    <div>
-                        <span aria-hidden="true">&#10003;</span>
-
-                        <p>
-                            <strong>Clear booking flow</strong>
-                            <small>
-                                Review important itinerary and booking states as you continue.
-                            </small>
-                        </p>
-                    </div>
-
-                    <div>
-                        <span aria-hidden="true">&#10003;</span>
-
-                        <p>
-                            <strong>Server-authoritative actions</strong>
-                            <small>
-                                Sensitive booking and payment decisions remain server controlled.
-                            </small>
-                        </p>
-                    </div>
-
-                </div>
-
+                <ul class="auth2__ticks">
+                    <li><svg class="ic"><use href="#i-shield"/></svg><span><b>Verified account access</b>Protected areas require a verified email address.</span></li>
+                    <li><svg class="ic"><use href="#i-plane"/></svg><span><b>Clear booking flow</b>See each booking and payment status as you continue.</span></li>
+                    <li><svg class="ic"><use href="#i-lock"/></svg><span><b>Server-checked actions</b>Booking and payment decisions stay on our secure servers.</span></li>
+                </ul>
             </div>
 
-            <small class="auth-visual-footer">
-                Eagle Global Hub LTD
-            </small>
-
+            <small class="auth2__foot">&copy; {{ now()->year }} Eagle Global Hub LTD</small>
         </section>
 
-        <section class="auth-content">
-
-            <div class="auth-mobile-brand">
-                <a href="{{ route('home') }}">
-                    <span class="auth-brand-icon" aria-hidden="true">
-                        &#9992;
-                    </span>
-
-                    <span>
-                        <strong>Eagle Global Hub LTD</strong>
-                        <small>Flights & Travel</small>
-                    </span>
+        <section class="auth2__panel">
+            <div class="auth2__mobile-brand">
+                <a href="{{ route('home') }}" class="logo" aria-label="Eagle Global Hub home">
+                    <img src="{{ $logoUrl }}" alt="Eagle Global Hub logo" class="logo__mark" width="76" height="40">
+                    <span class="logo__txt"><b>EAGLE</b><small>GLOBAL HUB LTD.</small></span>
+                </a>
+                <a href="{{ route('home') }}" class="auth2__back auth2__back--dark">
+                    <svg class="ic"><use href="#i-chev-l"/></svg>Website
                 </a>
             </div>
 
-            <div class="auth-card">
+            <div class="auth-card auth2__card">
 
                 @if ($errors->any())
-                    <div
-                        class="auth-alert auth-alert-error"
-                        role="alert"
-                    >
-                        <strong>
-                            Please check the form.
-                        </strong>
+                    <div class="auth-alert auth-alert-error" role="alert">
+                        <strong>Please check the form.</strong>
 
                         <ul>
                             @foreach ($errors->all() as $error)
-                                <li>
-                                    {{ $error }}
-                                </li>
+                                <li>{{ $error }}</li>
                             @endforeach
                         </ul>
                     </div>
@@ -142,10 +92,7 @@
                     session('status')
                     && session('status') !== 'verification-link-sent'
                 )
-                    <div
-                        class="auth-alert auth-alert-success"
-                        role="status"
-                    >
+                    <div class="auth-alert auth-alert-success" role="status">
                         {{ session('status') }}
                     </div>
                 @endif
@@ -153,18 +100,14 @@
                 @yield('content')
 
                 <div class="auth-card-meta">
-                    <span>Secure account access</span>
+                    <span><svg class="ic"><use href="#i-lock"/></svg>Secure account access</span>
 
-                    <a href="{{ route('home') }}">
-                        Eagle Global Hub LTD
-                    </a>
+                    <a href="{{ route('home') }}">Eagle Global Hub LTD</a>
                 </div>
 
             </div>
-
         </section>
 
     </main>
-
 </body>
 </html>

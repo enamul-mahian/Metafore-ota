@@ -1,124 +1,48 @@
 @extends('layouts.site')
 
-@section('title', 'Hotels')
+@include('partials.site.route-seo', ['seoRoute' => 'hotels.index'])
 
-@section(
-    'meta_description',
-    'Hotel search services from Eagle Global Hub LTD.'
-)
+@section('og_image', $site->imageUrl('page.hotels'))
 
 @section('content')
+<section class="page-hero page-hero--svc" style="background-image:url('{{ $site->imageUrl('page.hotels') }}')">
+    <div class="container page-hero__in">
+        <nav class="crumbs" aria-label="Breadcrumb"><a href="{{ route('home') }}">Home</a><span>Hotels</span></nav>
+        <h1>Find a Stay for Your Journey</h1>
+        <p>Search hotels, resorts and apartments by city and dates, then send us the one you like and we confirm rooms and rates for you.</p>
+    </div>
+</section>
 
-    <main class="travel-module-page">
-        <header class="travel-module-header">
-            <span class="site-eyebrow">HOTELS</span>
-            <h1>Find a stay for your journey</h1>
-            <p>
-                Search configured hotel inventory and review room and rate
-                details before continuing to guest information.
-            </p>
-        </header>
+<div class="container page">
+    @if (! $service['available'])
+        @include('partials.site.service-unavailable', [
+            'icon' => 'hotel',
+            'badge' => 'Not Configured',
+            'title' => 'Hotel service is not configured',
+            'text' => 'Hotel search will be available after an approved provider adapter and its required server configuration are enabled.',
+            'service' => 'hotels',
+        ])
+    @else
+        <section class="card svc-search" aria-labelledby="hotel-search-title">
+            <h2 class="card__title" id="hotel-search-title"><span>Search available stays</span><svg class="ic"><use href="#i-hotel"/></svg></h2>
+            @include('hotels._search-form')
+        </section>
+    @endif
 
-        <ol class="travel-module-steps" aria-label="Hotel booking steps">
-            @foreach ([
-                'Search',
-                'Results',
-                'Hotel details',
-                'Room & rate',
-                'Guest details',
-                'Review',
-                'Booking',
-                'Payment',
-                'Confirmation',
-            ] as $step)
-                <li>{{ $step }}</li>
-            @endforeach
+    <section class="section">
+        <div class="section__head"><div><h2>How Hotel Booking Works</h2><p>Every step is confirmed with you before anything is paid.</p></div></div>
+        <ol class="process process--4">
+            <li><b>Search</b><p>Enter a city, your dates and how many rooms and adults.</p></li>
+            <li><b>Choose a stay</b><p>Compare the hotels returned for your search.</p></li>
+            <li><b>Request booking</b><p>Send us the hotel you like. Our team checks rooms, rates and rules.</p></li>
+            <li><b>Confirm & pay</b><p>You confirm the final price before the booking is made.</p></li>
         </ol>
+    </section>
 
-        @if (! $service['available'])
-            <section class="travel-unavailable" role="status">
-                <span class="travel-status-badge">Not Configured</span>
-                <h2>Hotel service is not configured</h2>
-                <p>
-                    Hotel search will be available after an approved provider
-                    adapter and its required server configuration are enabled.
-                </p>
-                <a href="{{ route('home') }}" class="site-button site-button-secondary">
-                    Back to travel services
-                </a>
-            </section>
-        @else
-            <section class="travel-search-panel">
-                <div>
-                    <span class="site-eyebrow">HOTEL SEARCH</span>
-                    <h2>Search available stays</h2>
-                </div>
-
-                <form method="POST" action="{{ route('hotels.search') }}">
-                    @csrf
-
-                    <label class="travel-field travel-field-wide">
-                        <span>Destination</span>
-                        <input
-                            type="text"
-                            name="destination"
-                            value="{{ old('destination') }}"
-                            maxlength="120"
-                            autocomplete="off"
-                            required
-                        >
-                    </label>
-
-                    <label class="travel-field">
-                        <span>Check in</span>
-                        <input
-                            type="date"
-                            name="check_in"
-                            value="{{ old('check_in') }}"
-                            min="{{ now()->toDateString() }}"
-                            required
-                        >
-                    </label>
-
-                    <label class="travel-field">
-                        <span>Check out</span>
-                        <input
-                            type="date"
-                            name="check_out"
-                            value="{{ old('check_out') }}"
-                            min="{{ now()->addDay()->toDateString() }}"
-                            required
-                        >
-                    </label>
-
-                    <label class="travel-field">
-                        <span>Adults</span>
-                        <select name="adults" required>
-                            @for ($adults = 1; $adults <= 9; $adults++)
-                                <option value="{{ $adults }}">
-                                    {{ $adults }}
-                                </option>
-                            @endfor
-                        </select>
-                    </label>
-
-                    <label class="travel-field">
-                        <span>Rooms</span>
-                        <select name="rooms" required>
-                            @for ($rooms = 1; $rooms <= 5; $rooms++)
-                                <option value="{{ $rooms }}">
-                                    {{ $rooms }}
-                                </option>
-                            @endfor
-                        </select>
-                    </label>
-
-                    <button type="submit" class="site-button site-button-primary">
-                        Search Hotels
-                    </button>
-                </form>
-            </section>
-        @endif
-    </main>
-
+    <div class="cta-band">
+        <div><h2>Prefer us to find the hotel?</h2><p>Tell us your city, dates and budget and we will suggest stays that fit.</p></div>
+        <a href="{{ route('enquiries.create', ['service' => 'hotels']) }}" class="btn btn--white">Request a Hotel Quote <svg class="ic"><use href="#i-arrow-r"/></svg></a>
+    </div>
+    <div style="height:8px"></div>
+</div>
 @endsection

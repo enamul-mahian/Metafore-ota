@@ -1,0 +1,10 @@
+/* Eagle Global Hub public website design (loaded by layouts.site after app.css). */
+@import './site/base.css';
+@import './site/pages.css';
+@import './site/booking.css';
+@import './site/info.css';
+@import './site/services.css';
+@import './site/work-visa.css';
+@import './site/home.css';
+@import './site/account.css';
+@import './site/flights.css';

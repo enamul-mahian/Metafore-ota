@@ -82,14 +82,11 @@ final class FlightOrderPaymentExecutionController extends Controller
             response()->json(
                 [
                     'data' => [
-                        'status' =>
-                            $status,
+                        'status' => $status,
 
-                        'provider' =>
-                            'duffel',
+                        'provider' => 'duffel',
 
-                        'attempt_reference' =>
-                            $paymentAttemptReference,
+                        'attempt_reference' => $paymentAttemptReference,
                     ],
                 ],
                 $status === 'processing'
@@ -104,8 +101,7 @@ final class FlightOrderPaymentExecutionController extends Controller
         return $this->noStore(
             response()->json(
                 [
-                    'message' =>
-                        'Flight payment execution is unavailable.',
+                    'message' => 'Flight payment execution is unavailable.',
                 ],
                 404,
             ),
@@ -117,8 +113,7 @@ final class FlightOrderPaymentExecutionController extends Controller
         return $this->noStore(
             response()->json(
                 [
-                    'message' =>
-                        'Flight payment execution is temporarily unavailable.',
+                    'message' => 'Flight payment execution is temporarily unavailable.',
                 ],
                 503,
             ),

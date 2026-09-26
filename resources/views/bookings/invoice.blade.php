@@ -1,7 +1,9 @@
 @extends('layouts.site')
 
 @section('title', 'Booking Invoice / Payment Record')
-@section('body_class', 'bookings-body')
+@section('seo_title', 'Booking Invoice | Eagle Global Hub')
+@section('robots', 'noindex,nofollow')
+@section('body_class', 'bookings-body account-body')
 
 @section('content')
 
@@ -26,157 +28,65 @@
             : 'Recorded Amount';
     @endphp
 
-    <main class="bookings-container">
+    <section class="page account-page">
+        <div class="container">
+            <nav class="crumbs no-print" aria-label="Breadcrumb">
+                <a href="{{ route('home') }}">Home</a>
+                <span><a href="{{ route('bookings.index') }}">My Bookings</a></span>
+                <span><a href="{{ route('bookings.show', $booking) }}">Booking #{{ $booking->id }}</a></span>
+                <span>Invoice</span>
+            </nav>
 
-        <section class="booking-detail-hero">
-            <div>
-                <span class="bookings-kicker">
-                    CUSTOMER PAYMENT DOCUMENT
-                </span>
+            <div class="account-layout">
+                @include('account.partials.side-menu', ['active' => 'bookings'])
 
-                <h1>
-                    Booking invoice / payment record
-                </h1>
+                <div class="stack">
+                    <div class="card booking-hero no-print">
+                        <div>
+                            <p class="account-hello__kicker">Customer payment document</p>
+                            <h1 class="h1">Booking invoice / payment record</h1>
+                            <p class="muted small">
+                                A printable record based only on payment information stored for internal booking #{{ $booking->id }}.
+                            </p>
+                        </div>
 
-                <p>
-                    A printable record based only on payment information stored
-                    for internal booking #{{ $booking->id }}.
-                </p>
+                        <div class="booking-actions">
+                            <a href="{{ route('bookings.show', $booking) }}" class="btn btn--outline btn--sm">
+                                <svg class="ic"><use href="#i-chev-l"/></svg>Back to Booking
+                            </a>
+                            <button type="button" class="btn btn--blue btn--sm" onclick="window.print()">
+                                <svg class="ic"><use href="#i-download"/></svg>Print
+                            </button>
+                        </div>
+                    </div>
+
+                    @include('bookings.partials.document', [
+                        'kicker' => 'Invoice / payment record',
+                        'heading' => 'Internal booking #'.$booking->id,
+                        'rows' => [
+                            'Customer' => auth()->user()->name,
+                            'Email' => auth()->user()->email,
+                            'Internal Booking' => '#'.$booking->id,
+                            'Order Status' => $orderStatus,
+                            'Booking Created' => $booking->created_at?->format('M j, Y g:i A') ?? 'Not available',
+                            'Order Resolved' => $booking->resolved_at?->format('M j, Y g:i A') ?? 'Not available',
+                            'Payment Record' => $payment ? '#'.$payment->id : 'Not available',
+                            'Payment Status' => $paymentStatus,
+                            $amountLabel => $payment ? $payment->currency.' '.$payment->amount : 'Not available',
+                            'Payment Created' => $payment?->created_at?->format('M j, Y g:i A') ?? 'Not available',
+                            'Payment Resolved' => $payment?->resolved_at?->format('M j, Y g:i A') ?? 'Not available',
+                        ],
+                        'notes' => [
+                            'Stored payment data' => $payment
+                                ? 'This record reflects the stored payment amount and status shown above.'
+                                : 'No payment attempt is stored for this booking, so no invoice amount is available.',
+                            'Fare and tax detail' => 'A fare, tax and fee breakdown is not stored in this booking record and is therefore not shown here.',
+                            'Airline ticket' => 'This document is not an airline-issued e-ticket, ticket receipt or proof of travel.',
+                        ],
+                    ])
+                </div>
             </div>
-
-            <div class="booking-detail-actions">
-                <a
-                    href="{{ route('bookings.show', $booking) }}"
-                    class="site-button site-button-secondary"
-                >
-                    Back to Booking
-                </a>
-
-                <button
-                    type="button"
-                    class="site-button site-button-primary"
-                    onclick="window.print()"
-                >
-                    Print
-                </button>
-            </div>
-        </section>
-
-        <section class="booking-document">
-            <div class="booking-document-heading">
-                <div>
-                    <span class="bookings-kicker">
-                        INVOICE / PAYMENT RECORD
-                    </span>
-
-                    <h2>
-                        Internal booking #{{ $booking->id }}
-                    </h2>
-                </div>
-
-                <strong>
-                    Eagle Global Hub LTD
-                </strong>
-            </div>
-
-            <dl class="booking-document-grid">
-                <div>
-                    <dt>Customer</dt>
-                    <dd>{{ auth()->user()->name }}</dd>
-                </div>
-
-                <div>
-                    <dt>Email</dt>
-                    <dd>{{ auth()->user()->email }}</dd>
-                </div>
-
-                <div>
-                    <dt>Internal Booking</dt>
-                    <dd>#{{ $booking->id }}</dd>
-                </div>
-
-                <div>
-                    <dt>Order Status</dt>
-                    <dd>{{ $orderStatus }}</dd>
-                </div>
-
-                <div>
-                    <dt>Booking Created</dt>
-                    <dd>{{ $booking->created_at?->format('M j, Y g:i A') ?? 'Not available' }}</dd>
-                </div>
-
-                <div>
-                    <dt>Order Resolved</dt>
-                    <dd>{{ $booking->resolved_at?->format('M j, Y g:i A') ?? 'Not available' }}</dd>
-                </div>
-
-                <div>
-                    <dt>Payment Record</dt>
-                    <dd>{{ $payment ? '#'.$payment->id : 'Not available' }}</dd>
-                </div>
-
-                <div>
-                    <dt>Payment Status</dt>
-                    <dd>{{ $paymentStatus }}</dd>
-                </div>
-
-                <div>
-                    <dt>{{ $amountLabel }}</dt>
-                    <dd>
-                        @if ($payment)
-                            {{ $payment->currency }} {{ $payment->amount }}
-                        @else
-                            Not available
-                        @endif
-                    </dd>
-                </div>
-
-                <div>
-                    <dt>Payment Created</dt>
-                    <dd>{{ $payment?->created_at?->format('M j, Y g:i A') ?? 'Not available' }}</dd>
-                </div>
-
-                <div>
-                    <dt>Payment Resolved</dt>
-                    <dd>{{ $payment?->resolved_at?->format('M j, Y g:i A') ?? 'Not available' }}</dd>
-                </div>
-            </dl>
-
-            <div class="booking-note-grid">
-                <article>
-                    <h3>Stored payment data</h3>
-
-                    <p>
-                        @if ($payment)
-                            This record reflects the stored payment amount and
-                            status shown above.
-                        @else
-                            No payment attempt is stored for this booking, so no
-                            invoice amount is available.
-                        @endif
-                    </p>
-                </article>
-
-                <article>
-                    <h3>Fare and tax detail</h3>
-
-                    <p>
-                        A fare, tax and fee breakdown is not stored in this
-                        booking record and is therefore not shown here.
-                    </p>
-                </article>
-
-                <article>
-                    <h3>Airline ticket</h3>
-
-                    <p>
-                        This document is not an airline-issued e-ticket, ticket
-                        receipt or proof of travel.
-                    </p>
-                </article>
-            </div>
-        </section>
-
-    </main>
+        </div>
+    </section>
 
 @endsection

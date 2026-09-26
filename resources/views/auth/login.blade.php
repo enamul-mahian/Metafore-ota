@@ -3,6 +3,8 @@
 @section('title', 'Login | Eagle Global Hub LTD')
 @section('hero-title', 'Welcome Back!')
 @section('hero-description', 'Login to continue your travel experience.')
+@section('robots', 'index,follow')
+@section('meta_description', 'Log in to your Eagle Global Hub account to book flights, manage bookings, track visa and work visa applications and update your profile.')
 
 @section('content')
     <div class="auth-heading">
@@ -10,6 +12,12 @@
         <h2>Login</h2>
         <p>Sign in to continue to your Eagle Global Hub LTD account.</p>
     </div>
+
+    @if (str_contains((string) session('url.intended'), '/flights/sign-in'))
+        <div class="auth-alert auth-alert-info" role="status">
+            Log in or create an account to book your selected flight. You will return to your flight search afterwards.
+        </div>
+    @endif
 
     <form method="POST" action="{{ route('login.store') }}" class="auth-form">
         @csrf

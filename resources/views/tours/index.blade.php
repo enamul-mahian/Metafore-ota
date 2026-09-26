@@ -1,107 +1,48 @@
 @extends('layouts.site')
 
-@section('title', 'Tours')
+@include('partials.site.route-seo', ['seoRoute' => 'tours.index'])
 
-@section(
-    'meta_description',
-    'Tour search services from Eagle Global Hub LTD.'
-)
+@section('og_image', $site->imageUrl('page.tours'))
 
 @section('content')
+<section class="page-hero page-hero--svc" style="background-image:url('{{ $site->imageUrl('page.tours') }}')">
+    <div class="container page-hero__in">
+        <nav class="crumbs" aria-label="Breadcrumb"><a href="{{ route('home') }}">Home</a><span>Tours &amp; Activities</span></nav>
+        <h1>Explore Tours for Your Destination</h1>
+        <p>City tours, day trips, cruises and activities. Search by destination, then send us the tour you like and we confirm availability for you.</p>
+    </div>
+</section>
 
-    <main class="travel-module-page">
-        <header class="travel-module-header">
-            <span class="site-eyebrow">TOURS</span>
-            <h1>Explore tours for your destination</h1>
-            <p>
-                Search a configured tour provider and review genuine
-                availability before entering traveler details.
-            </p>
-        </header>
+<div class="container page">
+    @if (! $service['available'])
+        @include('partials.site.service-unavailable', [
+            'icon' => 'palm',
+            'badge' => 'Not Configured',
+            'title' => 'Tour service is not configured',
+            'text' => 'Tour search will be available after an approved provider adapter and its required server configuration are enabled.',
+            'service' => 'tours',
+        ])
+    @else
+        <section class="card svc-search" aria-labelledby="tour-search-title">
+            <h2 class="card__title" id="tour-search-title"><span>Search available tours</span><svg class="ic"><use href="#i-palm"/></svg></h2>
+            @include('tours._search-form')
+        </section>
+    @endif
 
-        <ol
-            class="travel-module-steps travel-module-steps-eight"
-            aria-label="Tour booking steps"
-        >
-            @foreach ([
-                'Search',
-                'Tour details',
-                'Availability',
-                'Traveler details',
-                'Review',
-                'Booking',
-                'Payment',
-                'Confirmation',
-            ] as $step)
-                <li>{{ $step }}</li>
-            @endforeach
+    <section class="section">
+        <div class="section__head"><div><h2>How Tour Booking Works</h2><p>Availability and price are confirmed with you before you pay.</p></div></div>
+        <ol class="process process--4">
+            <li><b>Search</b><p>Enter your destination, a preferred date and the number of travelers.</p></li>
+            <li><b>Pick a tour</b><p>Compare the tours returned for your destination.</p></li>
+            <li><b>Request booking</b><p>Send us the tour you like. Our team checks the date and price.</p></li>
+            <li><b>Confirm & pay</b><p>You confirm the final price before the booking is made.</p></li>
         </ol>
+    </section>
 
-        @if (! $service['available'])
-            <section class="travel-unavailable" role="status">
-                <span class="travel-status-badge">Not Configured</span>
-                <h2>Tour service is not configured</h2>
-                <p>
-                    Tour search will be available after an approved provider
-                    adapter and its required server configuration are enabled.
-                </p>
-                <a href="{{ route('home') }}" class="site-button site-button-secondary">
-                    Back to travel services
-                </a>
-            </section>
-        @else
-            <section class="travel-search-panel">
-                <div>
-                    <span class="site-eyebrow">TOUR SEARCH</span>
-                    <h2>Search available tours</h2>
-                </div>
-
-                <form
-                    method="POST"
-                    action="{{ route('tours.search') }}"
-                    class="travel-search-form-compact"
-                >
-                    @csrf
-
-                    <label class="travel-field travel-field-wide">
-                        <span>Destination</span>
-                        <input
-                            type="text"
-                            name="destination"
-                            value="{{ old('destination') }}"
-                            maxlength="120"
-                            autocomplete="off"
-                            required
-                        >
-                    </label>
-
-                    <label class="travel-field">
-                        <span>Preferred date</span>
-                        <input
-                            type="date"
-                            name="travel_date"
-                            value="{{ old('travel_date') }}"
-                            min="{{ now()->toDateString() }}"
-                        >
-                    </label>
-
-                    <label class="travel-field">
-                        <span>Travelers</span>
-                        <select name="travelers" required>
-                            @for ($travelers = 1; $travelers <= 12; $travelers++)
-                                <option value="{{ $travelers }}">
-                                    {{ $travelers }}
-                                </option>
-                            @endfor
-                        </select>
-                    </label>
-
-                    <button type="submit" class="site-button site-button-primary">
-                        Search Tours
-                    </button>
-                </form>
-            </section>
-        @endif
-    </main>
-
+    <div class="cta-band">
+        <div><h2>Want a tour plan made for you?</h2><p>Tell us your destination and interests and we will suggest tours and activities.</p></div>
+        <a href="{{ route('enquiries.create', ['service' => 'tours']) }}" class="btn btn--white">Request a Tour Quote <svg class="ic"><use href="#i-arrow-r"/></svg></a>
+    </div>
+    <div style="height:8px"></div>
+</div>
 @endsection
