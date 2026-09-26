@@ -7,6 +7,7 @@
 @section('title', 'Dashboard')
 @section('body_class', 'dashboard-body')
 @section('page-class', 'admin-page')
+@section('robots', 'noindex,nofollow')
 
 @section('content')
 
@@ -19,6 +20,64 @@
         >
             <a class="egh-button secondary" href="{{ route('home') }}">View website</a>
         </x-admin.page-header>
+
+        @php
+            $dashboardStats = app(\App\Services\AdminDashboardService::class);
+            $kpis = $dashboardStats->kpis(auth()->user());
+            $recentEnquiries = $dashboardStats->recentEnquiries(auth()->user());
+        @endphp
+
+        <section class="dash-kpis" aria-label="Key numbers">
+            @foreach ($kpis as $kpi)
+                @if ($kpi['url'])
+                    <a href="{{ $kpi['url'] }}" class="dash-kpi dash-kpi--{{ $kpi['tone'] }}">
+                @else
+                    <div class="dash-kpi dash-kpi--{{ $kpi['tone'] }}">
+                @endif
+                    <span class="dash-kpi__label">{{ $kpi['label'] }}</span>
+                    <strong class="dash-kpi__value">{{ number_format($kpi['value']) }}</strong>
+                    <span class="dash-kpi__hint">{{ $kpi['hint'] }}</span>
+                @if ($kpi['url'])
+                    </a>
+                @else
+                    </div>
+                @endif
+            @endforeach
+        </section>
+
+        @can('enquiries.view')
+            <section class="egh-card dash-recent">
+                <div class="admin-card-heading">
+                    <div>
+                        <span class="admin-page-eyebrow">Leads</span>
+                        <h2>Latest enquiries</h2>
+                    </div>
+                    @if (Route::has('admin.enquiries.index'))
+                        <a class="egh-button secondary" href="{{ route('admin.enquiries.index') }}">All enquiries</a>
+                    @endif
+                </div>
+                @if ($recentEnquiries->isEmpty())
+                    <p class="dash-empty">No enquiries yet. Quote requests from the website will appear here.</p>
+                @else
+                    <div class="wsc-table-wrap">
+                        <table class="wsc-table dash-table">
+                            <thead><tr><th>Received</th><th>Service</th><th>Name</th><th>Status</th><th><span class="sr-only">Open</span></th></tr></thead>
+                            <tbody>
+                                @foreach ($recentEnquiries as $enquiry)
+                                    <tr>
+                                        <td>{{ $enquiry->created_at?->diffForHumans() }}</td>
+                                        <td>{{ $enquiry->serviceLabel() }}</td>
+                                        <td>{{ $enquiry->name }}</td>
+                                        <td><span @class(['dash-status', 'is-new' => $enquiry->status === \App\Models\Enquiry::STATUS_NEW])>{{ $enquiry->statusLabel() }}</span></td>
+                                        <td><a href="{{ route('admin.enquiries.show', $enquiry) }}">View</a></td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                @endif
+            </section>
+        @endcan
 
         <section class="egh-card">
             <div class="admin-card-heading">
@@ -50,6 +109,13 @@
                         <span>Visibility controls within established safety boundaries</span>
                     </a>
                 @endrole
+
+                @can('content.view')
+                    <a class="admin-dashboard-card" href="{{ route('admin.website.images') }}">
+                        <strong>Website</strong>
+                        <span>Images, destinations, SEO, tracking &amp; ads, contact details</span>
+                    </a>
+                @endcan
 
                 @can('settings.view')
                     <a class="admin-dashboard-card" href="{{ route('admin.settings.manage') }}">
@@ -87,338 +153,142 @@
         </section>
     @else
 
-    <main class="dashboard-container">
+    <section class="page account-page">
+        <div class="container">
+            <nav class="crumbs" aria-label="Breadcrumb">
+                <a href="{{ route('home') }}">Home</a>
+                <span>Dashboard</span>
+            </nav>
 
-        <section class="dashboard-welcome">
+            <div class="account-layout">
+                @include('account.partials.side-menu', ['active' => ''])
 
-            <div>
-                <span class="dashboard-kicker">
-                    WELCOME BACK
-                </span>
-
-                <h1>
-                    Hello, {{ auth()->user()->name }}
-                </h1>
-
-                <p>
-                    Search flights, review your account details and continue
-                    your travel journey from one secure dashboard.
-                </p>
-
-                <div class="dashboard-welcome-actions">
-
-                    @feature('flights')
-                        @can('flights.search')
-                            <a
-                                href="{{ route('flights.index') }}"
-                                class="site-button site-button-primary"
-                            >
-                                Search Flights
-                            </a>
-                        @endcan
-                    @endfeature
-
-                    @feature('account')
-                        <a
-                            href="{{ route('account.overview') }}"
-                            class="site-button site-button-secondary"
-                        >
-                            View Account
-                        </a>
-                    @endfeature
-
-                </div>
-            </div>
-
-            <div class="dashboard-verified">
-                <span aria-hidden="true">&#10003;</span>
-
-                <div>
-                    <strong>Email Verified</strong>
-
-                    <small>
-                        Your verified account can access protected travel pages.
-                    </small>
-                </div>
-            </div>
-
-        </section>
-
-        <section class="dashboard-section">
-
-            <div class="dashboard-section-heading">
-                <div>
-                    <span class="dashboard-kicker">
-                        QUICK ACCESS
-                    </span>
-
-                    <h2>
-                        Continue your journey
-                    </h2>
-                </div>
-            </div>
-
-            <div class="dashboard-quick-grid">
-
-                @feature('flights')
-                    @can('flights.search')
-                        <a
-                            href="{{ route('flights.index') }}"
-                            class="dashboard-quick-card"
-                        >
-                        <span class="dashboard-quick-icon" aria-hidden="true">
-                            &#9992;
-                        </span>
-
-                        <div>
-                            <strong>Flight Search</strong>
-
-                            <small>
-                                Search available flight options by route,
-                                date, cabin and travelers.
-                            </small>
+                <div class="stack">
+                    <div class="card account-hello">
+                        <div class="account-hello__id">
+                            <span class="account-hello__av" aria-hidden="true">{{ strtoupper(substr(auth()->user()->name, 0, 1)) }}</span>
+                            <div>
+                                <p class="account-hello__kicker">Welcome back</p>
+                                <h1 class="h1">Hello, {{ auth()->user()->name }}</h1>
+                                <p class="muted small">Search flights, review your account details and continue your travel journey.</p>
+                            </div>
                         </div>
-
-                        <b aria-hidden="true">&rarr;</b>
-                        </a>
-                    @endcan
-                @endfeature
-
-                @feature('account')
-                    <a
-                        href="{{ route('account.overview') }}"
-                        class="dashboard-quick-card"
-                    >
-                    <span class="dashboard-quick-icon" aria-hidden="true">
-                        A
-                    </span>
-
-                    <div>
-                        <strong>Account Overview</strong>
-
-                        <small>
-                            Review your name, email, verification and
-                            account timeline.
-                        </small>
+                        <div class="account-hello__cta">
+                            @feature('flights')
+                                @can('flights.search')
+                                    <a href="{{ route('flights.index') }}" class="btn btn--blue">
+                                        <svg class="ic"><use href="#i-search"/></svg>Search Flights
+                                    </a>
+                                @endcan
+                            @endfeature
+                            @feature('account')
+                                <a href="{{ route('account.overview') }}" class="btn btn--outline">View Account</a>
+                            @endfeature
+                        </div>
                     </div>
 
-                    <b aria-hidden="true">&rarr;</b>
-                    </a>
-                @endfeature
+                    <section class="card" aria-labelledby="dashboard-services-title">
+                        <h2 class="card__title" id="dashboard-services-title">Travel services</h2>
 
-                @feature('bookings')
-                    @can('flights.book')
-                        <a
-                            href="{{ route('bookings.index') }}"
-                            class="dashboard-quick-card"
-                        >
-                        <span class="dashboard-quick-icon" aria-hidden="true">
-                            B
-                        </span>
+                        <div class="dash-services">
+                            @feature('flights')
+                                @can('flights.search')
+                                    <a href="{{ route('flights.index') }}" class="dash-service is-live">
+                                        <span class="svc__ic c-blue"><svg class="ic"><use href="#i-plane"/></svg></span>
+                                        <b>Flights</b>
+                                        <small>Search domestic and international flight options.</small>
+                                        <span class="badge badge--success">Available</span>
+                                    </a>
+                                @else
+                                    <article class="dash-service">
+                                        <span class="svc__ic c-blue"><svg class="ic"><use href="#i-plane"/></svg></span>
+                                        <b>Flights</b>
+                                        <small>Flight access is not enabled for this account.</small>
+                                        <span class="badge badge--muted">Unavailable</span>
+                                    </article>
+                                @endcan
+                            @endfeature
 
-                        <div>
-                            <strong>My Bookings</strong>
+                            @foreach ([
+                                'hotels' => [
+                                    'icon' => 'hotel',
+                                    'tone' => 'c-orange',
+                                    'description' => 'Search configured hotel availability and stay options.',
+                                ],
+                                'tours' => [
+                                    'icon' => 'palm',
+                                    'tone' => 'c-green',
+                                    'description' => 'Search configured tours and destination activities.',
+                                ],
+                                'visa' => [
+                                    'icon' => 'passport',
+                                    'tone' => 'c-indigo',
+                                    'description' => 'Review configured visa and entry requirement information.',
+                                ],
+                            ] as $serviceKey => $presentation)
+                                @feature($serviceKey)
+                                    @php
+                                        $service = $travelServices[$serviceKey] ?? null;
+                                        $hasPermission = $service
+                                            && (
+                                                $service['permission'] === null
+                                                || auth()->user()->can($service['permission'])
+                                            );
+                                        $canAccess = $service
+                                            && $service['available']
+                                            && $service['route_name']
+                                            && $hasPermission;
+                                    @endphp
 
-                            <small>
-                                Review your flight booking attempts, order
-                                status and payment status.
-                            </small>
-                        </div>
-
-                        <b aria-hidden="true">&rarr;</b>
-                        </a>
-                    @endcan
-                @endfeature
-
-            </div>
-
-        </section>
-
-        <section class="dashboard-section">
-
-            <div class="dashboard-section-heading">
-                <div>
-                    <span class="dashboard-kicker">
-                        TRAVEL SERVICES
-                    </span>
-
-                    <h2>
-                        Services
-                    </h2>
-                </div>
-            </div>
-
-            <div class="dashboard-service-grid">
-
-                @feature('flights')
-                    @can('flights.search')
-                        <a
-                            href="{{ route('flights.index') }}"
-                            class="dashboard-service-card dashboard-service-card-link"
-                        >
-                        <div class="service-icon" aria-hidden="true">
-                            &#9992;
-                        </div>
-
-                        <h3>Flights</h3>
-
-                        <p>
-                            Search domestic and international flight options.
-                        </p>
-
-                        <span class="service-status service-status-live">
-                            Available
-                        </span>
-                        </a>
-                    @else
-                        <article class="dashboard-service-card">
-                        <div class="service-icon" aria-hidden="true">
-                            &#9992;
-                        </div>
-
-                        <h3>Flights</h3>
-
-                        <p>
-                            Flight access is not enabled for this account.
-                        </p>
-
-                        <span class="service-status">
-                            Unavailable
-                        </span>
-                        </article>
-                    @endcan
-                @endfeature
-
-                @foreach ([
-                    'hotels' => [
-                        'icon' => 'H',
-                        'description' => 'Search configured hotel availability and stay options.',
-                    ],
-                    'tours' => [
-                        'icon' => 'T',
-                        'description' => 'Search configured tours and destination activities.',
-                    ],
-                    'visa' => [
-                        'icon' => 'V',
-                        'description' => 'Review configured visa and entry requirement information.',
-                    ],
-                ] as $serviceKey => $presentation)
-                    @feature($serviceKey)
-                        @php
-                            $service = $travelServices[$serviceKey] ?? null;
-                            $hasPermission = $service
-                                && (
-                                    $service['permission'] === null
-                                    || auth()->user()->can($service['permission'])
-                                );
-                            $canAccess = $service
-                                && $service['available']
-                                && $service['route_name']
-                                && $hasPermission;
-                        @endphp
-
-                        @if ($canAccess)
-                            <a
-                                href="{{ route($service['route_name']) }}"
-                                class="dashboard-service-card dashboard-service-card-link"
-                            >
-                                <div class="service-icon" aria-hidden="true">
-                                    {{ $presentation['icon'] }}
-                                </div>
-
-                                <h3>{{ $service['label'] }}</h3>
-
-                                <p>{{ $presentation['description'] }}</p>
-
-                                <span class="service-status service-status-live">
-                                    {{ $service['status'] }}
-                                </span>
-                            </a>
-                        @else
-                            <article class="dashboard-service-card">
-                                <div class="service-icon" aria-hidden="true">
-                                    {{ $presentation['icon'] }}
-                                </div>
-
-                                <h3>{{ $service['label'] ?? ucfirst($serviceKey) }}</h3>
-
-                                <p>
-                                    @if ($service && $service['available'])
-                                        This service is not enabled for your account.
+                                    @if ($canAccess)
+                                        <a href="{{ route($service['route_name']) }}" class="dash-service is-live">
+                                            <span class="svc__ic {{ $presentation['tone'] }}"><svg class="ic"><use href="#i-{{ $presentation['icon'] }}"/></svg></span>
+                                            <b>{{ $service['label'] }}</b>
+                                            <small>{{ $presentation['description'] }}</small>
+                                            <span class="badge badge--success">{{ $service['status'] }}</span>
+                                        </a>
                                     @else
-                                        This service is not configured for customer use.
+                                        <article class="dash-service">
+                                            <span class="svc__ic {{ $presentation['tone'] }}"><svg class="ic"><use href="#i-{{ $presentation['icon'] }}"/></svg></span>
+                                            <b>{{ $service['label'] ?? ucfirst($serviceKey) }}</b>
+                                            <small>
+                                                @if ($service && $service['available'])
+                                                    This service is not enabled for your account.
+                                                @else
+                                                    This service is not configured for customer use.
+                                                @endif
+                                            </small>
+                                            <span class="badge badge--muted">
+                                                {{ $service && $service['available']
+                                                    ? 'Unavailable'
+                                                    : ($service['status'] ?? 'Not Configured') }}
+                                            </span>
+                                        </article>
                                     @endif
-                                </p>
+                                @endfeature
+                            @endforeach
+                        </div>
+                    </section>
 
-                                <span class="service-status">
-                                    {{ $service && $service['available']
-                                        ? 'Unavailable'
-                                        : ($service['status'] ?? 'Not Configured') }}
-                                </span>
-                            </article>
-                        @endif
-                    @endfeature
-                @endforeach
+                    <section class="card" aria-labelledby="dashboard-account-title">
+                        <div class="card__title">
+                            <h2 class="h3" id="dashboard-account-title">Account snapshot</h2>
+                            @feature('account')
+                                <a href="{{ route('account.overview') }}" class="link small">Open Account</a>
+                            @endfeature
+                        </div>
 
+                        <dl class="kv kv--grid">
+                            <div><dt>Full Name</dt><dd>{{ auth()->user()->name }}</dd></div>
+                            <div><dt>Email Address</dt><dd>{{ auth()->user()->email }}</dd></div>
+                            <div><dt>Email Status</dt><dd><span class="badge badge--success">Verified</span></dd></div>
+                            <div><dt>Member Since</dt><dd>{{ auth()->user()->created_at?->format('M Y') ?? 'Not available' }}</dd></div>
+                        </dl>
+                    </section>
+                </div>
             </div>
-
-        </section>
-
-        <section class="dashboard-account-card">
-
-            <div class="dashboard-account-heading">
-                <div>
-                    <span class="dashboard-kicker">
-                        YOUR ACCOUNT
-                    </span>
-
-                    <h2>
-                        Account snapshot
-                    </h2>
-                </div>
-
-                @feature('account')
-                    <a
-                        href="{{ route('account.overview') }}"
-                        class="dashboard-account-link"
-                    >
-                        Open Account
-                    </a>
-                @endfeature
-            </div>
-
-            <div class="dashboard-account-grid">
-
-                <div>
-                    <span>Full Name</span>
-                    <strong>{{ auth()->user()->name }}</strong>
-                </div>
-
-                <div>
-                    <span>Email Address</span>
-                    <strong>{{ auth()->user()->email }}</strong>
-                </div>
-
-                <div>
-                    <span>Email Status</span>
-                    <strong class="verified-text">
-                        Verified
-                    </strong>
-                </div>
-
-                <div>
-                    <span>Member Since</span>
-
-                    <strong>
-                        {{ auth()->user()->created_at?->format('M Y') ?? 'Not available' }}
-                    </strong>
-                </div>
-
-            </div>
-
-        </section>
-
-    </main>
+        </div>
+    </section>
 
     @endif
 

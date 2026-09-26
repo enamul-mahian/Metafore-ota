@@ -38,14 +38,11 @@ final class FlightOrderPaymentAttempt extends Model
     protected function casts(): array
     {
         return [
-            'user_id' =>
-                'integer',
+            'user_id' => 'integer',
 
-            'flight_order_attempt_id' =>
-                'integer',
+            'flight_order_attempt_id' => 'integer',
 
-            'resolved_at' =>
-                'datetime',
+            'resolved_at' => 'datetime',
         ];
     }
 

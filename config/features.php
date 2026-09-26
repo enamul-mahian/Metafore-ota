@@ -62,4 +62,9 @@ return [
         'description' => 'Authenticated customer and administrative dashboard.',
         'default' => $visibleByDefault,
     ],
+    'work-visa' => [
+        'label' => 'Work Visa',
+        'description' => 'Work visa processing information, online applications and application tracking.',
+        'default' => $visibleByDefault,
+    ],
 ];

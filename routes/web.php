@@ -32,6 +32,7 @@ use App\Http\Controllers\Flight\FlightOrderPaymentReadinessController;
 use App\Http\Controllers\Flight\FlightOrderPaymentReconciliationController;
 use App\Http\Controllers\Flight\FlightOrderReconciliationController;
 use App\Http\Controllers\Flight\FlightSearchController;
+use App\Http\Controllers\Flight\FlightSignInRedirectController;
 use App\Http\Controllers\Flight\FlightTravelerValidationController;
 use App\Http\Controllers\FlightBookingController;
 use App\Http\Controllers\Hotel\HotelController;
@@ -40,6 +41,8 @@ use App\Http\Controllers\Tour\TourController;
 use App\Http\Controllers\Tour\TourSearchController;
 use App\Http\Controllers\Visa\VisaController;
 use App\Http\Controllers\Visa\VisaRequirementController;
+use App\Http\Middleware\AllowGuestOrPermission;
+use App\Http\Middleware\AuthorizePublicServiceAccess;
 use Illuminate\Support\Facades\Route;
 
 Route::view('/', 'home')->name('home');
@@ -55,6 +58,55 @@ Route::view('/support', 'public.support')
 Route::view('/terms', 'public.terms')
     ->name('terms');
 
+/*
+ * Public flight search: guests may search and compare offers; signed-in users
+ * keep the verified + flights.search permission checks. Selecting an offer and
+ * every booking step below stay behind auth + verified.
+ */
+Route::view('/flights', 'flights.search')
+    ->middleware(['feature:flights', AllowGuestOrPermission::class.':flights.search'])
+    ->name('flights.index');
+
+Route::post('/flights/search', FlightSearchController::class)
+    ->middleware(['throttle:20,1', 'feature:flights', AllowGuestOrPermission::class.':flights.search'])
+    ->name('flights.search');
+
+Route::get('/flights/sign-in', FlightSignInRedirectController::class)
+    ->middleware(['auth', 'verified', 'feature:flights'])
+    ->name('flights.sign-in');
+
+/**
+ * |--------------------------------------------------------------------------
+ * | Public travel search (hotels, tours, visa information)
+ * |--------------------------------------------------------------------------
+ * | Guests may search. Signed-in users keep the earlier checks: an unverified
+ * | email goes to the verification notice and a missing permission is a 403.
+ * | Anything that books stays behind auth.
+ */
+Route::get('/hotels', HotelController::class)
+    ->middleware([AuthorizePublicServiceAccess::class, 'feature:hotels', AuthorizePublicServiceAccess::class.':hotels.search'])
+    ->name('hotels.index');
+
+Route::post('/hotels/search', HotelSearchController::class)
+    ->middleware([AuthorizePublicServiceAccess::class, 'feature:hotels', AuthorizePublicServiceAccess::class.':hotels.search', 'throttle:20,1'])
+    ->name('hotels.search');
+
+Route::get('/tours', TourController::class)
+    ->middleware([AuthorizePublicServiceAccess::class, 'feature:tours', AuthorizePublicServiceAccess::class.':tours.search'])
+    ->name('tours.index');
+
+Route::post('/tours/search', TourSearchController::class)
+    ->middleware([AuthorizePublicServiceAccess::class, 'feature:tours', AuthorizePublicServiceAccess::class.':tours.search', 'throttle:20,1'])
+    ->name('tours.search');
+
+Route::get('/visa', VisaController::class)
+    ->middleware([AuthorizePublicServiceAccess::class, 'feature:visa', AuthorizePublicServiceAccess::class.':visa.view'])
+    ->name('visa.index');
+
+Route::post('/visa/requirements', VisaRequirementController::class)
+    ->middleware([AuthorizePublicServiceAccess::class, 'feature:visa', AuthorizePublicServiceAccess::class.':visa.view', 'throttle:20,1'])
+    ->name('visa.requirements');
+
 Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::view('/dashboard', 'dashboard')
@@ -65,33 +117,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->middleware('feature:account')
         ->name('account.overview');
 
-    Route::view('/flights', 'flights.search')
-        ->middleware(['feature:flights', 'permission:flights.search'])
-        ->name('flights.index');
-
-    Route::get('/hotels', HotelController::class)
-        ->middleware(['feature:hotels', 'permission:hotels.search'])
-        ->name('hotels.index');
-
-    Route::post('/hotels/search', HotelSearchController::class)
-        ->middleware(['feature:hotels', 'permission:hotels.search'])
-        ->name('hotels.search');
-
-    Route::get('/tours', TourController::class)
-        ->middleware(['feature:tours', 'permission:tours.search'])
-        ->name('tours.index');
-
-    Route::post('/tours/search', TourSearchController::class)
-        ->middleware(['feature:tours', 'permission:tours.search'])
-        ->name('tours.search');
-
-    Route::get('/visa', VisaController::class)
-        ->middleware(['feature:visa', 'permission:visa.view'])
-        ->name('visa.index');
-
-    Route::post('/visa/requirements', VisaRequirementController::class)
-        ->middleware(['feature:visa', 'permission:visa.view'])
-        ->name('visa.requirements');
+    Route::view('/account/profile', 'account.profile')
+        ->middleware('feature:account')
+        ->name('account.profile');
 
     Route::get('/bookings', [FlightBookingController::class, 'index'])
         ->middleware(['feature:bookings', 'permission:flights.book'])
@@ -105,12 +133,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->middleware(['feature:bookings', 'permission:flights.book'])
         ->name('bookings.show');
 
-    Route::post(
-        '/flights/search',
-        FlightSearchController::class
-    )
-        ->middleware(['feature:flights', 'permission:flights.search'])
-        ->name('flights.search');
     Route::post(
         '/flights/offers/select',
         FlightOfferSelectionController::class
@@ -571,6 +593,9 @@ Route::get(
     ->name('flights.bookings.orders.attempts.confirmation.show');
 
 require __DIR__.'/admin-users-roles.php';
+require __DIR__.'/site-content.php';
+require __DIR__.'/enquiries.php';
+require __DIR__.'/work-visa.php';
 
 Route::middleware(['auth', 'verified', 'role:admin|super-admin'])
     ->prefix('admin/institutions')->name('admin.institutions.')

@@ -171,21 +171,16 @@ final class FlightOrderExecutionController extends Controller
         return $this->noStore(
             response()->json([
                 'data' => [
-                    'status' =>
-                        'execution_disabled',
+                    'status' => 'execution_disabled',
 
-                    'live_order_creation' =>
-                        false,
+                    'live_order_creation' => false,
 
-                    'order_created' =>
-                        false,
+                    'order_created' => false,
 
-                    'confirmation_intent_consumed' =>
-                        false,
+                    'confirmation_intent_consumed' => false,
                 ],
 
-                'message' =>
-                    'Flight order execution is currently unavailable.',
+                'message' => 'Flight order execution is currently unavailable.',
             ], 503),
         );
     }
@@ -195,21 +190,16 @@ final class FlightOrderExecutionController extends Controller
         return $this->noStore(
             response()->json([
                 'data' => [
-                    'status' =>
-                        'confirmation_intent_unavailable',
+                    'status' => 'confirmation_intent_unavailable',
 
-                    'live_order_creation' =>
-                        false,
+                    'live_order_creation' => false,
 
-                    'order_created' =>
-                        false,
+                    'order_created' => false,
 
-                    'confirmation_intent_consumed' =>
-                        false,
+                    'confirmation_intent_consumed' => false,
                 ],
 
-                'message' =>
-                    'This flight confirmation is no longer available. Please review the flight again.',
+                'message' => 'This flight confirmation is no longer available. Please review the flight again.',
             ], 410),
         );
     }
@@ -219,20 +209,15 @@ final class FlightOrderExecutionController extends Controller
         ?string $attemptReference,
     ): JsonResponse {
         $data = [
-            'status' =>
-                'processing',
+            'status' => 'processing',
 
-            'provider' =>
-                $provider,
+            'provider' => $provider,
 
-            'live_order_creation' =>
-                true,
+            'live_order_creation' => true,
 
-            'order_created' =>
-                false,
+            'order_created' => false,
 
-            'confirmation_intent_consumed' =>
-                true,
+            'confirmation_intent_consumed' => true,
         ];
 
         if ($attemptReference !== null) {
@@ -242,33 +227,27 @@ final class FlightOrderExecutionController extends Controller
 
         return $this->noStore(
             response()->json([
-                'data' =>
-                    $data,
+                'data' => $data,
 
-                'message' =>
-                    'Flight order creation is still processing. Do not retry this confirmation intent. Review or reconciliation is required before any further order attempt.',
+                'message' => 'Flight order creation is still processing. Do not retry this confirmation intent. Review or reconciliation is required before any further order attempt.',
             ], 202),
         );
     }
+
     private function createdResponse(
         string $provider,
         ?string $attemptReference,
     ): JsonResponse {
         $data = [
-            'status' =>
-                'created',
+            'status' => 'created',
 
-            'provider' =>
-                $provider,
+            'provider' => $provider,
 
-            'live_order_creation' =>
-                true,
+            'live_order_creation' => true,
 
-            'order_created' =>
-                true,
+            'order_created' => true,
 
-            'confirmation_intent_consumed' =>
-                true,
+            'confirmation_intent_consumed' => true,
         ];
 
         if ($attemptReference !== null) {
@@ -278,11 +257,9 @@ final class FlightOrderExecutionController extends Controller
 
         return $this->noStore(
             response()->json([
-                'data' =>
-                    $data,
+                'data' => $data,
 
-                'message' =>
-                    'Flight order creation completed.',
+                'message' => 'Flight order creation completed.',
             ], 201),
         );
     }
@@ -294,24 +271,18 @@ final class FlightOrderExecutionController extends Controller
         return $this->noStore(
             response()->json([
                 'data' => [
-                    'status' =>
-                        'unavailable',
+                    'status' => 'unavailable',
 
-                    'provider' =>
-                        $provider,
+                    'provider' => $provider,
 
-                    'live_order_creation' =>
-                        false,
+                    'live_order_creation' => false,
 
-                    'order_created' =>
-                        false,
+                    'order_created' => false,
 
-                    'confirmation_intent_consumed' =>
-                        $confirmationIntentConsumed,
+                    'confirmation_intent_consumed' => $confirmationIntentConsumed,
                 ],
 
-                'message' =>
-                    'Flight order is temporarily unavailable. Please review the flight before any further attempt.',
+                'message' => 'Flight order is temporarily unavailable. Please review the flight before any further attempt.',
             ], 503),
         );
     }

@@ -43,8 +43,8 @@ class AccountOverviewTest extends TestCase
             ->assertSee('Account Overview')
             ->assertSee('Account Test User')
             ->assertSee('account-test@example.com')
-            ->assertSee('Save Profile')
-            ->assertSee(route('user-profile-information.update'), false)
+            ->assertSee(route('account.profile'), false)
+            ->assertSee('<meta name="robots" content="noindex,nofollow">', false)
             ->assertSee('Verified');
     }
 

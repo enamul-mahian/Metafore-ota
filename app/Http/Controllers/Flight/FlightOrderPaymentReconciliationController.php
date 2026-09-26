@@ -32,8 +32,7 @@ final class FlightOrderPaymentReconciliationController extends Controller
             return response()
                 ->json(
                     [
-                        'message' =>
-                            'Flight payment reconciliation is temporarily unavailable.',
+                        'message' => 'Flight payment reconciliation is temporarily unavailable.',
                     ],
                     503,
                 )
@@ -73,11 +72,9 @@ final class FlightOrderPaymentReconciliationController extends Controller
             ->json(
                 [
                     'data' => [
-                        'status' =>
-                            $status,
+                        'status' => $status,
 
-                        'provider' =>
-                            $result['provider'],
+                        'provider' => $result['provider'],
                     ],
                 ],
                 $status === 'processing'
@@ -99,8 +96,7 @@ final class FlightOrderPaymentReconciliationController extends Controller
         return response()
             ->json(
                 [
-                    'message' =>
-                        'Flight payment attempt is unavailable.',
+                    'message' => 'Flight payment attempt is unavailable.',
                 ],
                 404,
             )

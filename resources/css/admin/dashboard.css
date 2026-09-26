@@ -1,0 +1,36 @@
+/* Admin dashboard key numbers and latest enquiries. */
+.dash-kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 14px; margin-bottom: 18px; }
+.dash-kpi {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 16px 18px;
+    border: 1px solid var(--admin-line, #dde6f1);
+    border-left: 4px solid var(--dash-tone, #315ff4);
+    border-radius: 14px;
+    background: #fff;
+    color: var(--admin-ink, #10233f);
+    text-decoration: none;
+    transition: box-shadow .2s, transform .2s;
+}
+a.dash-kpi:hover { box-shadow: 0 10px 24px rgba(16, 35, 63, .08); transform: translateY(-1px); }
+.dash-kpi--blue { --dash-tone: #315ff4; }
+.dash-kpi--amber { --dash-tone: #f59e0b; }
+.dash-kpi--indigo { --dash-tone: #6366f1; }
+.dash-kpi--green { --dash-tone: #16a34a; }
+.dash-kpi--sky { --dash-tone: #0ea5e9; }
+.dash-kpi__label { color: var(--admin-muted, #66768c); font-size: 13px; font-weight: 600; }
+.dash-kpi__value { font-size: 30px; line-height: 1.1; font-weight: 800; font-variant-numeric: tabular-nums; }
+.dash-kpi__hint { color: var(--admin-muted, #66768c); font-size: 12px; }
+.dash-recent { margin-bottom: 18px; }
+.dash-recent .admin-card-heading { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 12px; }
+.dash-table { min-width: 560px; }
+.dash-table a { color: var(--admin-blue, #315ff4); font-weight: 600; }
+.dash-empty { color: var(--admin-muted, #66768c); margin: 8px 0 0; }
+.dash-status { display: inline-block; padding: 2px 10px; border-radius: 999px; background: #eef2f7; color: #475467; font-size: 12px; font-weight: 600; }
+.dash-status.is-new { background: #e8efff; color: #244bc6; }
+@media (max-width: 640px) {
+    .dash-kpis { grid-template-columns: 1fr 1fr; gap: 10px; }
+    .dash-kpi { padding: 12px 14px; }
+    .dash-kpi__value { font-size: 24px; }
+}

@@ -1,0 +1,118 @@
+/* =========================================================
+   Eagle Global Hub — Work visa landing, application & tracking
+   (loaded after info.css; only wv-* classes live here)
+   ========================================================= */
+
+.wv-sr{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+.wv-spacer{height:48px}
+
+/* Landing */
+.wv-hero .row .btn{min-height:44px}
+.wv-tiles .tile{min-height:132px;justify-content:center}
+.wv-tiles .tile small{line-height:1.35}
+.wv-tile-fee{color:var(--blue)!important;font-weight:600!important}
+.wv-empty{display:flex;flex-direction:column;align-items:center;gap:8px}
+.wv-empty p{max-width:520px}
+.wv-empty .btn{align-self:center;margin-top:6px}
+.wv-empty .btn .ic{width:16px;height:16px;margin:0;color:inherit}
+.wv-docs .doclist b{color:var(--navy)}
+.wv-req details{padding:12px 14px}
+.wv-req .doclist{margin-top:10px}
+.chips{list-style:none;padding:0}
+
+/* Alerts */
+.wv-alert{border-radius:12px;padding:14px 16px;margin-bottom:18px;font-size:14px;border:1px solid}
+.wv-alert:focus{outline:3px solid rgba(224,50,43,.25);outline-offset:2px}
+.wv-alert ul{margin:6px 0 0 18px;list-style:disc}
+.wv-alert--error{background:#fff4f3;border-color:#f5c2bf;color:#9f1d17}
+.wv-alert--success{background:#f0fbf4;border-color:#bfe8cf;color:#166534}
+.wv-error{font-size:12.5px;color:#c0262d;margin-top:2px}
+.input[aria-invalid="true"]{border-color:#e0322b;background:#fff8f7}
+
+/* Application form */
+.wv-title{margin-bottom:18px}
+.wv-form .card__title{margin-bottom:14px}
+.wv-hint{font-weight:400}
+.wv-form .upload{min-height:128px;justify-content:center}
+.wv-upload--error{border-color:#e0322b!important;background:#fff8f7}
+.wv-upload--error .fname{color:#c0262d}
+.wv-notes{margin-top:18px}
+.wv-confirm{margin-top:18px;align-items:flex-start;line-height:1.45;min-height:40px}
+.wv-confirm span{flex:none;margin-top:2px}
+.wv-actions{margin-top:18px}
+.wv-actions .btn{min-height:44px}
+.wv-form .radio{min-height:40px}
+.wv-summary .summary__row b,.wv-summary .summary__row span:last-child{text-align:right}
+.wv-summary .summary__row{gap:12px}
+
+/* Sticky submit bar (phones & tablets only) */
+.wv-submitbar{display:none}
+
+/* Account: list, detail, timeline */
+.wv-head{margin-bottom:16px;align-items:flex-start}
+.wv-list{list-style:none;padding:0;margin:0}
+.wv-flag{background:var(--soft);font-size:26px;line-height:1}
+.wv-booking .badge{justify-self:start}
+.wv-booking .btn{min-height:40px}
+.wv-pagination{margin-top:16px}
+.wv-done{margin-bottom:18px}
+.wv-done p{margin-top:6px}
+.wv-badge-lg{font-size:13px;padding:6px 14px}
+.wv-dl{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px 18px}
+.wv-dl div{min-width:0}
+.wv-dl dt{font-size:12px;color:var(--muted)}
+.wv-dl dd{font-size:14px;color:var(--navy);font-weight:500;overflow-wrap:anywhere}
+.wv-dl__full{grid-column:1/-1}
+.wv-pre{white-space:pre-line}
+.wv-docs-list{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:10px}
+.wv-docs-list li{display:flex;align-items:center;gap:12px;padding:10px 12px;border:1px solid var(--line);border-radius:12px}
+.wv-docs-list li > .ic{width:22px;height:22px;color:var(--blue);flex:none}
+.wv-docs-list li > div{flex:1;min-width:0}
+.wv-docs-list b{display:block;font-size:13.5px;color:var(--navy)}
+.wv-docs-list small{display:block;font-size:12px;color:var(--muted);overflow-wrap:anywhere}
+.wv-docs-list .btn{flex:none;min-height:40px}
+.wv-add-doc{margin-top:18px;padding-top:4px;border-top:1px solid var(--line)}
+.wv-add-doc .upload{min-height:96px;justify-content:center}
+.wv-add-doc__btn{margin-top:14px;min-height:44px}
+.wv-timeline{list-style:none;padding:0;margin:0;position:relative}
+.wv-timeline__item{position:relative;padding:0 0 18px 26px}
+.wv-timeline__item:last-child{padding-bottom:0}
+.wv-timeline__item::before{content:"";position:absolute;left:5px;top:6px;width:12px;height:12px;border-radius:50%;background:var(--blue);box-shadow:0 0 0 4px #e6efff}
+.wv-timeline__item::after{content:"";position:absolute;left:10px;top:22px;bottom:2px;width:2px;background:var(--line)}
+.wv-timeline__item:last-child::after{display:none}
+.wv-timeline__item--success::before{background:var(--green);box-shadow:0 0 0 4px #e3f7ea}
+.wv-timeline__item--warn::before{background:#d97706;box-shadow:0 0 0 4px #fff3dc}
+.wv-timeline__item--danger::before{background:var(--red);box-shadow:0 0 0 4px #ffe9e8}
+.wv-timeline__item--muted::before{background:#94a3b8;box-shadow:0 0 0 4px #eef1f6}
+.wv-timeline__head{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px}
+.wv-timeline time{font-size:12px;color:var(--muted)}
+.wv-timeline p{margin-top:6px;font-size:13.5px;color:#334155}
+
+@media (max-width:960px){
+  .wv-summary__btn{display:none}
+  .wv-actions button[type=submit]{display:none}
+  .wv-submitbar{
+    display:flex;align-items:center;justify-content:space-between;gap:12px;
+    position:sticky;bottom:0;z-index:40;
+    margin:18px -16px -48px;padding:10px 16px calc(10px + env(safe-area-inset-bottom,0px));
+    background:rgba(255,255,255,.97);border-top:1px solid var(--line);box-shadow:0 -8px 24px rgba(15,35,90,.08);
+    -webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)
+  }
+  .wv-submitbar__info{min-width:0;display:flex;flex-direction:column}
+  .wv-submitbar__info b{font-size:14px;color:var(--navy);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .wv-submitbar__info span{font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .wv-submitbar .btn{flex:none;min-height:46px;padding:0 22px;font-size:14px}
+  .wv-apply .wv-summary{margin-bottom:8px}
+  .wv-apply-body .totop{bottom:calc(86px + env(safe-area-inset-bottom,0px))}
+}
+@media (max-width:640px){
+  .wv-tiles{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .wv-form{padding:16px}
+  .wv-form .input{font-size:16px}
+  .wv-dl{grid-template-columns:1fr}
+  .wv-head .btn{width:100%;justify-content:center}
+  .wv-docs-list li{flex-wrap:wrap}
+  .wv-docs-list .btn{width:100%;justify-content:center}
+  .wv-add-doc__btn{width:100%;justify-content:center}
+  .wv-cta .btn{width:100%;justify-content:center}
+}

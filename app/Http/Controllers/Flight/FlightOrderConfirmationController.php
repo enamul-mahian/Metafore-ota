@@ -51,20 +51,16 @@ final class FlightOrderConfirmationController extends Controller
         return $this->noStore(
             response()->json([
                 'data' => [
-                    'status' =>
-                        'confirmed',
+                    'status' => 'confirmed',
 
-                    'provider' =>
-                        'duffel',
+                    'provider' => 'duffel',
 
-                    'booking_reference' =>
-                        $result[
+                    'booking_reference' => $result[
                             'booking_reference'
                         ],
                 ],
 
-                'message' =>
-                    'Flight booking confirmation loaded.',
+                'message' => 'Flight booking confirmation loaded.',
             ]),
         );
     }
@@ -74,8 +70,7 @@ final class FlightOrderConfirmationController extends Controller
         return $this->noStore(
             response()->json(
                 [
-                    'message' =>
-                        'Flight booking confirmation is unavailable.',
+                    'message' => 'Flight booking confirmation is unavailable.',
                 ],
                 404,
             ),
@@ -87,8 +82,7 @@ final class FlightOrderConfirmationController extends Controller
         return $this->noStore(
             response()->json(
                 [
-                    'message' =>
-                        'Flight booking confirmation is temporarily unavailable.',
+                    'message' => 'Flight booking confirmation is temporarily unavailable.',
                 ],
                 503,
             ),

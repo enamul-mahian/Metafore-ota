@@ -3,6 +3,8 @@
 @section('title', 'Create Account | Eagle Global Hub LTD')
 @section('hero-title', 'Explore The World With Eagle Global Hub LTD')
 @section('hero-description', 'Create your account and start planning your next journey.')
+@section('robots', 'index,follow')
+@section('meta_description', 'Create a free Eagle Global Hub account to book flights, save your details, track bookings and apply for visas and work visas online.')
 
 @section('content')
     <div class="auth-heading">
@@ -11,7 +13,7 @@
         <p>Join us and start your journey.</p>
     </div>
 
-    <form method="POST" action="{{ route('register.store') }}" class="auth-form">
+    <form method="POST" action="{{ route('register.store') }}" class="auth-form" data-track="sign_up" aria-label="Create account">
         @csrf
 
         <div class="form-group">

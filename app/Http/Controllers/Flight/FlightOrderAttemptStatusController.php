@@ -73,15 +73,12 @@ final class FlightOrderAttemptStatusController extends Controller
         return $this->noStore(
             response()->json([
                 'data' => [
-                    'status' =>
-                        $status,
+                    'status' => $status,
 
-                    'provider' =>
-                        $provider,
+                    'provider' => $provider,
                 ],
 
-                'message' =>
-                    'Flight order attempt status loaded.',
+                'message' => 'Flight order attempt status loaded.',
             ]),
         );
     }
@@ -90,11 +87,9 @@ final class FlightOrderAttemptStatusController extends Controller
     {
         return $this->noStore(
             response()->json([
-                'data' =>
-                    null,
+                'data' => null,
 
-                'message' =>
-                    'Flight order attempt status is unavailable.',
+                'message' => 'Flight order attempt status is unavailable.',
             ], 404),
         );
     }

@@ -12,10 +12,12 @@ use App\Services\Feature\FeatureManager;
 use App\Services\Feature\FeatureRegistry;
 use App\Services\Flight\UnavailableFlightSearchProvider;
 use App\Services\Hotel\UnavailableHotelSearchProvider;
+use App\Services\SiteContentService;
 use App\Services\Tour\UnavailableTourSearchProvider;
 use App\Services\Travel\TravelServiceRegistry;
 use App\Services\Travel\UnavailableDestinationResolver;
 use App\Services\Visa\UnavailableVisaInformationProvider;
+use App\View\Composers\SiteLayoutComposer;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Blade;
@@ -32,6 +34,7 @@ class AppServiceProvider extends ServiceProvider
     {
         $this->app->scoped(FeatureRegistry::class);
         $this->app->scoped(FeatureManager::class);
+        $this->app->scoped(SiteContentService::class);
 
         $this->app->bind(
             FlightSearchProvider::class,
@@ -107,6 +110,15 @@ class AppServiceProvider extends ServiceProvider
                 );
             },
         );
+
+        View::composer(
+            '*',
+            function (IlluminateView $view): void {
+                $view->with('site', app(SiteContentService::class));
+            }
+        );
+
+        View::composer('layouts.site', SiteLayoutComposer::class);
 
         View::composer(
             ['home', 'dashboard', 'layouts.site'],

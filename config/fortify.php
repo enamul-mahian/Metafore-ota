@@ -124,6 +124,7 @@ return [
     | - Password reset
     | - Email verification
     | - Profile information updates
+    | - Password updates (account profile page)
     |
     | Two-factor authentication and passkeys are intentionally deferred.
     |
@@ -134,6 +135,7 @@ return [
         Features::resetPasswords(),
         Features::emailVerification(),
         Features::updateProfileInformation(),
+        Features::updatePasswords(),
     ],
 
 ];

@@ -1,240 +1,111 @@
 @extends('layouts.site')
 
 @section('title', 'Account Overview')
+@section('seo_title', 'My Account | Eagle Global Hub')
+@section('robots', 'noindex,nofollow')
 @section('body_class', 'account-body')
 
 @section('content')
+    @php($user = auth()->user())
 
-    <main class="account-container">
+    <section class="page account-page">
+        <div class="container">
+            <nav class="crumbs" aria-label="Breadcrumb">
+                <a href="{{ route('home') }}">Home</a>
+                <span>My Account</span>
+            </nav>
 
-        <section class="account-hero">
+            <div class="account-layout">
+                @include('account.partials.side-menu', ['active' => 'overview'])
 
-            <div>
-                <span class="account-kicker">
-                    YOUR ACCOUNT
-                </span>
-
-                <h1>
-                    Account Overview
-                </h1>
-
-                <p>
-                    Review the account information currently stored for your
-                    Eagle Global Hub LTD travel account.
-                </p>
-            </div>
-
-            <div class="account-identity">
-                <span class="account-avatar">
-                    {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
-                </span>
-
-                <div>
-                    <strong>{{ auth()->user()->name }}</strong>
-                    <small>{{ auth()->user()->email }}</small>
-                </div>
-            </div>
-
-        </section>
-
-        <section class="account-grid">
-
-            <article class="account-panel">
-
-                <div class="account-panel-heading">
-                    <div>
-                        <span class="account-kicker">
-                            PROFILE
-                        </span>
-
-                        <h2>
-                            Personal details
-                        </h2>
-                    </div>
-                </div>
-
-                <form
-                    method="POST"
-                    action="{{ route('user-profile-information.update') }}"
-                    class="account-profile-form"
-                >
-                    @csrf
-                    @method('PUT')
-
-                    @if (session('status') === \Laravel\Fortify\Fortify::PROFILE_INFORMATION_UPDATED)
-                        <div class="account-form-success" role="status">
-                            Profile information updated.
+                <div class="stack">
+                    <div class="card account-hello">
+                        <div class="account-hello__id">
+                            <span class="account-hello__av" aria-hidden="true">{{ strtoupper(substr($user->name, 0, 1)) }}</span>
+                            <div>
+                                <p class="account-hello__kicker">Account Overview</p>
+                                <h1 class="h1">{{ $user->name }}</h1>
+                                <p class="muted">{{ $user->email }}</p>
+                            </div>
                         </div>
-                    @endif
-
-                    <div class="account-form-field">
-                        <label for="account-name">Full Name</label>
-
-                        <input
-                            id="account-name"
-                            name="name"
-                            type="text"
-                            value="{{ old('name', auth()->user()->name) }}"
-                            autocomplete="name"
-                            required
-                            @error('name', 'updateProfileInformation')
-                                aria-invalid="true"
-                                aria-describedby="account-name-error"
-                            @enderror
-                        >
-
-                        @error('name', 'updateProfileInformation')
-                            <span id="account-name-error" class="account-form-error">
-                                {{ $message }}
-                            </span>
-                        @enderror
+                        <span class="badge badge--success"><svg class="ic"><use href="#i-check"/></svg>Verified</span>
                     </div>
 
-                    <div class="account-form-field">
-                        <label for="account-email">Email Address</label>
-
-                        <input
-                            id="account-email"
-                            name="email"
-                            type="email"
-                            value="{{ old('email', auth()->user()->email) }}"
-                            autocomplete="email"
-                            required
-                            @error('email', 'updateProfileInformation')
-                                aria-invalid="true"
-                                aria-describedby="account-email-error"
-                            @enderror
-                        >
-
-                        @error('email', 'updateProfileInformation')
-                            <span id="account-email-error" class="account-form-error">
-                                {{ $message }}
-                            </span>
-                        @enderror
+                    <div class="grid-3 account-facts">
+                        <div class="card account-fact">
+                            <span class="account-fact__ic c-green"><svg class="ic"><use href="#i-shield"/></svg></span>
+                            <div>
+                                <small>Email verification</small>
+                                <b>Verified</b>
+                                <small>{{ $user->email_verified_at?->format('M j, Y') ?? 'Verified' }}</small>
+                            </div>
+                        </div>
+                        <div class="card account-fact">
+                            <span class="account-fact__ic c-blue"><svg class="ic"><use href="#i-cal"/></svg></span>
+                            <div>
+                                <small>Member since</small>
+                                <b>{{ $user->created_at?->format('M j, Y') ?? '—' }}</b>
+                            </div>
+                        </div>
+                        <div class="card account-fact">
+                            <span class="account-fact__ic c-orange"><svg class="ic"><use href="#i-lock"/></svg></span>
+                            <div>
+                                <small>Security</small>
+                                <b>Password protected</b>
+                                <a class="link small" href="{{ route('account.profile') }}#security">Change password</a>
+                            </div>
+                        </div>
                     </div>
 
-                    <p class="account-form-note">
-                        Changing your email address requires you to verify the
-                        new address before returning to verified-only pages.
-                    </p>
+                    <section class="card" aria-labelledby="account-shortcuts-title">
+                        <h2 class="card__title" id="account-shortcuts-title">Continue planning</h2>
 
-                    <button
-                        type="submit"
-                        class="site-button site-button-primary"
-                    >
-                        Save Profile
-                    </button>
-                </form>
+                        <div class="account-shortcuts">
+                            <a href="{{ route('account.profile') }}" class="account-shortcut">
+                                <span class="account-shortcut__ic"><svg class="ic"><use href="#i-user"/></svg></span>
+                                <span><b>Profile &amp; security</b><small>Update your name, email and password</small></span>
+                                <svg class="ic account-shortcut__go"><use href="#i-chev-r"/></svg>
+                            </a>
 
-            </article>
+                            @feature('flights')
+                                @can('flights.search')
+                                    <a href="{{ route('flights.index') }}" class="account-shortcut">
+                                        <span class="account-shortcut__ic"><svg class="ic"><use href="#i-plane"/></svg></span>
+                                        <span><b>Search Flights</b><small>Compare fares and start a new booking</small></span>
+                                        <svg class="ic account-shortcut__go"><use href="#i-chev-r"/></svg>
+                                    </a>
+                                @endcan
+                            @endfeature
 
-            <article class="account-panel">
+                            @feature('bookings')
+                                @can('flights.book')
+                                    <a href="{{ route('bookings.index') }}" class="account-shortcut">
+                                        <span class="account-shortcut__ic"><svg class="ic"><use href="#i-briefcase"/></svg></span>
+                                        <span><b>My Bookings</b><small>Order, payment and invoice records</small></span>
+                                        <svg class="ic account-shortcut__go"><use href="#i-chev-r"/></svg>
+                                    </a>
+                                @endcan
+                            @endfeature
 
-                <div class="account-panel-heading">
-                    <div>
-                        <span class="account-kicker">
-                            SECURITY
-                        </span>
+                            @if (Route::has('work-visa.applications.index'))
+                                <a href="{{ route('work-visa.applications.index') }}" class="account-shortcut">
+                                    <span class="account-shortcut__ic"><svg class="ic"><use href="#i-file"/></svg></span>
+                                    <span><b>Work Visa Applications</b><small>Track your application status</small></span>
+                                    <svg class="ic account-shortcut__go"><use href="#i-chev-r"/></svg>
+                                </a>
+                            @endif
 
-                        <h2>
-                            Account status
-                        </h2>
-                    </div>
+                            @feature('dashboard')
+                                <a href="{{ route('dashboard') }}" class="account-shortcut">
+                                    <span class="account-shortcut__ic"><svg class="ic"><use href="#i-grid"/></svg></span>
+                                    <span><b>Dashboard</b><small>All travel services in one place</small></span>
+                                    <svg class="ic account-shortcut__go"><use href="#i-chev-r"/></svg>
+                                </a>
+                            @endfeature
+                        </div>
+                    </section>
                 </div>
-
-                <dl class="account-detail-list">
-
-                    <div>
-                        <dt>Email Verification</dt>
-
-                        <dd class="account-status-verified">
-                            Verified
-                        </dd>
-                    </div>
-
-                    <div>
-                        <dt>Verified On</dt>
-
-                        <dd>
-                            {{
-                                auth()->user()->email_verified_at
-                                    ?->format('M j, Y')
-                                ?? 'Verified'
-                            }}
-                        </dd>
-                    </div>
-
-                    <div>
-                        <dt>Account Created</dt>
-
-                        <dd>
-                            {{
-                                auth()->user()->created_at
-                                    ?->format('M j, Y')
-                                ?? '—'
-                            }}
-                        </dd>
-                    </div>
-
-                </dl>
-
-            </article>
-
-        </section>
-
-        <section class="account-actions">
-
-            <div>
-                <span class="account-kicker">
-                    TRAVEL
-                </span>
-
-                <h2>
-                    Continue planning
-                </h2>
-
-                <p>
-                    Return to your dashboard or continue to flight search.
-                </p>
             </div>
-
-            <div class="account-action-buttons">
-
-                @feature('dashboard')
-                    <a
-                        href="{{ route('dashboard') }}"
-                        class="site-button site-button-secondary"
-                    >
-                        Dashboard
-                    </a>
-                @endfeature
-
-                @feature('flights')
-                    @can('flights.search')
-                        <a
-                            href="{{ route('flights.index') }}"
-                            class="site-button site-button-primary"
-                        >
-                            Search Flights
-                        </a>
-                    @endcan
-                @endfeature
-
-                @feature('bookings')
-                    @can('flights.book')
-                        <a
-                            href="{{ route('bookings.index') }}"
-                            class="site-button site-button-secondary"
-                        >
-                            My Bookings
-                        </a>
-                    @endcan
-                @endfeature
-
-            </div>
-
-        </section>
-
-    </main>
-
+        </div>
+    </section>
 @endsection

@@ -239,6 +239,80 @@
                 @endcan
             </div>
 
+            @canany(['content.view', 'enquiries.view', 'work-visa.view'])
+                <div class="admin-nav-section">
+                    <span class="admin-nav-title">WEBSITE &amp; LEADS</span>
+
+                    @can('content.view')
+                        <a
+                            href="{{ route('admin.website.images') }}"
+                            class="admin-nav-link {{ request()->routeIs('admin.website.*') ? 'active' : '' }}"
+                        >
+                            <svg viewBox="0 0 24 24" aria-hidden="true">
+                                <rect x="3" y="4" width="18" height="16" rx="2"/>
+                                <path d="M3 9h18M7 6.5h.01M10 6.5h.01"/>
+                            </svg>
+                            <span>Website</span>
+                        </a>
+                    @endcan
+
+                    @if (Route::has('admin.enquiries.index'))
+                        @can('enquiries.view')
+                            <a
+                                href="{{ route('admin.enquiries.index') }}"
+                                class="admin-nav-link {{ request()->routeIs('admin.enquiries.*') ? 'active' : '' }}"
+                            >
+                                <svg viewBox="0 0 24 24" aria-hidden="true">
+                                    <path d="M4 5h16v11H8l-4 4z"/>
+                                    <path d="M8 9h8M8 12h5"/>
+                                </svg>
+                                <span>Enquiries</span>
+                            </a>
+                        @endcan
+                    @endif
+
+                    @if (Route::has('admin.newsletter.index'))
+                        @can('enquiries.view')
+                            <a
+                                href="{{ route('admin.newsletter.index') }}"
+                                class="admin-nav-link {{ request()->routeIs('admin.newsletter.*') ? 'active' : '' }}"
+                            >
+                                <svg viewBox="0 0 24 24" aria-hidden="true">
+                                    <rect x="3" y="5" width="18" height="14" rx="2"/>
+                                    <path d="m3 7 9 6 9-6"/>
+                                </svg>
+                                <span>Newsletter</span>
+                            </a>
+                        @endcan
+                    @endif
+
+                    @if (Route::has('admin.work-visa.applications.index'))
+                        @can('work-visa.view')
+                            <a
+                                href="{{ route('admin.work-visa.applications.index') }}"
+                                class="admin-nav-link {{ request()->routeIs('admin.work-visa.applications.*') ? 'active' : '' }}"
+                            >
+                                <svg viewBox="0 0 24 24" aria-hidden="true">
+                                    <rect x="3" y="7" width="18" height="13" rx="2"/>
+                                    <path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M3 13h18"/>
+                                </svg>
+                                <span>Work Visa Applications</span>
+                            </a>
+                            <a
+                                href="{{ route('admin.work-visa.destinations.index') }}"
+                                class="admin-nav-link {{ request()->routeIs('admin.work-visa.destinations.*') ? 'active' : '' }}"
+                            >
+                                <svg viewBox="0 0 24 24" aria-hidden="true">
+                                    <circle cx="12" cy="12" r="9"/>
+                                    <path d="M3 12h18M12 3c2.5 2.7 3.8 5.7 3.8 9s-1.3 6.3-3.8 9c-2.5-2.7-3.8-5.7-3.8-9S9.5 5.7 12 3z"/>
+                                </svg>
+                                <span>Work Visa Countries</span>
+                            </a>
+                        @endcan
+                    @endif
+                </div>
+            @endcanany
+
             <div class="admin-nav-section">
                 <span class="admin-nav-title">SYSTEM</span>
 
@@ -472,6 +546,7 @@
                 session('status')
                 && ! request()->routeIs('admin.settings.*')
                 && ! request()->routeIs('admin.features.*')
+                && ! request()->routeIs('admin.website.*')
             )
                 <div class="egh-alert" role="status">
                     {{ session('status') }}

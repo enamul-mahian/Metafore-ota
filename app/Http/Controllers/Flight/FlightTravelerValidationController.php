@@ -30,8 +30,8 @@ final class FlightTravelerValidationController extends Controller
                 [
                     'message' => (
                         'This flight offer selection '
-                        . 'has expired or is no longer '
-                        . 'available. Please search again.'
+                        .'has expired or is no longer '
+                        .'available. Please search again.'
                     ),
                 ],
                 410,

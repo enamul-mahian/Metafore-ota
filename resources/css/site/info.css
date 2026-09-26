@@ -1,0 +1,144 @@
+/* =========================================================
+   Eagle Global Hub — tours, visa, work visa & contact pages
+   (loaded after pages.css)
+   ========================================================= */
+
+textarea{font:inherit;color:inherit}
+
+/* Split hero: copy on the left, replaceable photo fading in on the right */
+.split-hero{position:relative;background:linear-gradient(120deg,#f4f8ff 0%,#e3eeff 60%,#d6e6ff 100%);overflow:hidden}
+.split-hero__img{position:absolute;top:0;right:0;bottom:0;width:52%;background:#dbe6f8 center/cover no-repeat;-webkit-mask:linear-gradient(90deg,transparent,#000 30%);mask:linear-gradient(90deg,transparent,#000 30%)}
+.split-hero__in{position:relative;padding-top:34px;padding-bottom:40px}
+.split-hero__copy{max-width:560px}
+.split-hero h1{font-size:clamp(28px,3.8vw,44px);font-weight:700;line-height:1.12;color:var(--navy);text-wrap:balance}
+.split-hero h1.red{letter-spacing:-.01em}
+.split-hero__sub{font-size:clamp(16px,1.8vw,21px);font-weight:600;color:var(--red);margin-top:6px}
+.split-hero p.lead{color:#475569;margin-top:8px;max-width:520px}
+.split-hero .ticks{font-size:15px;font-weight:500;color:var(--navy);gap:8px;margin:18px 0 22px}
+.split-hero .ticks li::before{width:18px;height:18px;background-size:11px}
+
+/* Visa checker panel */
+.checker{margin-top:20px;background:rgba(255,255,255,.85);backdrop-filter:blur(6px);border:1px solid #fff;border-radius:16px;padding:16px;box-shadow:var(--shadow);display:grid;grid-template-columns:1fr auto;gap:12px;align-items:end;max-width:620px}
+.checker .fld--full{grid-column:1/-1}
+.checker .fld__box{height:48px;background:#fff}
+.checker .btn{height:48px;border-radius:10px;padding:0 22px;align-self:end}
+.checker-result{margin-top:22px}
+.req{display:grid;grid-template-columns:1.1fr 1fr;gap:22px}
+.req__head{display:flex;align-items:center;gap:14px;margin-bottom:14px}
+.req__head .flag-lg{font-size:40px}
+.req__head h2{font-size:20px;color:var(--navy);font-weight:700;line-height:1.2}
+.facts{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.fact{background:var(--soft);border-radius:12px;padding:12px 14px}
+.fact small{display:block;font-size:11.5px;color:var(--muted)}
+.fact b{font-size:14.5px;color:var(--navy);font-variant-numeric:tabular-nums}
+.doclist{display:flex;flex-direction:column;gap:8px}
+.doclist li{display:flex;gap:10px;align-items:flex-start;font-size:13.5px;color:#334155}
+.doclist .ic{width:18px;height:18px;color:var(--green);margin-top:1px}
+
+/* Numbered process (real sequence) */
+.process{list-style:none;display:grid;grid-template-columns:repeat(6,1fr);gap:14px;counter-reset:p}
+.process li{position:relative;background:#fff;border:1px solid var(--line);border-radius:14px;padding:18px 16px;counter-increment:p}
+.process li::before{content:counter(p);display:grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--blue);color:#fff;font-weight:700;font-size:14px;margin-bottom:10px}
+.process b{display:block;color:var(--navy);font-size:14px;margin-bottom:4px}
+.process p{font-size:12.5px;color:var(--muted)}
+.process--5{grid-template-columns:repeat(5,1fr)}
+.process--4{grid-template-columns:repeat(4,1fr)}
+
+/* Feature list (trust points, info rows) */
+.feat{display:flex;gap:12px;align-items:flex-start}
+.feat b{display:block;color:var(--navy);font-size:14px}
+.feat p{font-size:12.5px;color:var(--muted)}
+.band{background:var(--soft);padding:34px 0;margin-top:38px}
+.band .section{padding-top:0}
+.cta-band{margin-top:38px;background:linear-gradient(120deg,var(--navy),#1a4bb8);border-radius:var(--radius);padding:24px 26px;color:#fff;display:flex;align-items:center;justify-content:space-between;gap:18px;flex-wrap:wrap}
+.cta-band h2{font-size:clamp(18px,2.2vw,24px);font-weight:700}
+.cta-band p{color:#dbe4ff;font-size:13.5px}
+.cta-band .btn{align-self:auto}
+
+/* Job category chips */
+.chips{display:flex;flex-wrap:wrap;gap:10px}
+.chip{display:inline-flex;align-items:center;gap:8px;padding:10px 16px;border-radius:999px;background:#fff;border:1px solid var(--line);font-size:13px;font-weight:500;color:var(--navy)}
+.chip .ic{width:16px;height:16px;color:var(--blue)}
+
+/* Fee table cells */
+.fee-note{font-size:12px;color:var(--muted);margin-top:10px}
+
+/* Tours */
+.tour-tags{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.results-head{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap;margin-bottom:12px}
+.results-head h1{font-size:clamp(20px,2.2vw,26px)}
+
+/* Modal (tour booking) */
+.modal{position:fixed;inset:0;z-index:110;background:rgba(8,20,50,.55);display:grid;place-items:center;padding:16px;opacity:0;pointer-events:none;transition:opacity .25s}
+.modal.is-open{opacity:1;pointer-events:auto}
+.modal__box{background:#fff;border-radius:16px;width:min(480px,100%);max-height:calc(100vh - 32px);overflow-y:auto;padding:22px;box-shadow:var(--shadow-lg);position:relative;transform:translateY(12px);transition:transform .25s}
+.modal.is-open .modal__box{transform:none}
+.modal__close{position:absolute;right:12px;top:12px}
+.modal h2{font-size:18px;color:var(--navy);font-weight:700;padding-right:40px}
+
+/* Work visa application */
+.upload-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.upload b{color:var(--navy);font-size:13.5px}
+.upload .fname{font-size:12px;color:var(--green);font-weight:500;word-break:break-all}
+.upload.has-file{border-style:solid;border-color:var(--green);background:#f3fbf6}
+.sum-flag{width:56px;height:56px;border-radius:12px;background:var(--soft);display:grid;place-items:center;font-size:32px;flex:none}
+.done-box{text-align:center;padding:30px 16px}
+.done-box .svc__ic{width:64px;height:64px;margin:0 auto 12px}
+.done-box .svc__ic .ic{width:30px;height:30px}
+.done-box h2{font-size:22px;color:var(--navy);font-weight:700}
+.done-box .row{justify-content:center;margin-top:16px}
+.form-sec{font-size:14px;font-weight:600;color:var(--navy);margin:20px 0 12px;display:flex;align-items:center;gap:8px}
+.form-sec .ic{color:var(--blue)}
+
+/* Contact */
+.contact-grid{display:grid;grid-template-columns:1.05fr 1fr;gap:22px;align-items:stretch}
+.cinfo{display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:start}
+.cinfo ul{display:flex;flex-direction:column;gap:16px}
+.cinfo li{display:flex;gap:12px;align-items:flex-start;font-size:13.5px;color:#334155}
+.cinfo li b{display:block;color:var(--navy);font-size:13px}
+.cinfo .svc__ic{width:38px;height:38px}
+.cinfo .svc__ic .ic{width:18px;height:18px}
+.cinfo .map{min-height:230px}
+.about{display:grid;grid-template-columns:1fr 1fr;gap:26px;align-items:center}
+.about img{border-radius:var(--radius);width:100%;height:auto;aspect-ratio:16/10;object-fit:cover}
+.about p{color:#475569;font-size:14px;margin-top:10px}
+.mini-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:18px}
+.mini-stats div{background:var(--soft);border-radius:12px;padding:12px;text-align:center}
+.mini-stats b{display:block;font-size:22px;font-weight:800;color:var(--blue)}
+.mini-stats span{font-size:12px;color:var(--muted)}
+
+@media (max-width:1100px){
+  .process{grid-template-columns:repeat(3,1fr)}
+  .process--5{grid-template-columns:repeat(3,1fr)}
+  .process--4{grid-template-columns:repeat(2,1fr)}
+  .cinfo{grid-template-columns:1fr}
+}
+@media (max-width:960px){
+  .split-hero__img{position:relative;width:auto;height:220px;-webkit-mask:linear-gradient(0deg,#000 70%,transparent);mask:linear-gradient(0deg,#000 70%,transparent);order:2}
+  .split-hero{display:flex;flex-direction:column}
+  .req,.contact-grid,.about{grid-template-columns:1fr}
+}
+@media (max-width:640px){
+  .checker{grid-template-columns:1fr}
+  .checker .btn{justify-content:center}
+  .process,.process--5,.process--4{grid-template-columns:1fr}
+  .facts,.upload-grid{grid-template-columns:1fr}
+  .split-hero .ticks{font-size:14px}
+  .split-hero__img{height:180px}
+  .mini-stats b{font-size:18px}
+  .cta-band{padding:20px}
+}
+
+/* hidden attribute must win over component display rules */
+[hidden]{display:none!important}
+[data-list]{display:flex;flex-direction:column;gap:14px}
+[data-list] .hcard + .hcard{margin-top:0}
+.fav.is-on{color:var(--red)}
+@media (min-width:961px){.tiles--5{grid-template-columns:repeat(5,1fr)}.tiles--6{grid-template-columns:repeat(6,1fr)}}
+.checker-result,.checker,section[id],#message,[data-list]{scroll-margin-top:96px}
+@media (max-width:960px){#tourFilters{padding-top:48px}}
+@media (max-width:960px){
+  [data-list] .hcard__price{justify-content:flex-start;flex-wrap:wrap;gap:4px 10px}
+  [data-list] .hcard__price b,[data-list] .hcard__price small,[data-list] .hcard__price .strike{white-space:nowrap}
+  [data-list] .hcard__price .btn{margin-left:auto}
+}

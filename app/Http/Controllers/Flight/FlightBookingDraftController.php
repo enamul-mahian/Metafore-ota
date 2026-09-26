@@ -15,8 +15,7 @@ final class FlightBookingDraftController extends Controller
         private readonly FlightOfferSelectionStore $selectionStore,
         private readonly FlightTravelerValidator $travelerValidator,
         private readonly FlightBookingDraftStore $bookingDraftStore,
-    ) {
-    }
+    ) {}
 
     public function store(
         ValidateFlightTravelersRequest $request,
@@ -62,9 +61,8 @@ final class FlightBookingDraftController extends Controller
                 'status' => 'draft',
                 'booking_draft_token' => $draftToken,
                 'traveler_count' => count($travelers),
-                'expires_in_seconds' =>
-                    $this->bookingDraftStore
-                        ->expiresInSeconds(),
+                'expires_in_seconds' => $this->bookingDraftStore
+                    ->expiresInSeconds(),
             ],
         ], 201);
 
